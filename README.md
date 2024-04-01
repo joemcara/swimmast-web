@@ -1,1 +1,1 @@
-# SwimMast
+# SWIMMAST
