@@ -10,6 +10,7 @@ export default {
         "system-menu-blue": "#15192F",
         "system-menu-light-blue": "#7AB0CE",
         "system-section-white": "#F7F7F7",
+        "system-label-blue": "#3085C3",
 
       }
     },
