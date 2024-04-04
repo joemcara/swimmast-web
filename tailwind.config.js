@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {},
+    colors: {
+      "background-secundary": "#E2E1E5",
+      "button-color": "0730BE"
+    }
   },
   plugins: [],
 }

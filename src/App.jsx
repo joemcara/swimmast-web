@@ -4,16 +4,17 @@ import { Suspense, lazy } from 'react'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Loader } from '@mantine/core';
 const Home = lazy(() => import("./Home/Home.jsx"));
+const Update = lazy(() => import("./Update/Update.jsx"));
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Home />, //<Base/>,
+      element: <Update/> ,//<Base/>
       children: [
         {
           index: true,
-          element: <Home />
+          element: <Update />
         }
       ]
     },
@@ -24,6 +25,8 @@ function App() {
     >
       <RouterProvider router={router} />
     </Suspense>
+
+    
   )
 }
 
