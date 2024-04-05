@@ -3,6 +3,7 @@ import { Input, Select, Tabs, Button, Space, NumberInput} from '@mantine/core';
 import { IconCreditCard, IconCurrencyDollar } from '@tabler/icons-react';
 import { DateInput } from '@mantine/dates';
 import { useState } from 'react';
+import CustomSection from '../components/CustomSection';
 
 function Update() {
     const [valueDate, setValueDate] = useState(new Date());
@@ -33,12 +34,11 @@ function Update() {
     
    
     return (
-        <div className='bg-background-secundary left-10 items-center ml-64 my-24 mr-8 pr-3 pt-7 pl-3 pb-7'>
-            <p className='font-bold ml-3'>Actualizar Datos</p>
+        <CustomSection title='Actualizar Datos'>
 
-            <div className='flex flex-row gap-10 ml-3 my-3' >
-                    <Input.Wrapper label='Nombres y Apellidos' className='w-60' labelProps={{ style: { fontSize: '12px', fontWeight: 'normal' } }} >
-                        <Input size='xs'/>
+            <div className='flex flex-row gap-14 ml-3 my-3' >
+                    <Input.Wrapper label='Nombres y Apellidos' className='w-60' labelProps={{ style: { fontSize: '16px', fontWeight: 'normal' } }} >
+                        <Input size='sm'/>
                     </Input.Wrapper>
 
                     <DateInput
@@ -46,60 +46,60 @@ function Update() {
                         onChange={handleBirthDateChange}
                         valueFormat="DD/MM/YYYY"
                         label="Fecha de Nacimiento"
-                        size='xs'
-                        labelProps={{ style: { fontSize: '12px', fontWeight: 'normal' } }}
+                        size='sm'
+                        labelProps={{ style: { fontSize: '16px', fontWeight: 'normal' } }}
                     />
 
-                    <NumberInput allowDecimal={false} value={age} label="Edad" hideControls size='xs' className='w-16' labelProps={{ style: { fontSize: '12px', fontWeight: 'normal' } }}/>
+                    <NumberInput allowDecimal={false} value={age} label="Edad" hideControls size='sm' className='w-16' labelProps={{ style: { fontSize: '16px', fontWeight: 'normal' } }}/>
                     
-                    <Input.Wrapper label='# Comprobante' className='w-32' labelProps={{ style: { fontSize: '12px', fontWeight: 'normal' } }}>
-                        <Input size='xs'/>
+                    <Input.Wrapper label='# Comprobante' className='w-32' labelProps={{ style: { fontSize: '16px', fontWeight: 'normal' } }}>
+                        <Input size='sm'/>
                     </Input.Wrapper>
             </div>
 
-            <div className='flex flex-row gap-10 ml-3 my-3' >
-                    <Input.Wrapper label='Correo' className='w-60' labelProps={{ style: { fontSize: '12px', fontWeight: 'normal' } }}>
-                        <Input size='xs'/>
+            <div className='flex flex-row gap-14 ml-3 my-3' >
+                    <Input.Wrapper label='Correo' className='w-60' labelProps={{ style: { fontSize: '16px', fontWeight: 'normal' } }}>
+                        <Input size='sm'/>
                     </Input.Wrapper>
-                    <Input.Wrapper label='Teléfono' labelProps={{ style: { fontSize: '12px', fontWeight: 'normal' } }}>
-                        <Input size='xs'/>
+                    <Input.Wrapper label='Teléfono' labelProps={{ style: { fontSize: '16px', fontWeight: 'normal' } }}>
+                        <Input size='sm'/>
                     </Input.Wrapper>
-                    <Input.Wrapper label='Dirección' className='w-56' labelProps={{ style: { fontSize: '12px', fontWeight: 'normal' } }}>
-                        <Input size='xs'/>
-                    </Input.Wrapper>
-            </div>
-
-            <div className='flex flex-row gap-16 ml-3 my-3' >
-                    <Input.Wrapper label='Representante' labelProps={{ style: { fontSize: '12px', fontWeight: 'normal' } }}>
-                        <Input size='xs'/>
-                    </Input.Wrapper>
-                    <Input.Wrapper label='Vínculo' labelProps={{ style: { fontSize: '12px', fontWeight: 'normal' } }}>
-                        <Input size='xs'/>
-                    </Input.Wrapper>
-                    <Input.Wrapper label='Instructor' className='w-64' labelProps={{ style: { fontSize: '12px', fontWeight: 'normal' } }}>
-                        <Input size='xs'/>
+                    <Input.Wrapper label='Dirección' className='w-64' labelProps={{ style: { fontSize: '16px', fontWeight: 'normal' } }}>
+                        <Input size='sm'/>
                     </Input.Wrapper>
             </div>
 
-            <div className='flex flex-row gap-40 ml-3 my-3'>
+            <div className='flex flex-row gap-14 ml-3 my-3' >
+                    <Input.Wrapper label='Representante' className='w-60'  labelProps={{ style: { fontSize: '16px', fontWeight: 'normal' } }}>
+                        <Input size='sm'/>
+                    </Input.Wrapper>
+                    <Input.Wrapper label='Vínculo' labelProps={{ style: { fontSize: '16px', fontWeight: 'normal' } }}>
+                        <Input size='sm'/>
+                    </Input.Wrapper>
+                    <Input.Wrapper label='Instructor' className='w-64' labelProps={{ style: { fontSize: '16px', fontWeight: 'normal' } }}>
+                        <Input size='sm'/>
+                    </Input.Wrapper>
+            </div>
+
+            <div className='flex flex-row gap-44 ml-3 my-3'>
                 <div className='flex flex-row gap-1.5'>
-                    <p className='text-xs'>Cursos Inscritos</p>
-                    < Select size='xs' placeholder="Pick value" data={['Entrenamiento', 'Vacacional']}/>
+                    <p className='text-base'>Cursos Inscritos</p>
+                    < Select size='sm' placeholder="Pick value" data={['Entrenamiento', 'Vacacional']}/>
                 </div>
 
                 <div className='flex flex-row gap-10'>
-                    <p className='text-xs'>Inscripción</p>
-                    < Select size='xs' className='w-44' placeholder="Pick value" data={['Aceptar', 'Negar']}/>
+                    <p className='text-base'>Inscripción</p>
+                    < Select size='sm' className='w-44' placeholder="Pick value" data={['Aceptar', 'Negar']}/>
                 </div>
             </div >
 
             <div className='flex flex-row gap-40 ml-3 my-3'>
                 <div className='flex flex-row gap-1.5'>
-                    <p className='text-xs'>Estado de Pago</p>
-                    < Select size='xs' placeholder="Pick value" data={['Abono', 'Pagado', 'Stand-By', 'No Pagado']}/>
+                    <p className='text-base'>Estado de Pago</p>
+                    < Select size='sm' placeholder="Pick value" data={['Abono', 'Pagado', 'Stand-By', 'No Pagado']}/>
                 </div>
-                <div className='flex flex-row gap-5'>
-                    <p className='text-xs'>Forma de Pago</p>
+                <div className='flex flex-row gap-3'>
+                    <p className='text-base'>Forma de Pago</p>
                     <div>
                     <Tabs bg={'white'} className='h-9' defaultValue="first">
                     <Tabs.List grow>
@@ -116,10 +116,10 @@ function Update() {
                 
             </div>
 
-            <div className='ml-96 flex flex-row gap-4 pl-14'>
-                <p className='text-xs'> Saldo  Abonado</p>
+            <div className='ml-96 flex flex-row gap-2 pl-28'>
+                <p className='text-base'> Saldo  Abonado</p>
                 <NumberInput 
-                    size='xs' 
+                    size='sm' 
                     leftSection={<IconCurrencyDollar/>} 
                     defaultValue={0.00} 
                     allowDecimal={true}
@@ -131,14 +131,12 @@ function Update() {
                 </NumberInput>
             </div>
 
-            <Space h="xl" />
             
             <div className='flex justify-center mt-3 mb-3' >
-            <Button variant='filled' color='#0730BE' radius="lg">Editar</Button>
+            <Button variant='filled' color='#0730BE'  size="lg" radius="xl">Editar</Button>
             </div>
     
-        </div>
-        
+        </CustomSection>
         
         
     )

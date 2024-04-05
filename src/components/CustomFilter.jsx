@@ -1,0 +1,16 @@
+import { ActionIcon, Group } from '@mantine/core'
+import { IconFilterCancel } from '@tabler/icons-react'
+import React from 'react'
+
+function CustomFilter(props) {
+    return (
+        <Group gap={72}>
+            {props.children}
+            <ActionIcon bg={"transparent"} onClick={() => console.log("reset filters")}>
+                <IconFilterCancel color='red' />
+            </ActionIcon>
+        </Group>
+    )
+}
+
+export default CustomFilter
