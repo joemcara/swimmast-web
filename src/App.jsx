@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Loader } from '@mantine/core';
+import Register from './Register/Register.jsx';
 const Base = lazy(() => import("./Base/Base.jsx"));
 const Home = lazy(() => import("./Home/Home.jsx"));
 
@@ -23,7 +24,7 @@ function App() {
       children: [
         {
           index: true,
-          element: <Home />
+          element: <Register />
         }
       ]
     },
