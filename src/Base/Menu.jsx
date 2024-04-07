@@ -4,7 +4,7 @@ import snachesOrcasLogo from '../assets/snachesOrcasLogo.png';
 function Menu() {
     const navItemStyles = "pl-12 h-12 flex items-center text-lg";
     return (
-        <div className='bg-system-menu-blue w-72 h-screen fixed top-0 left-0 flex flex-col gap-6 items-center' >
+        <div className='bg-system-menu-blue w-72 min-h-screen fixed top-0 left-0 flex flex-col gap-6 items-center hidden lg:flex' >
             <a href="/">
                 <img alt="snaches-orcas" src={snachesOrcasLogo} className='mt-8 h-56 w-56 object-contain' />
             </a>

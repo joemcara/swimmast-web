@@ -4,7 +4,7 @@ import React from 'react'
 
 function CustomFilter(props) {
     return (
-        <Group gap={72}>
+        <Group gap={12}>
             {props.children}
             <ActionIcon bg={"transparent"} onClick={() => console.log("reset filters")}>
                 <IconFilterCancel color='red' />
