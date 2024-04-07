@@ -12,6 +12,7 @@ import { Tabs, rem } from '@mantine/core';
 import dayjs from 'dayjs';
 import { DatePickerInput } from '@mantine/dates';
 
+
 const tabStyles = {
     backgroundColor: "#15192F",
     color: "white",
@@ -330,6 +331,7 @@ const RegisterCursoForm = () => {
             <br />
             <Group justify="center">
                 <Button variant="filled">Guardar</Button>
+                
             </Group>
         </form>
     );
