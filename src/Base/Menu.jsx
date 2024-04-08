@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import snachesOrcasLogo from '../assets/snachesOrcasLogo.png';
+import CustomNavLink from '../components/CustomNavLink';
 function Menu() {
     const navItemStyles = "pl-12 h-12 flex items-center text-lg";
     return (
@@ -10,18 +11,26 @@ function Menu() {
             </a>
             <h3 className='text-3xl text-white font-semibold'>ADMIN</h3>
             <nav className='flex flex-col text-white w-full gap-4'>
-                <NavLink to="/" className={({ isActive }) => isActive ? `${navItemStyles} bg-system-menu-light-blue` : navItemStyles}>
-                    Inicio
-                </NavLink>
-                <NavLink to="/registrar" className={({ isActive }) => isActive ? `${navItemStyles} bg-system-menu-light-blue` : navItemStyles}>
-                    Registrar
-                </NavLink>
-                <NavLink to="/actualizar" className={({ isActive }) => isActive ? `${navItemStyles} bg-system-menu-light-blue` : navItemStyles}>
-                    Actualizar
-                </NavLink>
-                <NavLink to="/cursos" className={({ isActive }) => isActive ? `${navItemStyles} bg-system-menu-light-blue` : navItemStyles}>
-                    Cursos
-                </NavLink>
+                <CustomNavLink
+                    to="/"
+                    text="Inicio"
+                    pl={12}
+                />
+                <CustomNavLink
+                    to="/registrar"
+                    text="Registrar"
+                    pl={12}
+                />
+                <CustomNavLink
+                    to="/actualizar"
+                    text="Actualizar"
+                    pl={12}
+                />
+                <CustomNavLink
+                    to="/cursos"
+                    text="Cursos"
+                    pl={12}
+                />
             </nav>
         </div>
     )

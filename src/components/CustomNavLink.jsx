@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom';
 
 function CustomNavLink(props) {
-    const navItemStyles = "pl-2 h-12 flex items-center text-lg";
+    const navItemStyles = `${props.pl ? `pl-${props.pl}` : "pl-2"} h-12 flex items-center text-lg`;
     return (
         <NavLink
             to={props.to}
