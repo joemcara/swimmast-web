@@ -3,6 +3,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Loader } from '@mantine/core';
 const Base = lazy(() => import("./Base/Base.jsx"));
 const Home = lazy(() => import("./Home/Home.jsx"));
+const Curso = lazy(() => import("./Cursos/Curso.jsx"))
 
 function App() {
   const router = createBrowserRouter([
@@ -43,7 +44,7 @@ function App() {
       children: [
         {
           index: true,
-          element: <Home />
+          element: <Curso />
         }
       ]
     },

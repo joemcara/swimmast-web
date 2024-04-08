@@ -36,7 +36,7 @@ function Home() {
                 <Group >
                     <InputLabel className='text-system-label-blue' size={18} fw={700}>Solicitud</InputLabel>
                     <Select
-                        data={["ACEPTADA", "PENDIENTE", "NEGADA"]}
+                        data={["Activo", "Inactivo", "Reservado"]}
                     />
                 </Group>
                 <Group >

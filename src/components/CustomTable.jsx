@@ -26,7 +26,7 @@ function CustomTable(props) {
     }
 
     return (
-        <Table.ScrollContainer className='mt-6' >
+        <Table.ScrollContainer className='absolute mt-6' >
             <Table striped highlightOnHover classNames={{
                 th: "text-center  justify-center"
             }}>
