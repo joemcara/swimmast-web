@@ -4,6 +4,7 @@ import { Loader } from '@mantine/core';
 import Register from './Register/Register.jsx';
 const Base = lazy(() => import("./Base/Base.jsx"));
 const Home = lazy(() => import("./Home/Home.jsx"));
+const Curso = lazy(() => import("./Cursos/Curso.jsx"))
 const Update = lazy(() => import("./Update/Update.jsx"));
 
 function App() {
@@ -45,7 +46,7 @@ function App() {
       children: [
         {
           index: true,
-          element: <Home />
+          element: <Curso />
         }
       ]
     },
@@ -57,7 +58,7 @@ function App() {
       <RouterProvider router={router} />
     </Suspense>
 
-    
+
   )
 }
 

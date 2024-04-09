@@ -1,7 +1,6 @@
 import React from 'react'
 import CustomTable from '../components/CustomTable'
-import { ActionIcon, Group, Input, InputLabel, Select, Table } from '@mantine/core'
-import { IconBellFilled, IconBellRinging, IconBellRingingFilled, IconFilter, IconFilterCancel, IconPhoto } from '@tabler/icons-react'
+import { Group, InputLabel, Select } from '@mantine/core'
 import CustomSection from '../components/CustomSection'
 import CustomFilter from '../components/CustomFilter'
 
@@ -36,7 +35,8 @@ function Home() {
                 <Group >
                     <InputLabel className='text-system-label-blue' size={18} fw={700}>Solicitud</InputLabel>
                     <Select
-                        data={["ACEPTADA", "PENDIENTE", "NEGADA"]}
+                        data={["aceptada", "Inactivo", "Reservado"]}
+                        defaultValue={"x"}
                     />
                 </Group>
                 <Group >

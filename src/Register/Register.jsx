@@ -1,15 +1,9 @@
-import * as React from 'react';
-import CustomTable from '../components/CustomTable'
-import { ActionIcon, Group, Input, InputLabel, Select, Table, Button, TextInput, NumberInput, InputWrapper, ButtonGroup } from '@mantine/core'
-import { IconBellFilled, IconBellRinging, IconBellRingingFilled, IconFilter, IconFilterCancel, IconPhoto, IconCash, IconClock } from '@tabler/icons-react'
+import { ActionIcon, Group, Input, Select, Button, TextInput, NumberInput, InputWrapper, ButtonGroup } from '@mantine/core'
+import { IconPhoto, IconCash, IconClock } from '@tabler/icons-react'
 import CustomSection from '../components/CustomSection'
-import CustomFilter from '../components/CustomFilter'
 import { useState } from 'react';
-
 import { DateInput, TimeInput } from '@mantine/dates';
-import { IconAt, } from '@tabler/icons-react';
 import { Tabs, rem } from '@mantine/core';
-import dayjs from 'dayjs';
 import { DatePickerInput } from '@mantine/dates';
 
 
@@ -331,7 +325,7 @@ const RegisterCursoForm = () => {
             <br />
             <Group justify="center">
                 <Button variant="filled">Guardar</Button>
-                
+
             </Group>
         </form>
     );

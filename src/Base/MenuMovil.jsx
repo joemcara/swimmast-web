@@ -1,8 +1,8 @@
-import { ActionIcon, Button, Drawer, Menu, MenuItem, MenuTarget, Modal } from '@mantine/core'
+import { ActionIcon, Drawer } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { IconClockSearch, IconMenu, IconMenu2, IconX } from '@tabler/icons-react'
+import { IconMenu2, IconX } from '@tabler/icons-react'
 import React, { useEffect } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import CustomNavLink from '../components/CustomNavLink'
 
 function MenuMovil() {
@@ -13,7 +13,7 @@ function MenuMovil() {
     }, [location])
     return (
         <>
-            <div className='flex gap-2 items-center pt-2'>
+            <div className='lg:hidden flex gap-2 items-center pt-2'>
                 <ActionIcon onClick={open} className='lg:invisible visible' bg={"transparent"}>
                     <IconMenu2 color='#000' />
                 </ActionIcon>

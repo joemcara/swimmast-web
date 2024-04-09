@@ -1,5 +1,4 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
 import snachesOrcasLogo from '../assets/snachesOrcasLogo.png';
 import CustomNavLink from '../components/CustomNavLink';
 function Menu() {
