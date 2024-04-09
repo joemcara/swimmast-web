@@ -19,15 +19,15 @@ function Curso() {
                     Curso
                     </InputLabel>
                     <Select
-                        data={['GRU01','IND01','VAV01','TRP01']}
+                        data={['GRUPAL','INDIVIDUAL','VACACIONAL','TERAPIA']}
                         />
                 </Group>
                 <Group>
                     <InputLabel className='text-system-label-blue' size={20} fw={550}>
                     Horario
                     </InputLabel>
-                    <Select
-                        data={['GRU01','IND01','VAV01','TRP01']}
+                    <Autocomplete
+                        data={['7:00','7:30','8:00','9:30']}
                         />
                 </Group>
                 <Group>
