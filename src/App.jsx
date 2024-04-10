@@ -6,6 +6,7 @@ const Base = lazy(() => import("./Base/Base.jsx"));
 const Home = lazy(() => import("./Home/Home.jsx"));
 const Curso = lazy(() => import("./Cursos/Curso.jsx"))
 const Update = lazy(() => import("./Update/Update.jsx"));
+const PageNotFound = lazy(() => import("./PageNotFound/PageNotFound.jsx"));
 
 function App() {
   const router = createBrowserRouter([
@@ -14,40 +15,30 @@ function App() {
       element: <Base />,
       children: [
         {
+          path: "/",
           index: true,
           element: <Home />
-        }
-      ]
-    },
-    // Change "element" keys with actual component to navigate like Update, Courses...
-    {
-      path: "/registrar",
-      element: <Base />,
-      children: [
+        },
         {
+          path: "/registrar",
           index: true,
-          element: <Register />
-        }
-      ]
-    },
-    {
-      path: "/actualizar",
-      element: <Base />,
-      children: [
+          element: <Register />,
+        },
         {
+          path: "/actualizar",
           index: true,
           element: <Update />
-        }
-      ]
-    },
-    {
-      path: "/cursos",
-      element: <Base />,
-      children: [
+        },
         {
+          path: "/cursos",
           index: true,
           element: <Curso />
-        }
+        },
+        {
+          path: "*",
+          index: true,
+          element: <PageNotFound />
+        },
       ]
     },
   ])

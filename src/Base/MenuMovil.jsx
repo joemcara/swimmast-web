@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom'
 import CustomNavLink from '../components/CustomNavLink'
 
 function MenuMovil() {
-    const [opened, { open, close }] = useDisclosure(true)
+    const [opened, { open, close }] = useDisclosure(false)
     let location = useLocation();
     useEffect(() => {
         close();
