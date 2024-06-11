@@ -6,7 +6,7 @@ function CustomFilter(props) {
     return (
         <Group gap={12}>
             {props.children}
-            <ActionIcon bg={"transparent"} onClick={() => console.log("reset filters")}>
+            <ActionIcon bg={"transparent"} onClick={props.filter?.restablecer}>
                 <IconFilterCancel color='black' />
             </ActionIcon>
         </Group>

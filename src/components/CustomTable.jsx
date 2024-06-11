@@ -3,7 +3,6 @@ import { IconBellRinging, IconPhone, IconPhoto } from '@tabler/icons-react'
 import React, { useEffect } from 'react'
 
 function CustomTable(props) {
-
     function camelToSentence(text) {
         // Split the camel case string into words
         const words = text.split(/([A-Z][a-z]+)/);
@@ -19,9 +18,9 @@ function CustomTable(props) {
     }
 
     const cellColor = (cell) => {
-        if (cell === "en curso" || cell === "aceptada") return "text-green-600 font-semibold"
-        else if (cell === "inactivo" || cell === "rechazada") return "text-red-800 font-semibold"
-        else if (cell === "por empezar" || cell === "pendiente") return "text-yellow-600 font-semibold"
+        if (cell === "en curso" || cell === "APROBADO") return "text-green-600 font-semibold"
+        else if (cell === "inactivo" || cell === "RECHAZADO") return "text-red-800 font-semibold"
+        else if (cell === "por empezar" || cell === "PENDIENTE") return "text-yellow-600 font-semibold"
         else return ""
     }
 
@@ -32,23 +31,36 @@ function CustomTable(props) {
             }}>
                 <Table.Thead>
                     <Table.Tr>
-                        {props.headers?.map(header => {
+                        {props.headers?.map((header, index) => {
                             return (
-                                <Table.Th>
+                                <Table.Th key={index}>
                                     {camelToSentence(header)}
                                 </Table.Th>
                             );
                         })}
+                        {props.notification &&
+                            <Table.Th>
+                                Notificar
+                            </Table.Th>
+                        }
+                        {props.voucher &&
+                            <Table.Th>
+                                Comprobante
+                            </Table.Th>
+                        }
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                     {props.data?.map((element) => {
-                        let cells = Object.values(element)
-                        return <Table.Tr>
-                            {cells.map(cell =>
-                                <Table.Td className={cellColor(cell)}>
-                                    {cell}
-                                </Table.Td>)}
+                        let values = Object.values(element)
+                        let keys = Object.keys(element)
+                        return <Table.Tr >
+                            {props.headers?.map(value => {
+                                return <Table.Td className={cellColor(element[value])} >
+                                    {element[value]}
+                                </Table.Td>
+                            }
+                            )}
                             {props.notification &&
                                 <Table.Td>
                                     <ActionIcon bg={"transparent"}>

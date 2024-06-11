@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import CustomTable from '../components/CustomTable'
 import { Group, InputLabel, Select } from '@mantine/core'
 import CustomSection from '../components/CustomSection'
 import CustomFilter from '../components/CustomFilter'
+import axios from 'axios'
 
 function Home() {
     const exampleData = [{
         id: 1,
         solicitudInscripcion: "aceptada",
-        nombres: "Andres David",
+        nombres: "David",
         apellidos: "Borbor Guerrero",
         correo: "adborbor@espol.edu.ec",
         curso: "1",
@@ -19,16 +20,22 @@ function Home() {
     {
         id: 2,
         solicitudInscripcion: "rechazada",
-        nombres: "Andres David",
-        apellidos: "Borbor Guerrero",
+        nombres: "Andres",
+        apellidos: "Guerrero",
         correo: "adborbor@espol.edu.ec",
         curso: "1",
         inicioInscripcion: "21-11-2023",
         finInscripcion: "21-11-2023",
         estadoPago: "PAGADO",
     }]
+    const [data, setData] = useState([])
     const exampleHeaders = Object.keys(exampleData[0]).concat("notificar", "comprobante")
+    useEffect(() => {
+        axios.get("administrador/estudiantes-registrados/solicitud/1/curso/1/estado-pago/1/pagina/1/").then(function (response) {
+            setData(response.data)
 
+        }).catch(function (error) { console.log(error) })
+    }, [])
     return (
         <CustomSection title="Estudiantes registrados">
             <CustomFilter>
@@ -53,8 +60,8 @@ function Home() {
                 </Group>
             </CustomFilter>
             <CustomTable
-                headers={exampleHeaders}
-                data={exampleData.concat(exampleData, exampleData, exampleData, exampleData)}
+                headers={["id", "solicitudInscripcion", 'nombres', 'apellidos', 'celular', 'curso', 'inicioInscripcion', 'finInscripcion', 'estadoPago']}
+                data={data.data}
                 notification
                 voucher
             />

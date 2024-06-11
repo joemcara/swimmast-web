@@ -2,12 +2,14 @@ import { Suspense, lazy } from 'react'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Loader } from '@mantine/core';
 import Register from './Register/Register.jsx';
+import axios from 'axios';
 const Base = lazy(() => import("./Base/Base.jsx"));
 const Home = lazy(() => import("./Home/Home.jsx"));
-const Curso = lazy(() => import("./Cursos/Curso.jsx"))
+const Course = lazy(() => import("./Courses/Course.jsx"))
 const Update = lazy(() => import("./Update/Update.jsx"));
 const PageNotFound = lazy(() => import("./PageNotFound/PageNotFound.jsx"));
-
+const Logout = lazy(() => import("./Login/Logout.jsx"));
+const Login = lazy(() => import("./Login/Login.jsx"))
 function App() {
   const router = createBrowserRouter([
     {
@@ -32,7 +34,7 @@ function App() {
         {
           path: "/cursos",
           index: true,
-          element: <Curso />
+          element: <Course />
         },
         {
           path: "*",
@@ -41,7 +43,16 @@ function App() {
         },
       ]
     },
+    {
+      path: "/login",
+      element: <Login />
+    },
+    {
+      path: "/logout",
+      element: <Logout />
+    }
   ])
+  axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
   return (
     <Suspense
       fallback={<Loader />}

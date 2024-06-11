@@ -53,9 +53,9 @@ const RegisterMiembroForm = () => {
     };
     return (
         <form>
-            <div class="border-b border-gray-900/10 pb-12">
-                <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                    <div class="sm:col-span-2 sm:col-start-1">
+            <div className="border-b border-gray-900/10 pb-12">
+                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                    <div className="sm:col-span-2 sm:col-start-1">
                         <TextInput
                             label="Nombres y Apellidos"
                             withAsterisk
@@ -63,7 +63,7 @@ const RegisterMiembroForm = () => {
                         />
                     </div>
 
-                    <div class="sm:col-span-2 sm:col-start-3">
+                    <div className="sm:col-span-2 sm:col-start-3">
                         <DateInput
                             label="Fecha de nacimiento"
                             withAsterisk
@@ -76,7 +76,7 @@ const RegisterMiembroForm = () => {
                         />
                     </div>
 
-                    <div class="sm:col-span-1">
+                    <div className="sm:col-span-1">
                         <TextInput
                             label="Edad: "
                             placeholder="Edad"
@@ -85,14 +85,14 @@ const RegisterMiembroForm = () => {
                         />
                     </div>
 
-                    <div class="sm:col-span-1">
+                    <div className="sm:col-span-1">
                         <TextInput
                             label="#Comprobante "
                             placeholder="Ingrese número de comprobante"
                         />
                     </div>
 
-                    <div class="sm:col-span-2 sm:col-start-1">
+                    <div className="sm:col-span-2 sm:col-start-1">
                         <TextInput
                             leftSectionPointerEvents="none"
 
@@ -102,7 +102,7 @@ const RegisterMiembroForm = () => {
                         />
                     </div>
 
-                    <div class="sm:col-span-2">
+                    <div className="sm:col-span-2">
                         <TextInput
                             leftSectionPointerEvents="none"
                             withAsterisk
@@ -111,7 +111,7 @@ const RegisterMiembroForm = () => {
                         />
                     </div>
 
-                    <div class="sm:col-span-2">
+                    <div className="sm:col-span-2">
                         <TextInput
                             leftSectionPointerEvents="none"
                             withAsterisk
@@ -120,7 +120,7 @@ const RegisterMiembroForm = () => {
                         />
                     </div>
 
-                    <div class="sm:col-span-2 sm:col-start-1">
+                    <div className="sm:col-span-2 sm:col-start-1">
                         <InputWrapper
                             id="input-demo"
                             required
@@ -130,7 +130,7 @@ const RegisterMiembroForm = () => {
                         </InputWrapper>
                     </div>
 
-                    <div class="sm:col-span-2 sm:col-start-3">
+                    <div className="sm:col-span-2 sm:col-start-3">
                         <Select
                             label="Vínculo:"
                             placeholder="Elegir Vínculo"
@@ -139,7 +139,7 @@ const RegisterMiembroForm = () => {
                         />
                     </div>
 
-                    <div class="sm:col-span-2 sm:col-start-5">
+                    <div className="sm:col-span-2 sm:col-start-5">
                         <Select
                             label="Instructor: "
                             placeholder="Elegir Instructor: "
@@ -149,7 +149,7 @@ const RegisterMiembroForm = () => {
 
                     </div>
 
-                    <div class="sm:col-span-2 sm:col-start-1">
+                    <div className="sm:col-span-2 sm:col-start-1">
                         <Select
                             label="Cursos Inscritos:"
                             placeholder="Elegir Paquete "
@@ -158,7 +158,7 @@ const RegisterMiembroForm = () => {
                         />
                     </div>
 
-                    <div class="sm:col-span-1">
+                    <div className="sm:col-span-1">
                         <TextInput
                             leftSectionPointerEvents="none"
                             withAsterisk
@@ -166,8 +166,8 @@ const RegisterMiembroForm = () => {
                             placeholder="Ingrese # de Clases"
                         />
                     </div>
-                    <div class="sm:col-span-1 ">
-                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Dias de clases: </label>
+                    <div className="sm:col-span-1 ">
+                        <label className="block text-sm font-medium leading-6 text-gray-900">Dias de clases: </label>
                         <ActionIcon.Group>
                             {daysOfWeek.map((day) => (
                                 <ActionIcon
@@ -184,7 +184,7 @@ const RegisterMiembroForm = () => {
                         </ActionIcon.Group>
                     </div>
 
-                    <div class="sm:col-span-2 sm:col-start-5">
+                    <div className="sm:col-span-2 sm:col-start-5">
                         <Select
                             label="Inscripción: "
                             placeholder="Elegir estado de inscripción "
@@ -193,7 +193,7 @@ const RegisterMiembroForm = () => {
                         />
 
                     </div>
-                    <div class="sm:col-span-2 sm:col-start-1">
+                    <div className="sm:col-span-2 sm:col-start-1">
                         <DatePickerInput
                             type="range"
                             label="Inicio-Fin de Inscripción:"
@@ -203,7 +203,7 @@ const RegisterMiembroForm = () => {
                         />
                     </div>
 
-                    <div class="sm:col-span-2 sm:col-start-3">
+                    <div className="sm:col-span-2 sm:col-start-3">
                         <Select
                             label="Estado de pago"
                             placeholder="Elegir estado de pago"
@@ -213,8 +213,8 @@ const RegisterMiembroForm = () => {
 
                     </div>
 
-                    <div class="sm:col-span-3 sm:col-start-5">
-                        <label for="country" class="block text-sm font-medium leading-6 text-gray-900">Forma de pago: </label>
+                    <div className="sm:col-span-3 sm:col-start-5">
+                        <label className="block text-sm font-medium leading-6 text-gray-900">Forma de pago: </label>
 
                         <ActionIcon.Group>
                             <ActionIcon
@@ -239,7 +239,7 @@ const RegisterMiembroForm = () => {
                         </ActionIcon.Group>
                     </div>
 
-                    <div class="sm:col-span-2 sm:col-start-5">
+                    <div className="sm:col-span-2 sm:col-start-5">
                         <NumberInput
                             label="Saldo Abonado: $"
                             defaultValue={0.00}
@@ -361,7 +361,7 @@ function Register() {
 
     return (
         <CustomSection title="Registrar" >
-            <Tabs variant="unstyled" defaultValue="Registrar Miembro" position="relative" borderRadius="rem(4px) 0 0 rem(4px)">
+            <Tabs variant="unstyled" defaultValue="Registrar Miembro" position="relative" >
                 <Tabs.List grow>
                     <Tabs.Tab
                         value="Registrar Miembro"
