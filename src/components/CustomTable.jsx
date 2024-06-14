@@ -33,7 +33,7 @@ function CustomTable(props) {
                     <Table.Tr>
                         {props.headers?.map((header, index) => {
                             return (
-                                <Table.Th key={index}>
+                                <Table.Th key={header}>
                                     {camelToSentence(header)}
                                 </Table.Th>
                             );
@@ -56,7 +56,7 @@ function CustomTable(props) {
                         let keys = Object.keys(element)
                         return <Table.Tr >
                             {props.headers?.map(value => {
-                                return <Table.Td className={cellColor(element[value])} >
+                                return <Table.Td className={cellColor(element[value])} key={element[value]} >
                                     {element[value]}
                                 </Table.Td>
                             }
