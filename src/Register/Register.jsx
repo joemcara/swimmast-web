@@ -1,25 +1,14 @@
-import { ActionIcon, Group, Input, Select, Button, TextInput, NumberInput, InputWrapper, ButtonGroup, FileInput, InputLabel, Text } from '@mantine/core'
+import { ActionIcon, Group, Input, Select, Button, TextInput, NumberInput, FileInput, Text } from '@mantine/core'
 import { IconPhoto, IconCash, IconClock } from '@tabler/icons-react'
 import CustomSection from '../components/CustomSection'
 import { useRef, useState } from 'react';
-import { DateInput, DateTimePicker, TimeInput } from '@mantine/dates';
+import { DateInput, TimeInput } from '@mantine/dates';
 import { Tabs, rem } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import axios from 'axios';
 import useMemberFormStore from './MemberFormStore';
-
-
-const tabStyles = {
-    backgroundColor: "#15192F",
-    color: "white",
-    fontSize: '1.6rem',
-};
-
-const inactiveTabStyles = {
-    backgroundColor: "inherit",
-    color: "#15192F",
-    fontSize: '1.6rem',
-};
+import { CustomButton, CustomDateInput, CustomDatePickerInput, CustomNumberInput, CustomSelect, CustomTextInput, SelectPaymentMethod } from '../components/CustomInputs';
+import useCourseFormStore from './CourseFormStore';
 
 const RegisterMiembroForm = ({ store }) => {
     const paquetes = ["GRUPAL/PFG", "INDIVIDUAL", "USO", "TERAPIA"];
@@ -77,7 +66,7 @@ const RegisterMiembroForm = ({ store }) => {
                     value={store.lastNames}
                     onChange={e => store.setLastNames(e.currentTarget.value)}
                 />
-                <DateInput
+                <CustomDateInput
                     label="Fecha de nacimiento"
                     withAsterisk
                     placeholder="00/00/0000"
@@ -86,7 +75,6 @@ const RegisterMiembroForm = ({ store }) => {
                         store.setBirthDate(birthdate);
                         store.setAge(calculateAge(birthdate))
                     }}
-                    className="sm:col-span-2 "
                 />
 
                 <div className="sm:col-span-2 grid grid-cols-2 gap-x-6">
@@ -223,13 +211,12 @@ const RegisterMiembroForm = ({ store }) => {
                     />
 
                 </div>
-                <DatePickerInput
+                <CustomDatePickerInput
                     type="range"
                     label="Inicio-Fin de Inscripción:"
                     placeholder="Inicio-Fin de Inscripción:"
                     value={store.applicationDuration}
                     onChange={store.setApplicationDuration}
-                    className="sm:col-span-2"
                 />
 
                 <Select
@@ -242,31 +229,7 @@ const RegisterMiembroForm = ({ store }) => {
                     onChange={store.setPaymentState}
                 />
 
-                <div className="sm:col-span-2 grid grid-cols-2">
-                    <label className="col-span-2 block text-sm font-medium leading-6 text-gray-900">Forma de pago: </label>
-                    <ActionIcon.Group>
-                        <ActionIcon
-                            variant="default"
-                            size="lg"
-                            aria-label="Gallery"
-                            onClick={() => store.setPaymentMethod('TRANSACTION')}
-                            style={{ backgroundColor: store.paymentMethod === 'TRANSACTION' ? 'green' : 'transparent' }}
-                        >
-                            <IconPhoto style={{ width: '50px' }} stroke={1.5} />
-                        </ActionIcon>
-
-                        <ActionIcon
-                            variant="default"
-                            size="lg"
-                            aria-label="Settings"
-                            onClick={() => store.setPaymentMethod('CASH')}
-                            style={{ backgroundColor: store.paymentMethod === 'CASH' ? 'green' : 'transparent' }}
-                        >
-                            <IconCash style={{ width: '50px' }} stroke={1.5} />
-                        </ActionIcon>
-                    </ActionIcon.Group>
-                    {store.paymentMethod === "TRANSACTION" && <FileInput placeholder="Seleccionar archivo" size="xs" variant='filled' multiple onChange={(e) => console.log(e)} />}
-                </div>
+                <SelectPaymentMethod store={store} />
 
                 <NumberInput
                     label="Dinero cancelado: $"
@@ -281,7 +244,7 @@ const RegisterMiembroForm = ({ store }) => {
 
             </div>
             <Group justify="center">
-                <Button variant="filled" onClick={createSwimmer}>Guardar</Button>
+                <CustomButton onClick={createSwimmer} text={"Guardar"} bgColor={'#15192F'} />
             </Group>
         </form>
     );
@@ -290,15 +253,6 @@ const RegisterMiembroForm = ({ store }) => {
 
 const RegisterCursoForm = ({ store }) => {
     const instructor = ["Ricardo Alcivar", "Joseph Carabajo", "Andres Borbor", "Paulina", "Katherine"];
-    const [valuedate, setValuedate] = useState([]);
-
-    const [selectedRange, setSelectedRange] = useState(null);
-
-    const handleRangeChange = (range) => {
-        setSelectedRange(range);
-    };
-
-
 
     const startTimeRef = useRef(null);
     const finishTimeRef = useRef(null);
@@ -314,65 +268,72 @@ const RegisterCursoForm = ({ store }) => {
         </ActionIcon>
     )
 
-
     return (
         <form>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8">
 
-                <TextInput
+                <CustomTextInput
                     label="Nombre del curso"
                     withAsterisk
                     placeholder="Ingrese Curso"
-                    className='sm:col-span-2'
+                    value={store.courseName}
+                    onChange={e => store.setCourseName(e.currentTarget?.value)}
                 />
-                <Select
+                <CustomSelect
                     label="Instructor: "
                     placeholder="Elegir Instructor: "
                     withAsterisk
                     data={instructor}
-                    className='col-span-2'
+                    value={store.instructor}
+                    onChange={store.setInstructor}
                 />
 
-                <Select
+                <CustomSelect
                     label="Tipo de clase"
                     data={["GRUPAL", "INDIVIDUAL"]}
-                    className='col-span-2'
+                    value={store.courseType}
+                    onChange={store.setCourseType}
                 />
 
-                <DatePickerInput
-                    type="range"
+                <CustomDatePickerInput
                     label="Inicio-Fin de Curso:"
                     placeholder="Inicio-Fin de Curso:"
-                    value={valuedate}
-                    onChange={setValuedate}
-                    className='col-span-2'
+                    value={store.enrollmentDuration}
+                    onChange={store.setEnrollmentDuration}
                 />
-                <Select
+                <CustomSelect
                     label="Estado"
                     data={["estado clase"]}
-                    className='col-span-2'
                 />
-                <NumberInput label="Precio: $"
+                <CustomNumberInput
+                    label="Precio: $"
                     defaultValue={0.00}
                     precision={2}
                     min={-1}
                     step={0.05}
-                    className="sm:col-span-2" />
+                />
                 <TimeInput
                     label="Hora Inicio:"
+                    maxTime={store.endTime}
                     rightSection={startPickerControl}
                     ref={startTimeRef}
+                    value={store.startTime}
+                    onChange={e => store.setStartTime(e.currentTarget?.value)}
                 />
 
                 <TimeInput
                     label="Hora Fin:"
                     rightSection={finishPickerControl}
-                    ref={finishTimeRef} />
+                    ref={finishTimeRef}
+                    minTime={store.startTime}
+                    value={store.endTime}
+                    onChange={e => store.setEndTime(e.currentTarget?.value)}
+                />
 
             </div>
             <br />
             <Group justify="center">
-                <Button variant="filled">Guardar</Button>
+                <CustomButton text='Guardar' bgColor={'#15192F'} />
 
             </Group>
         </form>
@@ -380,7 +341,8 @@ const RegisterCursoForm = ({ store }) => {
 }
 function Register() {
     const [activeTab, setActiveTab] = useState("Registrar Miembro");
-    const registerStore = useMemberFormStore();
+    const memberFormStore = useMemberFormStore();
+    const courseFormStore = useCourseFormStore();
 
     const handleTabChange = (value) => {
         setActiveTab(value);
@@ -401,9 +363,9 @@ function Register() {
 
     const renderContent = () => {
         if (activeTab === "Registrar Miembro") {
-            return <RegisterMiembroForm store={registerStore} />;
+            return <RegisterMiembroForm store={memberFormStore} />;
         } else if (activeTab === "Registrar Curso") {
-            return <RegisterCursoForm />;
+            return <RegisterCursoForm store={courseFormStore} />;
         }
         return null;
     };

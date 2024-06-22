@@ -12,7 +12,8 @@ export default {
         "system-section-white": "#F7F7F7",
         "system-label-blue": "#3085C3",
         "system-layout-green": "#9AB8BD",
-        "button-color": "0730BE"
+        "button-color": "#0730BE",
+        "system-button-yellow": "#F2C94C",
       }
     },
   },

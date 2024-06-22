@@ -51,11 +51,14 @@ function CustomTable(props) {
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                    {props.data?.map((element) => {
+                    {props.data?.map((element, index) => {
                         let values = Object.values(element)
                         let keys = Object.keys(element)
-                        return <Table.Tr >
-                            {props.headers?.map(value => {
+                        return <Table.Tr key={element.id} onClick={e => {
+                            props.store?.setSelectedItem(element)
+                            window.location.href = "/actualizar"
+                        }}>
+                            {props.getters?.map(value => {
                                 return <Table.Td className={cellColor(element[value])} key={element[value]} >
                                     {element[value]}
                                 </Table.Td>

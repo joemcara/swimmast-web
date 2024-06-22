@@ -1,6 +1,6 @@
 import { ActionIcon, Group } from '@mantine/core'
 import { IconFilterCancel } from '@tabler/icons-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 function CustomFilter(props) {
     return (

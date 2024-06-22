@@ -3,7 +3,8 @@ import { Avatar, Button, Menu, MenuItem, Text } from "@mantine/core"
 import { IconCaretDown } from '@tabler/icons-react';
 
 const handleLogout = () => {
-  console.log("Logout");
+  window.localStorage.removeItem('token')
+  window.location.href = '/login'
 };
 
 

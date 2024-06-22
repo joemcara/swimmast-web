@@ -8,8 +8,17 @@ const createStudentsSlice = (set) => ({
         }))
 })
 
+const createSelectedItemSlice = (set) => ({
+    selectedItem: null,
+    setSelectedItem: (value) =>
+        set(() => ({
+            selectedItem: value
+        }))
+})
+
 const useHomeStore = create((...a) => ({
-    ...createStudentsSlice(...a)
+    ...createStudentsSlice(...a),
+    ...createSelectedItemSlice(...a)
 }))
 
 export default useHomeStore;

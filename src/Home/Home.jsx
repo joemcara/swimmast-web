@@ -4,8 +4,10 @@ import { Group, InputLabel, Select } from '@mantine/core'
 import CustomSection from '../components/CustomSection'
 import CustomFilter from '../components/CustomFilter'
 import axios from 'axios'
+import useHomeStore from './HomeStore'
 
 function Home() {
+    const homeStore = useHomeStore();
     const exampleData = [{
         id: 1,
         solicitudInscripcion: "aceptada",
@@ -31,8 +33,10 @@ function Home() {
     const [data, setData] = useState([])
     const exampleHeaders = Object.keys(exampleData[0]).concat("notificar", "comprobante")
     useEffect(() => {
-        axios.get("administrador/estudiantes-registrados/solicitud/1/curso/1/estado-pago/1/pagina/1/").then(function (response) {
+        axios.get("administrador/registered-students/applicants/1/curso/1/estado-pago/1/pagina/1/").then(function (response) {
             setData(response.data)
+            homeStore.setStudents(response.data?.data)
+            console.log(response.data)
 
         }).catch(function (error) { console.log(error) })
     }, [])
@@ -61,9 +65,11 @@ function Home() {
             </CustomFilter>
             <CustomTable
                 headers={["id", "solicitudInscripcion", 'nombres', 'apellidos', 'celular', 'curso', 'inicioInscripcion', 'finInscripcion', 'estadoPago']}
-                data={data.data}
+                getters={['id', 'enrollment_status', 'first_name', 'last_name', 'cell_phone', 'course', 'enrollment_start_date', 'enrollment_due_date', 'payment_status']}
+                data={homeStore.students}
                 notification
                 voucher
+                store={homeStore}
             />
         </CustomSection>
     )

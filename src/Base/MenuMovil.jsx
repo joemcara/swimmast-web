@@ -37,6 +37,15 @@ function MenuMovil() {
                         <CustomNavLink to="/actualizar" text="Actualizar" />
                         <CustomNavLink to="/cursos" text="Cursos" />
                     </nav>
+                    <div className='bg-black'>
+                        <div onClick={
+                            (e) => {
+                                window.localStorage.removeItem('token')
+                                window.location.href = '/login'
+                            }
+
+                        }>Log out</div>
+                    </div>
                 </div>
             </Drawer>
         </>
