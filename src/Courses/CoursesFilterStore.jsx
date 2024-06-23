@@ -8,30 +8,46 @@ const createCourseTypeSlice = (set) => ({
         }))
 })
 
-const createTrainerSlice = (set) => ({
-    trainer: "todos",
-    setTrainer: (value) =>
+const createInstructorSlice = (set) => ({
+    instructor: "todos",
+    setInstructor: (value) =>
         set(() => ({
-            trainer: value
+            instructor: value
         }))
 })
 
 const createScheduleSlice = (set) => ({
-    schedule: "todos",
+    schedule: "00:00:00",
     setSchedule: (value) =>
         set(() => ({
             schedule: value
         }))
 })
 
-// const createRestablecerSlice = (set) => ({
-//     createCourseTypeSlice().setCourseType("todos"),
-// })
+const createCurrentPageSlice = (set) => ({
+    currentPage: 1,
+    setCurrentPage: (value) =>
+        set(() => ({
+            currentPage: value
+        }))
+})
 
+const createResetFiltersSlice = (set) => ({
+    resetFilters: () =>
+        set(() => ({
+            courseType: "todos",
+            instructor: "todos",
+            schedule: "00:00:00"
+        })
+        )
+})
 const useCoursesFilterStore = create((...a) => ({
     ...createCourseTypeSlice(...a),
-    ...createTrainerSlice(...a),
-    ...createScheduleSlice(...a)
+    ...createInstructorSlice(...a),
+    ...createScheduleSlice(...a),
+    ...createCurrentPageSlice(...a),
+
+    ...createResetFiltersSlice(...a)
 }))
 
 export default useCoursesFilterStore;

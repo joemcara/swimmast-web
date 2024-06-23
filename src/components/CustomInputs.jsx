@@ -5,7 +5,7 @@ import { IconCash, IconPhoto } from "@tabler/icons-react";
 
 export function CustomButton(props) {
     return (
-        <Button bg={props.bgColor || '#0730BE'} w={props.w || 200} radius={'xl'} mt={8} onClick={props.onClick} >
+        <Button bg={props.bgColor || '#0730BE'} w={props.w || 200} radius={'sm'} mt={8} onClick={props.onClick} >
             <Text fw={600}>{props.text}</Text>
         </Button>
     );
@@ -17,7 +17,7 @@ export function LoginTextInput(props) {
             label={props.label}
             placeholder={props.placeholder}
             type={props.type}
-            radius={'md'}
+            radius={'sm'}
             className={'w-4/6 sm:w-5/12'}
         />
     );
@@ -29,7 +29,7 @@ export function LoginPasswordInput(props) {
         <CustomPasswordInput
             label={props.label}
             placeholder={props.placeholder}
-            radius={'md'}
+            radius={'sm'}
             className={'w-4/6 sm:w-5/12'}
         />
     );
@@ -102,7 +102,7 @@ export function CustomNumberInput(props) {
             value={props.value}
             label={props.label}
             hideControls={props.hideControls}
-            className='col-span-1'
+            className={props.className || 'col-span-1'}
             onChange={props.onChange}
         />
     );

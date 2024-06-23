@@ -11,10 +11,10 @@ function Curso() {
     const courseFilterStore = useCoursesFilterStore();
     // LLENAR FILTROS
     useEffect(() => {
-        axios.get("tipos-clase/").then(function (response) {
+        axios.get("course_type/").then(function (response) {
             let courseTypes = response.data?.map(cT => {
                 return {
-                    label: cT.nombre,
+                    label: cT.name,
                     value: cT.id.toString()
                 }
             })
@@ -22,23 +22,22 @@ function Curso() {
         })
 
         axios.get("instructor/").then(function (response) {
-            let trainers = response.data?.map(trainer => {
+            let instructors = response.data?.map(instructor => {
                 return {
-                    label: trainer.nombres,
-                    value: trainer.id.toString()
+                    label: instructor.first_name,
+                    value: instructor.id.toString()
                 }
             })
-            course.setTrainers(trainers)
+            course.setInstructors(instructors)
         })
 
-        axios.get("administrador/horarios/").then(function (response) {
+        axios.get("administrador/schedules/").then(function (response) {
             course.setSchedules(response.data)
         })
     }, [])
     useEffect(() => {
-        axios.get(`administrador/Courses/course_type/1/instructor/4/schedule/1/page/1/`)
+        axios.get(`administrador/Courses/course_type/${courseFilterStore.courseType || 'todos'}/instructor/${courseFilterStore.instructor || 'todos'}/schedule/${courseFilterStore.schedule || '00:00:00'}/page/${courseFilterStore.currentPage}/`)
             .then(function (response) {
-                console.log(response.data.data)
                 course.setCourses(response.data.data)
             })
     }, [courseFilterStore])
@@ -53,8 +52,9 @@ function Curso() {
                         </InputLabel>
                         <Select
                             searchable
-                            // data={course.trainers}
-                            onChange={courseFilterStore.setTrainer}
+                            data={course.instructors}
+                            value={courseFilterStore.instructor}
+                            onChange={courseFilterStore.setInstructor}
                         />
                     </Group>
                     <Group>
@@ -62,7 +62,8 @@ function Curso() {
                             Tipo de clase
                         </InputLabel>
                         <Select
-                            // data={course.courseTypes}
+                            data={course.courseTypes}
+                            value={courseFilterStore.courseType}
                             onChange={courseFilterStore.setCourseType}
                         />
                     </Group>
@@ -71,7 +72,8 @@ function Curso() {
                             Horario
                         </InputLabel>
                         <Select
-                            // data={course.schedules}
+                            data={course.schedules}
+                            value={courseFilterStore.schedule}
                             onChange={courseFilterStore.setSchedule}
                         />
                     </Group>

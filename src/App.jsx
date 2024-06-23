@@ -1,10 +1,10 @@
 import { Suspense, lazy } from 'react'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Loader } from '@mantine/core';
-import Register from './Register/Register.jsx';
 import axios from 'axios';
 const Base = lazy(() => import("./Base/Base.jsx"));
 const Home = lazy(() => import("./Home/Home.jsx"));
+const Register = lazy(() => import("./Register/Register.jsx"));
 const Course = lazy(() => import("./Courses/Course.jsx"))
 const Update = lazy(() => import("./Update/Update.jsx"));
 const PageNotFound = lazy(() => import("./PageNotFound/PageNotFound.jsx"));

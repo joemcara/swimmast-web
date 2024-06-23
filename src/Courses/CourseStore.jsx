@@ -16,11 +16,11 @@ const createCourseTypesSlice = (set) => ({
         }))
 })
 
-const createTrainersSlice = (set) => ({
-    trainers: [],
-    setTrainers: (value) =>
+const createInstructorsSlice = (set) => ({
+    instructod: [],
+    setInstructors: (value) =>
         set(() => ({
-            trainers: value
+            instructors: value
         }))
 })
 
@@ -35,8 +35,10 @@ const createSchedulesSlice = (set) => ({
 const useCourseStore = create((...a) => ({
     ...createCoursesSlice(...a),
     ...createCourseTypesSlice(...a),
-    ...createTrainersSlice(...a),
+    ...createInstructorsSlice(...a),
     ...createSchedulesSlice(...a),
+
+
 }))
 
 export default useCourseStore;

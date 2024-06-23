@@ -18,8 +18,8 @@ function CustomTable(props) {
     }
 
     const cellColor = (cell) => {
-        if (cell === "en curso" || cell === "APROBADO") return "text-green-600 font-semibold"
-        else if (cell === "inactivo" || cell === "RECHAZADO") return "text-red-800 font-semibold"
+        if (cell === "en curso" || cell === "APROBADA") return "text-green-600 font-semibold"
+        else if (cell === "inactivo" || cell === "RECHAZADA") return "text-red-800 font-semibold"
         else if (cell === "por empezar" || cell === "PENDIENTE") return "text-yellow-600 font-semibold"
         else return ""
     }

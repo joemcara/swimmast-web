@@ -1,7 +1,7 @@
 import { ActionIcon, Group, Input, Select, Button, TextInput, NumberInput, FileInput, Text } from '@mantine/core'
 import { IconPhoto, IconCash, IconClock } from '@tabler/icons-react'
 import CustomSection from '../components/CustomSection'
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DateInput, TimeInput } from '@mantine/dates';
 import { Tabs, rem } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
@@ -9,13 +9,46 @@ import axios from 'axios';
 import useMemberFormStore from './MemberFormStore';
 import { CustomButton, CustomDateInput, CustomDatePickerInput, CustomNumberInput, CustomSelect, CustomTextInput, SelectPaymentMethod } from '../components/CustomInputs';
 import useCourseFormStore from './CourseFormStore';
+import useRegisterStore from './RegisterStore';
+import { notifications } from '@mantine/notifications';
+import { showDefaultNotificaion, showErrorNotification, showLoadingNotification, updateErrorLoadingNotification, updateSuccessLoadingNotification } from '../util/CustomNotifications';
 
 const RegisterMiembroForm = ({ store }) => {
+    const registerStore = useRegisterStore();
     const paquetes = ["GRUPAL/PFG", "INDIVIDUAL", "USO", "TERAPIA"];
     const estadospagos = ["Pagado", "No Pagado", "Abono", "Stand-By"];
     const estadosinscripcion = ["Aceptado", "Negado"];
     const vinculo = ["Mama", "Papa", "Abuelo"];
     const instructor = ["Ricardo Alcivar", "Joseph Carabajo", "Andres Borbor", "Paulina", "Katherine"];
+    //FILL SELECTS WITH DATA
+    useEffect(() => {
+
+        axios.get('instructor/').then(function (response) {
+            const instructors = response.data?.map((instructor) => ({ label: instructor.first_name, value: instructor.id.toString() }))
+            registerStore.setInstructors(instructors)
+        })
+
+        axios.get('course_type/').then(function (response) {
+            const courseTypes = response.data?.map((courseType) => ({ label: courseType.name, value: courseType.id.toString() }))
+            registerStore.setCourseTypes(courseTypes)
+        })
+
+        axios.get('enrollment_status/').then(function (response) {
+            const enrollmentStatuses = response.data?.map((enrollmentStatus) => ({ label: enrollmentStatus.name, value: enrollmentStatus.id.toString() }))
+            registerStore.setEnrollmentStatuses(enrollmentStatuses)
+        })
+
+        axios.get('payment_status/').then(function (response) {
+            const paymentStatuses = response.data?.map((paymentStatus) => ({ label: paymentStatus.name, value: paymentStatus.id.toString() }))
+            registerStore.setPaymentStatuses(paymentStatuses)
+        })
+
+        axios.get('course/').then(function (response) {
+            const courses = response.data?.map((course) => ({ label: course.name, value: course.id.toString() }))
+            registerStore.setCourses(courses)
+        })
+    }, []);
+
 
     const calculateAge = (birthdate) => {
         if (!birthdate) return 0;
@@ -27,7 +60,7 @@ const RegisterMiembroForm = ({ store }) => {
 
     const [selectedDays, setSelectedDays] = useState([]);
 
-    const daysOfWeek = ['L', 'M', 'X', 'J'];
+    const daysOfWeek = ['L', 'M', 'X', 'J', 'V', 'S'];
 
     const toggleDaySelection = (day) => {
         if (selectedDays.includes(day)) {
@@ -38,19 +71,39 @@ const RegisterMiembroForm = ({ store }) => {
     };
 
     const createSwimmer = () => {
-        console.log(store)
+        if (store.age < 18) {
+            if (store.representative === '') {
+                showErrorNotification({ message: 'Debe ingresar el nombre del representante' })
+            } else if (store.relationship === '') {
+                showErrorNotification({ message: 'Debe ingresar el vinculo del representante' })
+            }
+
+        }
+        const idNotification = showLoadingNotification({ message: 'Creando registro de nadador' })
+
         let url = 'register/';
         axios.post(url, {
-            first_name: "first_name"
+            first_name: store.names,
+            last_name: store.lastNames,
+            birth_date: store.birthDate,
+            voucher_number: store.voucherNumber,
+            email: store.email,
+            address: store.address,
+            representative: store.representative,
+            cellphone_number: store.cellphoneNumber,
+            instructor: store.instructor,
+            username: store.username,
         }).then(function (response) {
-            console.log(response)
+            if (response.status === 201) updateSuccessLoadingNotification(idNotification)
+        }).catch(function (error) {
+            updateErrorLoadingNotification(idNotification)
         })
     }
 
     return (
         <form>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 pb-4">
-                <TextInput
+                <CustomTextInput
                     label=" Nombres"
                     withAsterisk
                     placeholder="Ingrese sus nombres"
@@ -58,7 +111,7 @@ const RegisterMiembroForm = ({ store }) => {
                     value={store.names}
                     onChange={e => store.setNames(e.currentTarget.value)}
                 />
-                <TextInput
+                <CustomTextInput
                     label="Apellidos"
                     withAsterisk
                     placeholder="Ingrese sus apellidos"
@@ -78,14 +131,14 @@ const RegisterMiembroForm = ({ store }) => {
                 />
 
                 <div className="sm:col-span-2 grid grid-cols-2 gap-x-6">
-                    <TextInput
+                    <CustomTextInput
                         label="Edad: "
                         placeholder="Edad"
                         value={store.age} // Aquí se pasa el estado de la edad como el valor del campo de texto
                         className='sm:col-span-1'
                         readOnly
                     />
-                    <TextInput
+                    <CustomTextInput
                         label="#Comprobante "
                         placeholder="Ingrese número de comprobante"
                         className='sm:col-span-1'
@@ -95,7 +148,7 @@ const RegisterMiembroForm = ({ store }) => {
                 </div>
 
 
-                <TextInput
+                <CustomTextInput
                     leftSectionPointerEvents="none"
                     className="sm:col-span-2 "
                     withAsterisk
@@ -105,7 +158,7 @@ const RegisterMiembroForm = ({ store }) => {
                     onChange={e => store.setEmail(e.currentTarget?.value)}
                 />
 
-                <TextInput
+                <CustomTextInput
                     leftSectionPointerEvents="none"
                     withAsterisk
                     label="Dirección"
@@ -115,7 +168,7 @@ const RegisterMiembroForm = ({ store }) => {
                     onChange={e => store.setAddress(e.currentTarget?.value)}
                 />
 
-                <TextInput
+                <CustomTextInput
                     leftSectionPointerEvents="none"
                     withAsterisk={store.age < 18}
                     label="Representante: "
@@ -124,17 +177,17 @@ const RegisterMiembroForm = ({ store }) => {
                     value={store.representantive}
                     onChange={e => store.setRepresentative(e.currentTarget?.value)}
                 />
-                <Select
+                <CustomTextInput
                     label="Vínculo:"
                     placeholder="Elegir Vínculo"
                     withAsterisk={store.age < 18}
                     data={vinculo}
                     className="sm:col-span-1"
                     value={store.familyBond}
-                    onChange={store.setFamilyBond}
+                    onChange={e => store.setFamilyBond(e.currentTarget?.value)}
                 />
 
-                <TextInput
+                <CustomTextInput
                     leftSectionPointerEvents="none"
                     withAsterisk
                     label="Teléfono: "
@@ -144,30 +197,30 @@ const RegisterMiembroForm = ({ store }) => {
                     onChange={e => store.setCellphoneNumber(e.currentTarget?.value)}
                 />
 
-                <Select
+                <CustomSelect
                     label="Instructor: "
                     placeholder="Elegir Instructor: "
                     withAsterisk
-                    data={instructor}
+                    data={registerStore.instructors}
                     className="sm:col-span-2"
-                    value={store.trainer}
-                    onChange={store.setTrainer}
+                    value={store.instructor}
+                    onChange={store.setInstructor}
                 />
 
-                <Select
+                <CustomSelect
                     label="Tipo de clase:"
                     placeholder="Elegir Paquete "
                     withAsterisk
-                    data={paquetes}
+                    data={registerStore.courseTypes}
                     className="sm:col-span-2"
                     value={store.courseType}
                     onChange={store.setCourseType}
                 />
                 {
-                    store.courseType !== "INDIVIDUAL" && <Select label="Curso" className='col-span-2' />
+                    store.courseType !== '1' && <Select label="Curso" className='col-span-2' data={registerStore.courses} />
                 }
-                {store.courseType === "INDIVIDUAL" && <div className="sm:col-span-2 grid grid-cols-2 gap-x-6">
-                    <TextInput
+                {store.courseType === "1" && <div className="sm:col-span-2 grid grid-cols-2 gap-x-6">
+                    <CustomTextInput
                         leftSectionPointerEvents="none"
                         withAsterisk
                         label="# De Clases: "
@@ -176,12 +229,11 @@ const RegisterMiembroForm = ({ store }) => {
                         value={store.numberOfDays}
                         onChange={e => {
                             store.setNumberOfDays(e.currentTarget.value)
-                            console.log(e)
                         }}
                     />
                     <div className="sm:col-span-1 ">
                         <label className="block text-sm font-medium leading-6 text-gray-900">Dias de clases: </label>
-                        <ActionIcon.Group>
+                        <ActionIcon.Group className='flex flex-wrap justify-center'>
                             {daysOfWeek.map((day) => (
                                 <ActionIcon
                                     key={day}
@@ -189,7 +241,10 @@ const RegisterMiembroForm = ({ store }) => {
                                     size={30}
                                     aria-label={day}
                                     onClick={() => toggleDaySelection(day)}
-                                    style={{ backgroundColor: selectedDays.includes(day) ? 'green' : 'transparent' }}
+                                    style={{
+                                        backgroundColor: selectedDays.includes(day) ? 'green' : 'transparent',
+                                        color: selectedDays.includes(day) ? 'white' : 'black'
+                                    }}
                                     className='mt-1'
                                 >
                                     {day}
@@ -201,11 +256,11 @@ const RegisterMiembroForm = ({ store }) => {
 
 
                 <div className="sm:col-span-2">
-                    <Select
+                    <CustomSelect
                         label="Estado de inscripción: "
                         placeholder="Elegir estado de inscripción "
                         withAsterisk
-                        data={estadosinscripcion}
+                        data={registerStore.enrollmentStatuses}
                         value={store.applicationState}
                         onChange={store.setApplicationState}
                     />
@@ -219,11 +274,11 @@ const RegisterMiembroForm = ({ store }) => {
                     onChange={store.setApplicationDuration}
                 />
 
-                <Select
+                <CustomSelect
                     label="Estado de pago"
                     placeholder="Elegir estado de pago"
                     withAsterisk
-                    data={estadospagos}
+                    data={registerStore.paymentStatuses}
                     className="sm:col-span-2"
                     value={store.paymentState}
                     onChange={store.setPaymentState}
@@ -231,7 +286,7 @@ const RegisterMiembroForm = ({ store }) => {
 
                 <SelectPaymentMethod store={store} />
 
-                <NumberInput
+                <CustomNumberInput
                     label="Dinero cancelado: $"
                     defaultValue={0.00}
                     precision={2}

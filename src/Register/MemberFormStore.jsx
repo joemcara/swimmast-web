@@ -66,11 +66,11 @@ const createRepresentativeSlice = (set) => ({
         }))
 })
 
-const createFamilyBondSlice = (set) => ({
-    familyBond: "",
-    setFamilyBond: (value) =>
+const createRelationshipSlice = (set) => ({
+    relationship: "",
+    setRelationship: (value) =>
         set(() => ({
-            familyBond: value
+            relationship: value
         }))
 })
 
@@ -82,11 +82,11 @@ const createCellphoneNumberSlice = (set) => ({
         }))
 })
 
-const createTrainerSlice = (set) => ({
-    trainer: null,
-    setTrainer: (value) =>
+const createInstructorSlice = (set) => ({
+    instructor: null,
+    setInstructor: (value) =>
         set(() => ({
-            trainer: value
+            instructor: value
         }))
 })
 
@@ -98,27 +98,27 @@ const createCourseTypeSlice = (set) => ({
         }))
 })
 
-const createApplicationStateSlice = (set) => ({
-    applicationState: null,
-    setApplicationState: (value) =>
+const createEnrollmentStatusSlice = (set) => ({
+    enrollmentStatus: null,
+    setEnrollmentStatus: (value) =>
         set(() => ({
-            applicationState: value
+            enrollmentStatus: value
         }))
 })
 
-const createApplicationDurationSlice = (set) => ({
-    applicationDuration: [],
-    setApplicationDuration: (value) =>
+const createEnrollmentDurationSlice = (set) => ({
+    enrollmentDuration: [],
+    setEnrollmentDuration: (value) =>
         set(() => ({
-            applicationDuration: value
+            enrollmentDuration: value
         }))
 })
 
-const createPaymentStateSlice = (set) => ({
-    paymentState: null,
+const createPaymentStatusSlice = (set) => ({
+    paymentStatus: null,
     setPaymentState: (value) =>
         set(() => ({
-            paymentState: value
+            paymentStatus: value
         }))
 })
 
@@ -182,13 +182,13 @@ const useMemberFormStore = create((...a) => ({
     ...createEmailSlice(...a),
     ...createAddressSlice(...a),
     ...createRepresentativeSlice(...a),
-    ...createFamilyBondSlice(...a),
+    ...createRelationshipSlice(...a),
     ...createCellphoneNumberSlice(...a),
-    ...createTrainerSlice(...a),
+    ...createInstructorSlice(...a),
     ...createCourseTypeSlice(...a),
-    ...createApplicationStateSlice(...a),
-    ...createApplicationDurationSlice(...a),
-    ...createPaymentStateSlice(...a),
+    ...createEnrollmentStatusSlice(...a),
+    ...createEnrollmentDurationSlice(...a),
+    ...createPaymentStatusSlice(...a),
     ...createCreditSlice(...a),
     ...createPaymentMethodSlice(...a),
     ...createPaymentSlice(...a),

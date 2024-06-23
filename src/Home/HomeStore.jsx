@@ -8,6 +8,30 @@ const createStudentsSlice = (set) => ({
         }))
 })
 
+const createEnrollmentStatusesSlice = (set) => ({
+    enrollmentStatuses: [],
+    setEnrollmentStatuses: (value) =>
+        set(() => ({
+            enrollmentStatuses: value
+        }))
+})
+
+const createCoursesSlice = (set) => ({
+    courses: [],
+    setCourses: (value) =>
+        set(() => ({
+            courses: value
+        }))
+})
+
+const createPaymentStatusesSlice = (set) => ({
+    paymentStatuses: [],
+    setPaymentStatuses: (value) =>
+        set(() => ({
+            paymentStatuses: value
+        }))
+})
+
 const createSelectedItemSlice = (set) => ({
     selectedItem: null,
     setSelectedItem: (value) =>
@@ -18,7 +42,10 @@ const createSelectedItemSlice = (set) => ({
 
 const useHomeStore = create((...a) => ({
     ...createStudentsSlice(...a),
-    ...createSelectedItemSlice(...a)
+    ...createEnrollmentStatusesSlice(...a),
+    ...createCoursesSlice(...a),
+    ...createPaymentStatusesSlice(...a),
+    ...createSelectedItemSlice(...a),
 }))
 
 export default useHomeStore;

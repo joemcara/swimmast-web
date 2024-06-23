@@ -1,65 +1,65 @@
-import React, { useEffect, useState } from 'react'
+import React, { lazy, useEffect, useState } from 'react'
 import CustomTable from '../components/CustomTable'
 import { Group, InputLabel, Select } from '@mantine/core'
 import CustomSection from '../components/CustomSection'
 import CustomFilter from '../components/CustomFilter'
 import axios from 'axios'
 import useHomeStore from './HomeStore'
+import useHomeFilterStore from './HomeFilterStore'
 
 function Home() {
     const homeStore = useHomeStore();
-    const exampleData = [{
-        id: 1,
-        solicitudInscripcion: "aceptada",
-        nombres: "David",
-        apellidos: "Borbor Guerrero",
-        correo: "adborbor@espol.edu.ec",
-        curso: "1",
-        inicioInscripcion: "21-11-2023",
-        finInscripcion: "21-11-2023",
-        estadoPago: "PAGADO",
-    },
-    {
-        id: 2,
-        solicitudInscripcion: "rechazada",
-        nombres: "Andres",
-        apellidos: "Guerrero",
-        correo: "adborbor@espol.edu.ec",
-        curso: "1",
-        inicioInscripcion: "21-11-2023",
-        finInscripcion: "21-11-2023",
-        estadoPago: "PAGADO",
-    }]
-    const [data, setData] = useState([])
-    const exampleHeaders = Object.keys(exampleData[0]).concat("notificar", "comprobante")
+    const homeFilterStore = useHomeFilterStore();
+    // fill filter selects
     useEffect(() => {
-        axios.get("administrador/registered-students/applicants/1/curso/1/estado-pago/1/pagina/1/").then(function (response) {
-            setData(response.data)
-            homeStore.setStudents(response.data?.data)
-            console.log(response.data)
+        axios.get("enrollment_status/").then(function (response) {
+            const enrollmentStatuses = response.data?.map((status) => ({ value: status.id.toString(), label: status.name }))
+            homeStore.setEnrollmentStatuses(enrollmentStatuses)
+        }).catch(function (error) { console.log(error) })
 
+        axios.get('course/').then(function (response) {
+            const courses = response.data?.map((course) => ({ value: course.id.toString(), label: course.name }))
+            homeStore.setCourses(courses)
+        }).catch(function (error) { console.log(error) })
+
+        axios.get("payment_status/").then(function (response) {
+            const paymentStatuses = response.data?.map((status) => ({ value: status.id.toString(), label: status.name }))
+            homeStore.setPaymentStatuses(paymentStatuses)
         }).catch(function (error) { console.log(error) })
     }, [])
+
+    useEffect(() => {
+        axios.get(`administrador/registered-students/applicants/${homeFilterStore.enrollmentStatus || 'todos'}/curso/${homeFilterStore.course || 'todos'}/estado-pago/${homeFilterStore.paymentStatus || 'todos'}/pagina/${homeFilterStore.currentPage}/`).then(function (response) {
+            homeStore.setStudents(response.data?.data)
+            console.log(homeFilterStore)
+            console.log(response.data)
+        }).catch(function (error) { console.log(error) })
+    }, [homeFilterStore])
     return (
         <CustomSection title="Estudiantes registrados">
-            <CustomFilter>
+            <CustomFilter filter={homeFilterStore}>
                 <Group >
                     <InputLabel className='text-system-label-blue' size={18} fw={700}>Solicitud</InputLabel>
                     <Select
-                        data={["aceptada", "Inactivo", "Reservado"]}
-                        defaultValue={"x"}
+                        data={homeStore.enrollmentStatuses}
+                        value={homeFilterStore.enrollmentStatus}
+                        onChange={homeFilterStore.setEnrollmentStatus}
                     />
                 </Group>
                 <Group >
                     <InputLabel className='text-system-label-blue' size={18} fw={700}>Curso</InputLabel>
                     <Select
-                        data={["C01", "C02"]}
+                        data={homeStore.courses}
+                        value={homeFilterStore.course}
+                        onChange={homeFilterStore.setCourse}
                     />
                 </Group>
                 <Group >
                     <InputLabel className='text-system-label-blue' size={18} fw={700}>Estado de pago</InputLabel>
                     <Select
-                        data={["PAGADO", "ABONADO", "NO PAGADO"]}
+                        data={homeStore.paymentStatuses}
+                        value={homeFilterStore.paymentStatus}
+                        onChange={homeFilterStore.setPaymentStatus}
                     />
                 </Group>
             </CustomFilter>
