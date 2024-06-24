@@ -5,7 +5,7 @@ export function showDefaultNotificaion(props) {
     return notifications.show({
         title: props.title,
         message: props.message,
-        autoClose: props.autoClose || 5000,
+        autoClose: props.autoClose || 1500,
     })
 }
 
@@ -14,7 +14,16 @@ export function showErrorNotification(props) {
         title: 'Error',
         color: 'red',
         message: props.message,
-        autoClose: props.autoClose || 5000,
+        autoClose: props.autoClose || 1500,
+    })
+}
+
+export function showSuccessNotification(props) {
+    return notifications.show({
+        title: 'Éxito',
+        color: 'teal',
+        message: props.message,
+        autoClose: props.autoClose || 1500,
     })
 }
 
@@ -36,7 +45,7 @@ export function updateSuccessLoadingNotification(idNotificacion) {
         message: 'El registro ha sido creado exitosamente',
         icon: <IconCheck style={{ width: 20, height: 20 }} />,
         loading: false,
-        autoClose: 5000,
+        autoClose: 1500,
     });
 
 }
@@ -48,7 +57,7 @@ export function updateErrorLoadingNotification(idNotificacion) {
         message: 'El registro no ha podido crearse',
         icon: <IconX style={{ width: 20, height: 20 }} />,
         loading: false,
-        autoClose: 5000,
+        autoClose: 1500,
     });
 
 }

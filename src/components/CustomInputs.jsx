@@ -2,6 +2,7 @@ import { ActionIcon, Button, FileInput, Group, NumberInput, PasswordInput, Selec
 import { DateInput, DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCash, IconPhoto } from "@tabler/icons-react";
+import { useRef } from "react";
 
 export function CustomButton(props) {
     return (
@@ -75,6 +76,7 @@ export function CustomDateInput(props) {
             defaultValue={props.defaultValue}
             withAsterisk={props.withAsterisk}
             onChange={props.onChange}
+            valueFormat={props.valueFormat || 'YYYY-MM-DD'}
             radius={props.radius || 'sm'}
             className={props.className || 'sm:col-span-2'}
         />
@@ -124,18 +126,24 @@ export function CustomSelect(props) {
 }
 
 export function SelectPaymentMethod(props) {
+
+    const fileInputRef = useRef(null);
     return (
-        <div className="sm:col-span-2 grid grid-cols-2">
-            <label className="col-span-2 block text-sm font-medium leading-6 text-gray-900">Forma de pago: </label>
-            <ActionIcon.Group>
+        <div className="sm:col-span-4 grid grid-cols-2">
+            <label className="col-span-2 block text-sm font-medium leading-6 text-gray-900">Forma de pago </label>
+            <Group className="col-span-2" grow gap={0}>
                 <ActionIcon
                     variant="default"
                     size="lg"
                     aria-label="Gallery"
-                    onClick={() => props.store?.setPaymentMethod('TRANSACTION')}
+                    onClick={() => {
+                        props.store?.setPaymentMethod('TRANSACTION')
+                        fileInputRef.current?.click()
+                    }}
                     style={{ backgroundColor: props.store?.paymentMethod === 'TRANSACTION' ? 'green' : 'transparent' }}
                 >
-                    <IconPhoto style={{ width: '50px' }} stroke={1.5} />
+                    <IconPhoto style={{ width: '50px' }} stroke={1.25} />
+                    {<FileInput size="xs" multiple onChange={(e) => console.log(e)} ref={fileInputRef} className="hidden" />}
                 </ActionIcon>
 
                 <ActionIcon
@@ -147,8 +155,7 @@ export function SelectPaymentMethod(props) {
                 >
                     <IconCash style={{ width: '50px' }} stroke={1.5} />
                 </ActionIcon>
-            </ActionIcon.Group>
-            {props.store?.paymentMethod === "TRANSACTION" && <FileInput placeholder="Seleccionar archivo" size="xs" variant='filled' multiple onChange={(e) => console.log(e)} />}
+            </Group>
         </div>
     );
 }

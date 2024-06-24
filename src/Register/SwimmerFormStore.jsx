@@ -19,7 +19,7 @@ const createLastNamesSlice = (set) => ({
 })
 
 const createBirthDateSlice = (set) => ({
-    birthDate: "",
+    birthDate: new Date(),
     setBirthDate: (value) =>
         set(() => ({
             birthDate: value
@@ -91,7 +91,7 @@ const createInstructorSlice = (set) => ({
 })
 
 const createCourseTypeSlice = (set) => ({
-    courseType: "INDIVIDUAL",
+    courseType: null,
     setCourseType: (value) =>
         set(() => ({
             courseType: value
@@ -146,6 +146,14 @@ const createPaymentSlice = (set) => ({
         }))
 })
 
+const createRoleSlice = (set) => ({
+    role: null,
+    setRole: (value) =>
+        set(() => ({
+            role: value
+        }))
+})
+
 //FOR "INDIVIDUAL" COURSE TYPE
 const createNumberOfDaysSlice = (set) => ({
     numbersOfDays: "",
@@ -173,7 +181,7 @@ const createCourseSlice = (set) => ({
 })
 
 
-const useMemberFormStore = create((...a) => ({
+const useSwimmerFormStore = create((...a) => ({
     ...createNamesSlice(...a),
     ...createLastNamesSlice(...a),
     ...createBirthDateSlice(...a),
@@ -192,6 +200,7 @@ const useMemberFormStore = create((...a) => ({
     ...createCreditSlice(...a),
     ...createPaymentMethodSlice(...a),
     ...createPaymentSlice(...a),
+    ...createRoleSlice(...a),
     //FOR "INDIVIDUAL" COURSE TYPE
     ...createNumberOfDaysSlice(...a),
     ...createCourseDaysSlice(...a),
@@ -199,4 +208,4 @@ const useMemberFormStore = create((...a) => ({
     ...createCourseSlice(...a),
 }))
 
-export default useMemberFormStore;
+export default useSwimmerFormStore;
