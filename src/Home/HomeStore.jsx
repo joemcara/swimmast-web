@@ -40,12 +40,22 @@ const createSelectedItemSlice = (set) => ({
         }))
 })
 
+const createTotalPagesSlice = (set) => ({
+    totalPages: 0,
+    setTotalPages: (value) =>
+        set(() => ({
+            totalPages: value
+        }))
+})
+
 const useHomeStore = create((...a) => ({
     ...createStudentsSlice(...a),
     ...createEnrollmentStatusesSlice(...a),
     ...createCoursesSlice(...a),
     ...createPaymentStatusesSlice(...a),
     ...createSelectedItemSlice(...a),
+
+    ...createTotalPagesSlice(...a),
 }))
 
 export default useHomeStore;

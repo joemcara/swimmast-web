@@ -1,4 +1,4 @@
-import { ActionIcon, Modal, Table } from '@mantine/core'
+import { ActionIcon, Group, Modal, Pagination, Table } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks';
 import { IconBellRinging, IconPhone, IconPhoto } from '@tabler/icons-react'
 import React, { useEffect } from 'react'
@@ -101,6 +101,14 @@ function CustomTable(props) {
                     </Table.Tbody>
                 </Table>
             </Table.ScrollContainer>
+            <Group justify='end'>
+                <Pagination
+                    total={props.store?.totalPages}
+                    value={props.filter?.currentPage}
+                    onChange={props.filter?.setCurrentPage}
+                    siblings={0}
+                />
+            </Group>
         </div>
     )
 }

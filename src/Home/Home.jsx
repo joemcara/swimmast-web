@@ -31,8 +31,7 @@ function Home() {
     useEffect(() => {
         axios.get(`administrador/registered-students/applicants/${homeFilterStore.enrollmentStatus || 'todos'}/curso/${homeFilterStore.course || 'todos'}/estado-pago/${homeFilterStore.paymentStatus || 'todos'}/pagina/${homeFilterStore.currentPage}/`).then(function (response) {
             homeStore.setStudents(response.data?.data)
-            console.log(homeFilterStore)
-            console.log(response.data)
+            homeStore.setTotalPages(response.data?.pagesTotales)
         }).catch(function (error) { console.log(error) })
     }, [homeFilterStore])
     return (
@@ -70,6 +69,7 @@ function Home() {
                 notification
                 voucher
                 store={homeStore}
+                filter={homeFilterStore}
             />
         </CustomSection>
     )
