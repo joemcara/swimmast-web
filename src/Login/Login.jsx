@@ -1,17 +1,38 @@
-import { Text, TextInput } from '@mantine/core'
-import React, { lazy, useEffect } from 'react'
+import { PasswordInput, Text, TextInput } from '@mantine/core'
+import React, { lazy, useEffect, useRef } from 'react'
 import { CustomButton, LoginPasswordInput, LoginTextInput } from '../components/CustomInputs'
 import snachesOrcasLogo from '../assets/snachesOrcasLogo.png';
 import { NavLink } from 'react-router-dom';
 import loginImage1 from '../assets/loginImage1.png'
 import loginImage2 from '../assets/loginImage2.png'
 import loginImage3 from '../assets/loginImage3.png'
+import { useDisclosure } from '@mantine/hooks';
+import axios from 'axios';
+import useLoginStore from './LoginStore';
 
 
 function Login() {
+    const loginStore = useLoginStore();
+    const usernameRef = useRef(null);
+    const passwordRef = useRef(null);
+    const [visible, { toggle }] = useDisclosure(false);
+
     function login() {
-        window.localStorage.setItem('token', 'token')
-        window.location.href = '/'
+
+        let data = {
+            username: usernameRef.current.value,
+            password: passwordRef.current.value
+        }
+        console.log(data)
+        axios.post('login_user/', data)
+            .then((response) => {
+                console.log(response.data);
+                window.localStorage.setItem('token', response.data.token);
+                loginStore.setUser(response.data.user);
+                window.location.href = '/'
+            }).catch((error) => {
+                console.log(error)
+            })
     }
     return (
         <main className='h-screen grid bg-system-section-white sm:grid-cols-6'>
@@ -19,8 +40,24 @@ function Login() {
                 <img alt="snaches-orcas" src={snachesOrcasLogo} className='h-48 w-48 object-contain' />
                 <h1 className='text-button-color font-semibold text-6xl mb-8'>SWIMMAST</h1>
                 <div className='w-full flex flex-col items-center gap-6'>
-                    <LoginTextInput label='Usuario' placeholder='Ingrese su usuario' />
-                    <LoginPasswordInput label='Contraseña' placeholder='Ingrese su contraseña' />
+                    <TextInput
+                        label='Usuario'
+                        placeholder='Ingrese su usuario'
+                        ref={usernameRef}
+                        radius={'sm'}
+                        className={'w-4/6 sm:w-5/12'}
+                    />
+
+                    <PasswordInput
+                        label='Contraseña'
+                        placeholder='Ingrese su contraseña'
+                        radius={'sm'}
+                        className={'w-4/6 sm:w-5/12'}
+                        ref={passwordRef}
+                        onVisibilityChange={toggle}
+                        visible={visible}
+                    />
+
                     <CustomButton text='INGRESAR' onClick={login} />
                 </div>
             </section>

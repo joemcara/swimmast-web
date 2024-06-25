@@ -11,11 +11,10 @@ import useCourseFormStore from './CourseFormStore';
 import useRegisterStore from './RegisterStore';
 import { showDefaultNotificaion, showErrorNotification, showLoadingNotification, updateErrorLoadingNotification, updateSuccessLoadingNotification } from '../util/CustomNotifications';
 import useSwimmerFormStore from './SwimmerFormStore';
+import RegisterInstructorForm from './RegisterInstructorForm';
 
 const RegisterMemberForm = ({ store }) => {
     const registerStore = useRegisterStore();
-    const vinculo = ["Mama", "Papa", "Abuelo"];
-    const daysOfWeek = ['L', 'M', 'X', 'J', 'V', 'S'];
     //FILL SELECTS WITH DATA
     useEffect(() => {
 
@@ -44,6 +43,12 @@ const RegisterMemberForm = ({ store }) => {
             const courses = response.data?.map((course) => ({ label: course.name, value: course.id.toString(), course: course }))
             registerStore.setCourses(courses)
         })
+
+        axios.get('role/').then(function (response) {
+            let filteredRoles = response.data?.filter(role => role.name !== 'ADMINISTRADOR')
+            const roles = filteredRoles?.map(role => ({ label: role.name, value: role.id.toString() }))
+            registerStore.setRoles(roles)
+        })
     }, []);
 
 
@@ -66,6 +71,74 @@ const RegisterMemberForm = ({ store }) => {
         }
     };
 
+    const createInstructor = async () => {
+        let url = "register/"
+        axios.post(url, {
+            first_name: store.names,
+            last_name: store.lastNames,
+            role: store.role,
+            email: store.email,
+        }).then(function (response) {
+
+            showDefaultNotificaion({ message: 'Instructor creado exitosamente' })
+        }).catch(function (error) {
+            showErrorNotification({ message: 'Error al crear instructor' })
+        })
+    }
+
+    const getInstructorData = () => {
+        return {
+            first_name: store.names,
+            last_name: store.lastNames,
+            email: store.email,
+            role: store.role,
+            password: '12345678',
+            confirm_password: '12345678',
+        }
+    }
+
+    const getSwimmerData = () => {
+        if (store.age < 18) {
+            if (store.representative === '') {
+                return showErrorNotification({ message: 'Debe ingresar el nombre del representante' })
+            } else if (store.relationship === '') {
+                return showErrorNotification({ message: 'Debe ingresar el vinculo del representante' })
+            }
+        }
+
+        return {
+            first_name: store.names,
+            last_name: store.lastNames,
+            email: store.email,
+            role: store.role,
+            password: '12345678',
+            confirm_password: '12345678',
+            date_of_birth: store.birthDate?.toISOString().split('T')[0],
+            age: store.age,
+            address: store.address,
+            cell_phone: store.cellphoneNumber,
+            representative_name: store.representative,
+            representative_relationship: store.relationship,
+        }
+    }
+
+    const saveUser = async () => {
+        const notificationId = showLoadingNotification({ message: 'Creando registro de usuario' })
+        let data = store.isInstructor ? getInstructorData() : getSwimmerData();
+        let url = 'register/';
+        console.log(data)
+        axios.post(url, data)
+            .then(function (response) {
+                if (!store.isInstructor) {
+                    return enrollSwimmer(response.data.id, 1)
+                }
+                return updateSuccessLoadingNotification(notificationId)
+            }).catch(function (error) {
+                return updateErrorLoadingNotification(notificationId)
+
+            })
+    }
+
     const createSwimmer = () => {
         if (store.age < 18) {
             if (store.representative === '') {
@@ -74,7 +147,7 @@ const RegisterMemberForm = ({ store }) => {
                 return showErrorNotification({ message: 'Debe ingresar el vinculo del representante' })
             }
         }
-        const notificationId = showLoadingNotification({ message: 'Creando registro de nadador' })
+        const notificationId = showLoadingNotification({ message: 'Creando registro de usuario' })
 
         let url = 'register/';
         axios.post(url, {
@@ -93,6 +166,7 @@ const RegisterMemberForm = ({ store }) => {
         }).then(function (response) {
             return enrollSwimmer(response.data.id, notificationId)
         }).catch(function (error) {
+            console.log(error)
             return updateErrorLoadingNotification(notificationId)
         })
     }
@@ -105,16 +179,17 @@ const RegisterMemberForm = ({ store }) => {
             status: store.enrollmentStatus,
         }).then(function (response) {
             const enrollmentId = response.data.id
-            return generatePaymentReceipt(response.data.id, notificationId)
+            return generatePaymentReceipt(enrollmentId, notificationId)
         }).catch(function (error) {
             // DELETE USER IF ENROLLMENT CREATION FAILS
+            console.log(error)
             return updateErrorLoadingNotification(notificationId)
 
         })
     }
     const generatePaymentReceipt = (enrollmentId, notificationId) => {
         let course = registerStore.courses?.find(course => course.value === store.course)?.course
-        console.log(store.credit)
+        console.log("payment_value", store.credit)
         if (!course) {
             return updateErrorLoadingNotification(notificationId)
         }
@@ -130,6 +205,7 @@ const RegisterMemberForm = ({ store }) => {
             financial_institution: 'Banco Pichincha',
             description: `Pago por registro de nadador en ${course.name}`
         }).then(function (response) {
+            console.log("RECEIPT CREADO")
             return updateSuccessLoadingNotification(notificationId)
         }).catch(function (error) {
             console.log(error)
@@ -157,7 +233,7 @@ const RegisterMemberForm = ({ store }) => {
                     onChange={e => store.setLastNames(e.currentTarget.value)}
                 />
 
-                <div className="sm:col-span-2 grid grid-cols-4 gap-x-3">
+                {!store.isInstructor && <div className="sm:col-span-2 grid grid-cols-4 gap-x-3">
                     <CustomDateInput
                         label="Fecha de nacimiento"
                         withAsterisk
@@ -170,28 +246,31 @@ const RegisterMemberForm = ({ store }) => {
                             store.setAge(calculateAge(birthdate))
                         }}
                     />
-                    <InputWrapper>
-                        <InputLabel>Edad: </InputLabel>
-                        <Input value={store.age} readOnly />
+                    <InputWrapper label='Edad:'>
+                        <Input value={store.age || 0} readOnly />
                     </InputWrapper>
 
                 </div>
-
+                }
                 <div className='sm:col-span-2 grid sm:grid-cols-7 gap-x-3'>
                     <CustomSelect
                         label="Rol"
-                        data={["DEPORTISTA", "MIEMBRO"]}
-                        className='sm:col-span-4'
+                        data={registerStore.roles}
+                        className={store.isInstructor ? 'sm:col-span-7' : 'sm:col-span-4'}
                         value={store.role}
-                        onChange={store.setRole}
+                        onChange={v => {
+                            store.setRole(v)
+                            const isInstructor = registerStore.roles?.filter(role => role.value === v)[0]?.label === 'INSTRUCTOR'
+                            store.setIsInstructor(isInstructor)
+                        }}
                     />
-                    <CustomTextInput
+                    {!store.isInstructor && <CustomTextInput
                         label="#Comprobante "
                         placeholder="Ingrese número de comprobante"
                         className='sm:col-span-3'
                         value={store.voucherNumber}
                         onChange={e => store.setVoucherNumber(e.currentTarget.value)}
-                    />
+                    />}
 
                 </div>
                 <CustomTextInput
@@ -204,7 +283,7 @@ const RegisterMemberForm = ({ store }) => {
                     onChange={e => store.setEmail(e.currentTarget?.value)}
                 />
 
-                <CustomTextInput
+                {!store.isInstructor && <> <CustomTextInput
                     leftSectionPointerEvents="none"
                     withAsterisk
                     label="Dirección"
@@ -214,71 +293,71 @@ const RegisterMemberForm = ({ store }) => {
                     onChange={e => store.setAddress(e.currentTarget?.value)}
                 />
 
-                <CustomTextInput
-                    leftSectionPointerEvents="none"
-                    withAsterisk={store.age < 18}
-                    label="Representante: "
-                    placeholder="Ingrese el nombre del representante"
-                    className="sm:col-span-2"
-                    value={store.representantive}
-                    onChange={e => store.setRepresentative(e.currentTarget?.value)}
-                />
-                <div className='sm:col-span-2 grid sm:grid-cols-7 gap-x-3'>
-                    <CustomTextInput
-                        label="Vínculo:"
-                        placeholder="Escriba el vínculo"
-                        withAsterisk={store.age < 18}
-                        className="sm:col-span-4"
-                        value={store.relationship}
-                        onChange={e => store.setRelationship(e.currentTarget?.value)}
-                    />
-
                     <CustomTextInput
                         leftSectionPointerEvents="none"
-                        withAsterisk
-                        label="Teléfono: "
-                        placeholder="Ingrese telefono"
-                        className="sm:col-span-3"
-                        value={store.cellphoneNumber}
-                        onChange={e => store.setCellphoneNumber(e.currentTarget?.value)}
+                        withAsterisk={store.age < 18}
+                        label="Representante: "
+                        placeholder="Ingrese el nombre del representante"
+                        className="sm:col-span-2"
+                        value={store.representantive}
+                        onChange={e => store.setRepresentative(e.currentTarget?.value)}
                     />
-                </div>
+                    <div className='sm:col-span-2 grid sm:grid-cols-7 gap-x-3'>
+                        <CustomTextInput
+                            label="Vínculo:"
+                            placeholder="Escriba el vínculo"
+                            withAsterisk={store.age < 18}
+                            className="sm:col-span-4"
+                            value={store.relationship}
+                            onChange={e => store.setRelationship(e.currentTarget?.value)}
+                        />
 
-                <CustomSelect
-                    label="Instructor: "
-                    placeholder="Elegir Instructor: "
-                    withAsterisk
-                    data={registerStore.instructors}
-                    className="sm:col-span-2"
-                    value={store.instructor}
-                    onChange={store.setInstructor}
-                />
+                        <CustomTextInput
+                            leftSectionPointerEvents="none"
+                            withAsterisk
+                            label="Teléfono: "
+                            placeholder="Ingrese telefono"
+                            className="sm:col-span-3"
+                            value={store.cellphoneNumber}
+                            onChange={e => store.setCellphoneNumber(e.currentTarget?.value)}
+                        />
+                    </div>
 
-                <CustomSelect
-                    label="Tipo de clase:"
-                    placeholder="Elegir Paquete "
-                    withAsterisk
-                    data={registerStore.courseTypes}
-                    className="sm:col-span-2"
-                    value={store.courseType}
-                    onChange={store.setCourseType}
-                />
-
-                <div className='sm:col-span-2 grid sm:grid-cols-4 gap-x-3'>
                     <CustomSelect
-                        label="Curso"
-                        className='sm:col-span-3'
-                        data={registerStore.courses}
-                        value={store.course}
-                        onChange={store.setCourse}
+                        label="Instructor: "
+                        placeholder="Elegir Instructor: "
+                        withAsterisk
+                        data={registerStore.instructors}
+                        className="sm:col-span-2"
+                        value={store.instructor}
+                        onChange={store.setInstructor}
                     />
-                    <InputWrapper>
-                        <InputLabel>Precio: </InputLabel>
-                        <Input value={store.course} readOnly />
-                    </InputWrapper>
-                </div>
 
-                <div className='sm:col-span-2 grid sm:grid-cols-7 gap-x-3'>
+
+                    <CustomSelect
+                        label="Tipo de clase:"
+                        placeholder="Elegir Paquete "
+                        withAsterisk
+                        data={registerStore.courseTypes}
+                        className="sm:col-span-2"
+                        value={store.courseType}
+                        onChange={store.setCourseType}
+                    />
+                    <div className='sm:col-span-2 grid sm:grid-cols-4 gap-x-3'>
+                        <CustomSelect
+                            label="Curso"
+                            className={store.isInstructor ? 'sm:col-span-4' : 'sm:col-span-3'}
+                            data={registerStore.courses}
+                            value={store.course}
+                            onChange={store.setCourse}
+                        />
+                        <InputWrapper label='Precio'>
+                            <Input value={store.course || 0} readOnly />
+                        </InputWrapper>
+                    </div>
+                </>}
+
+                {!store.isInstructor && <> <div className='sm:col-span-2 grid sm:grid-cols-7 gap-x-3'>
                     <SelectPaymentMethod store={store} />
 
                     <CustomNumberInput
@@ -293,42 +372,42 @@ const RegisterMemberForm = ({ store }) => {
                     />
                 </div>
 
-                <CustomSelect
-                    label="Estado de pago"
-                    placeholder="Elegir estado de pago"
-                    withAsterisk
-                    data={registerStore.paymentStatuses}
-                    className="sm:col-span-2"
-                    value={store.paymentState}
-                    onChange={store.setPaymentState}
-                />
-                <CustomSelect
-                    label="Estado de inscripción: "
-                    placeholder="Elegir estado de inscripción "
-                    withAsterisk
-                    data={registerStore.enrollmentStatuses}
-                    value={store.enrollmentStatus}
-                    onChange={store.setEnrollmentStatus}
-                />
+                    <CustomSelect
+                        label="Estado de pago"
+                        placeholder="Elegir estado de pago"
+                        withAsterisk
+                        data={registerStore.paymentStatuses}
+                        className="sm:col-span-2"
+                        value={store.paymentState}
+                        onChange={store.setPaymentState}
+                    />
+                    <CustomSelect
+                        label="Estado de inscripción: "
+                        placeholder="Elegir estado de inscripción "
+                        withAsterisk
+                        data={registerStore.enrollmentStatuses}
+                        value={store.enrollmentStatus}
+                        onChange={store.setEnrollmentStatus}
+                    />
 
-                <CustomDatePickerInput
-                    type="range"
-                    label="Inicio-Fin de Inscripción:"
-                    placeholder="Inicio-Fin de Inscripción:"
-                    value={store.applicationDuration}
-                    onChange={store.setApplicationDuration}
-                />
+                    <CustomDatePickerInput
+                        type="range"
+                        label="Inicio-Fin de Inscripción:"
+                        placeholder="Inicio-Fin de Inscripción:"
+                        value={store.applicationDuration}
+                        onChange={store.setApplicationDuration}
+                    />
+                </>}
 
 
 
             </div>
             <Group justify="center">
-                <CustomButton onClick={createSwimmer} text={"Guardar"} bgColor={'#15192F'} />
+                <CustomButton onClick={saveUser} text={"Guardar"} bgColor={'#15192F'} />
             </Group>
         </form>
     );
 };
-
 
 const RegisterCourseForm = ({ store }) => {
     const instructor = ["Ricardo Alcivar", "Joseph Carabajo", "Andres Borbor", "Paulina", "Katherine"];
@@ -419,7 +498,7 @@ const RegisterCourseForm = ({ store }) => {
     );
 }
 function Register() {
-    const [activeTab, setActiveTab] = useState("Registrar Nadador");
+    const [activeTab, setActiveTab] = useState("Registrar usuario");
     const swimmerFormStore = useSwimmerFormStore();
     const courseFormStore = useCourseFormStore();
 
@@ -441,11 +520,9 @@ function Register() {
 
 
     const renderContent = () => {
-        if (activeTab === "Registrar Nadador") {
+        if (activeTab === "Registrar usuario") {
             return <RegisterMemberForm store={swimmerFormStore} />;
         } else if (activeTab === "Registrar Curso") {
-            return <RegisterCourseForm store={courseFormStore} />;
-        } else if (activeTab === "Registrar Instructor") {
             return <RegisterCourseForm store={courseFormStore} />;
         }
         return null;
@@ -453,21 +530,14 @@ function Register() {
 
     return (
         <CustomSection title="Registrar" >
-            <Tabs variant="unstyled" defaultValue="Registrar Nadador" position="relative" >
+            <Tabs variant="unstyled" defaultValue="Registrar usuario" position="relative" >
                 <Tabs.List grow>
                     <Tabs.Tab
-                        value="Registrar Nadador"
-                        style={activeTab === "Registrar Nadador" ? tabStyles : inactiveTabStyles}
-                        onClick={() => handleTabChange("Registrar Nadador")}
+                        value="Registrar usuario"
+                        style={activeTab === "Registrar usuario" ? tabStyles : inactiveTabStyles}
+                        onClick={() => handleTabChange("Registrar usuario")}
                     >
-                        Registrar Nadador
-                    </Tabs.Tab>
-                    <Tabs.Tab
-                        value="Registrar Instructor"
-                        style={activeTab === "Registrar Instructor" ? tabStyles : inactiveTabStyles}
-                        onClick={() => handleTabChange("Registrar Instructor")}
-                    >
-                        Registrar Instructor
+                        Registrar usuario
                     </Tabs.Tab>
                     <Tabs.Tab
                         value="Registrar Curso"

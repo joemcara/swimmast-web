@@ -180,6 +180,14 @@ const createCourseSlice = (set) => ({
         }))
 })
 
+//IS INTRUCTOR
+const createIsInstructorSlice = (set) => ({
+    isInstructor: false,
+    setIsInstructor: (value) =>
+        set(() => ({
+            isInstructor: value
+        }))
+})
 
 const useSwimmerFormStore = create((...a) => ({
     ...createNamesSlice(...a),
@@ -206,6 +214,8 @@ const useSwimmerFormStore = create((...a) => ({
     ...createCourseDaysSlice(...a),
     //FOR "OTHERS" COURSE TYPES
     ...createCourseSlice(...a),
+
+    ...createIsInstructorSlice(...a),
 }))
 
 export default useSwimmerFormStore;

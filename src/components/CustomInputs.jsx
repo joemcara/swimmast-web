@@ -12,7 +12,7 @@ export function CustomButton(props) {
     );
 }
 
-export function LoginTextInput(props) {
+export const LoginTextInput = (props) => {
     return (
         <CustomTextInput
             label={props.label}
@@ -143,9 +143,9 @@ export function SelectPaymentMethod(props) {
                     style={{ backgroundColor: props.store?.paymentMethod === 'TRANSACTION' ? 'green' : 'transparent' }}
                 >
                     <IconPhoto style={{ width: '50px' }} stroke={1.25} />
-                    {<FileInput size="xs" multiple onChange={(e) => console.log(e)} ref={fileInputRef} className="hidden" />}
                 </ActionIcon>
 
+                {<FileInput size="xs" multiple onChange={(e) => console.log(e)} ref={fileInputRef} className="hidden" />}
                 <ActionIcon
                     variant="default"
                     size="lg"

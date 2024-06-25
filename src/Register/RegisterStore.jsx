@@ -40,12 +40,21 @@ const createCoursesSlice = (set) => ({
         }))
 })
 
+const createRolesSlice = (set) => ({
+    roles: [],
+    setRoles: (value) =>
+        set(() => ({
+            roles: value
+        }))
+})
+
 const useRegisterStore = create((...a) => ({
     ...createInstructorsSlice(...a),
     ...createCourseTypesSlice(...a),
     ...createEnrollmentStatusesSlice(...a),
     ...createPaymentStatusesSlice(...a),
     ...createCoursesSlice(...a),
+    ...createRolesSlice(...a),
 }))
 
 export default useRegisterStore;
