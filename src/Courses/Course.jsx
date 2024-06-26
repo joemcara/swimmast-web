@@ -41,13 +41,14 @@ function Curso() {
                 course.setCourses(response.data.data)
             })
     }, [courseFilterStore])
+
     return (
         <div>
             <CustomSection className='absolute ' title="Clases">
 
                 <CustomFilter filter={courseFilterStore}>
                     <Group>
-                        <InputLabel className='text-system-label-blue' size={20} fw={550}>
+                        <InputLabel className='text-system-label-blue' size={20} fw={700}>
                             Instructor
                         </InputLabel>
                         <Select
@@ -58,7 +59,7 @@ function Curso() {
                         />
                     </Group>
                     <Group>
-                        <InputLabel className='text-system-label-blue' size={20} fw={550}>
+                        <InputLabel className='text-system-label-blue' size={20} fw={700}>
                             Tipo de clase
                         </InputLabel>
                         <Select
@@ -68,7 +69,7 @@ function Curso() {
                         />
                     </Group>
                     <Group>
-                        <InputLabel className='text-system-label-blue' size={20} fw={550}>
+                        <InputLabel className='text-system-label-blue' size={20} fw={700}>
                             Horario
                         </InputLabel>
                         <Select
@@ -82,6 +83,7 @@ function Curso() {
                     headers={["id", "instructor", "tipoDeClase", "horaInicio", "horaFin", "fechaInicio", "fechaFin"]}
                     getters={['id', 'instructor', 'course_type', 'start_time', 'end_time', 'start_date', 'due_date']}
                     data={course.courses}
+                    store={course}
                 />
             </CustomSection>
         </div>

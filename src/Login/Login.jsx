@@ -29,6 +29,7 @@ function Login() {
                 console.log(response.data);
                 window.localStorage.setItem('token', response.data.token);
                 loginStore.setUser(response.data.user);
+                window.localStorage.setItem('user', JSON.stringify(response.data.user));
                 window.location.href = '/'
             }).catch((error) => {
                 console.log(error)

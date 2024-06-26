@@ -27,9 +27,9 @@ const createPaymentStatusSlice = (set) => ({
 const createResetFiltersSlice = (set) => ({
     resetFilters: () =>
         set(() => ({
-            enrollmentStatus: 'todos',
-            course: 'todos',
-            paymentStatus: 'todos',
+            enrollmentStatus: null,
+            course: null,
+            paymentStatus: null,
         })),
 });
 

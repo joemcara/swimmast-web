@@ -32,6 +32,8 @@ const createSchedulesSlice = (set) => ({
         }))
 })
 
+
+
 const useCourseStore = create((...a) => ({
     ...createCoursesSlice(...a),
     ...createCourseTypesSlice(...a),

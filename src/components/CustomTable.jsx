@@ -3,8 +3,10 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconBellRinging, IconPhone, IconPhoto } from '@tabler/icons-react'
 import React, { useEffect } from 'react'
 import snachesOrcasLogo from '../assets/snachesOrcasLogo.png'
+import { useNavigation } from 'react-router-dom';
 function CustomTable(props) {
     const [opened, { toggle }] = useDisclosure(false);
+    const navigate = useNavigation()
     function camelToSentence(text) {
         // Split the camel case string into words
         const words = text.split(/([A-Z][a-z]+)/);
@@ -68,7 +70,10 @@ function CustomTable(props) {
                             let keys = Object.keys(element)
                             return <Table.Tr key={element.id} onClick={e => {
                                 props.store?.setSelectedItem(element)
-                                window.location.href = "/actualizar"
+                                console.log(element)
+                                localStorage.setItem('selectedItem', JSON.stringify(element))
+
+                                window.location.href = '/actualizar'
                             }}>
                                 {props.getters?.map(value => {
                                     return <Table.Td className={cellColor(element[value])} key={element[value]} >
@@ -103,7 +108,7 @@ function CustomTable(props) {
             </Table.ScrollContainer>
             <Group justify='end'>
                 <Pagination
-                    total={props.store?.totalPages}
+                    total={props.store?.totalPages || 1}
                     value={props.filter?.currentPage}
                     onChange={props.filter?.setCurrentPage}
                     siblings={0}

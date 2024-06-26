@@ -29,6 +29,7 @@ function Home() {
     }, [])
 
     useEffect(() => {
+        console.log(`administrador/registered-students/applicants/${homeFilterStore.enrollmentStatus || 'todos'}/curso/${homeFilterStore.course || 'todos'}/estado-pago/${homeFilterStore.paymentStatus || 'todos'}/pagina/${homeFilterStore.currentPage}/`)
         axios.get(`administrador/registered-students/applicants/${homeFilterStore.enrollmentStatus || 'todos'}/curso/${homeFilterStore.course || 'todos'}/estado-pago/${homeFilterStore.paymentStatus || 'todos'}/pagina/${homeFilterStore.currentPage}/`).then(function (response) {
             homeStore.setStudents(response.data?.data)
             homeStore.setTotalPages(response.data?.pagesTotales)

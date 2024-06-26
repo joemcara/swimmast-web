@@ -35,9 +35,9 @@ const createCurrentPageSlice = (set) => ({
 const createResetFiltersSlice = (set) => ({
     resetFilters: () =>
         set(() => ({
-            courseType: "todos",
-            instructor: "todos",
-            schedule: "00:00:00"
+            courseType: null,
+            instructor: null,
+            schedule: null
         })
         )
 })

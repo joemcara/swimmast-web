@@ -11,10 +11,11 @@ import useRegisterStore from '../Register/RegisterStore';
 import { showDefaultNotificaion, showErrorNotification, showLoadingNotification, updateErrorLoadingNotification, updateSuccessLoadingNotification } from '../util/CustomNotifications';
 import useSwimmerFormStore from '../Register/UserFormStore';
 import useHomeStore from '../Home/HomeStore';
+import useLoginStore from '../Login/LoginStore';
+import useUserFormStore from '../Register/UserFormStore';
 
-const RegisterMemberForm = ({ store }) => {
+const UpdateUserForm = ({ store }) => {
     const registerStore = useRegisterStore();
-
     const getSelectData = () => {
         axios.get('course_type/').then(function (response) {
             const courseTypes = response.data?.map((courseType) => ({ label: courseType.name, value: courseType.id.toString() }))
@@ -39,14 +40,12 @@ const RegisterMemberForm = ({ store }) => {
 
         axios.get('role/').then(function (response) {
             let filteredRoles = response.data?.filter(role => role.name !== 'ADMINISTRADOR')
-            const roles = filteredRoles?.map(role => ({ label: role.name, value: role.id.toString() }))
+            const roles = filteredRoles?.map(role => ({ label: role.name, value: role.id.toString(), role: role }))
             registerStore.setRoles(roles)
         })
     }
     //FILL SELECTS WITH DATA
-    useEffect(() => {
-        getSelectData();
-    }, []);
+
 
 
     const calculateAge = (birthdate) => {
@@ -93,65 +92,29 @@ const RegisterMemberForm = ({ store }) => {
         }
     }
 
-    const saveUser = async () => {
-        const notificationId = showLoadingNotification({ message: 'Creando registro de usuario' })
+    const editUser = async () => {
         let data = store.isInstructor ? getInstructorData() : getSwimmerData();
-        let url = 'register/';
-        axios.post(url, data)
-            .then(function (response) {
-                if (!store.isInstructor) {
-                    return enrollSwimmer(response.data.id, 1)
-                }
-                store.reset();
-                getSelectData();
-                return updateSuccessLoadingNotification(notificationId)
-            }).catch(function (error) {
-                return updateErrorLoadingNotification(notificationId)
+        let url = 'member/';
+        if (store.role === 'INSTRUCTOR') {
+            url = 'instructor/'
+        } else if (store.role === 'DEPORTISTA') {
+            url = 'athlete/'
+        }
+        store.setRole(null)
+        store.reset();
 
+        axios.put(url, data)
+            .then(function (response) {
+                getSelectData();
+                console.log(response)
+            }).catch(function (error) {
+                console.log(error)
             })
     }
 
-    const enrollSwimmer = (swimmerId, notificationId) => {
-        let url = 'enrollment/generate_enrollment/';
-        axios.post(url, {
-            applicant: swimmerId,
-            course: store.course,
-            status: store.enrollmentStatus,
-        }).then(function (response) {
-            const enrollmentId = response.data.id
-            return generatePaymentReceipt(enrollmentId, notificationId)
-        }).catch(function (error) {
-            // DELETE USER IF ENROLLMENT CREATION FAILS
-            console.log(error)
-            return updateErrorLoadingNotification(notificationId)
-
-        })
-    }
-    const generatePaymentReceipt = (enrollmentId, notificationId) => {
-        let course = registerStore.courses?.find(course => course.value === store.course)?.course
-        console.log("payment_value", store.credit)
-        if (!course) {
-            return updateErrorLoadingNotification(notificationId)
-        }
-        let url = 'paymentreceipt/create/';
-        axios.post(url, {
-            receipt_number: store.voucherNumber,
-            payment_status: store.paymentStatus,
-            enrollment: enrollmentId,
-            course: store.course,
-            balance: course?.price,
-            payment_date: new Date().toISOString().split('T')[0],
-            payment_value: store.credit,
-            financial_institution: 'Banco Pichincha',
-            description: `Pago por registro de nadador en ${course.name}`
-        }).then(function (response) {
-            console.log("RECEIPT CREADO")
-            return updateSuccessLoadingNotification(notificationId)
-        }).catch(function (error) {
-            console.log(error)
-            return updateErrorLoadingNotification(notificationId)
-        })
-    }
+    useEffect(() => {
+        getSelectData();
+    }, []);
 
     return (
         <form>
@@ -197,7 +160,9 @@ const RegisterMemberForm = ({ store }) => {
                         label="Rol"
                         data={registerStore.roles}
                         className={store.isInstructor ? 'sm:col-span-7' : 'sm:col-span-4'}
-                        value={store.role}
+                        value={
+                            registerStore.roles?.filter(role => role.label === store.role)[0]?.value
+                            || '0'}
                         onChange={v => {
                             store.setRole(v)
                             const isInstructor = registerStore.roles?.filter(role => role.value === v)[0]?.label === 'INSTRUCTOR'
@@ -223,17 +188,18 @@ const RegisterMemberForm = ({ store }) => {
                     onChange={e => store.setEmail(e.currentTarget?.value)}
                 />
 
-                {!store.isInstructor && <> <CustomTextInput
-                    leftSectionPointerEvents="none"
-                    withAsterisk
-                    label="Dirección"
-                    placeholder="Ingrese dirección"
-                    className="sm:col-span-2"
-                    value={store.address}
-                    onChange={e => store.setAddress(e.currentTarget?.value)}
-                />
-
+                {!store.isInstructor && <>
                     <CustomTextInput
+                        leftSectionPointerEvents="none"
+                        withAsterisk
+                        label="Dirección"
+                        placeholder="Ingrese dirección"
+                        className="sm:col-span-2"
+                        value={store.address}
+                        onChange={e => store.setAddress(e.currentTarget?.value)}
+                    />
+
+                    {/* <CustomTextInput
                         leftSectionPointerEvents="none"
                         withAsterisk={store.age < 18}
                         label="Representante: "
@@ -241,16 +207,16 @@ const RegisterMemberForm = ({ store }) => {
                         className="sm:col-span-2"
                         value={store.representantive}
                         onChange={e => store.setRepresentative(e.currentTarget?.value)}
-                    />
+                    /> */}
                     <div className='sm:col-span-2 grid sm:grid-cols-7 gap-x-3'>
-                        <CustomTextInput
+                        {/* <CustomTextInput
                             label="Vínculo:"
                             placeholder="Escriba el vínculo"
                             withAsterisk={store.age < 18}
                             className="sm:col-span-4"
                             value={store.relationship}
                             onChange={e => store.setRelationship(e.currentTarget?.value)}
-                        />
+                        /> */}
 
                         <CustomTextInput
                             leftSectionPointerEvents="none"
@@ -266,7 +232,7 @@ const RegisterMemberForm = ({ store }) => {
                 </>}
             </div>
             <Group justify="center">
-                <CustomButton onClick={saveUser} text={"Guardar"} bgColor={'#15192F'} />
+                <CustomButton onClick={editUser} text={"Guardar"} bgColor={'#15192F'} />
             </Group>
         </form>
     );
@@ -362,9 +328,34 @@ const RegisterCourseForm = ({ store }) => {
 }
 function Update() {
     const [activeTab, setActiveTab] = useState("Actualizar usuario");
-    const swimmerFormStore = useSwimmerFormStore();
+    const userFormStore = useUserFormStore();
     const courseFormStore = useCourseFormStore();
+    const homeStore = useHomeStore();
+    const calculateAge = (birthdate) => {
+        if (!birthdate) return 0;
+        const birthdateYear = new Date(birthdate).getFullYear();
+        const currentYear = new Date().getFullYear();
+        const calculatedAge = currentYear - birthdateYear;
+        return calculatedAge.toString();
+    };
 
+    useEffect(() => {
+        let swimmer = localStorage.getItem('selectedItem')
+        if (swimmer) {
+            swimmer = JSON.parse(swimmer)
+            userFormStore.setNames(swimmer.first_name)
+            userFormStore.setLastNames(swimmer.last_name)
+            userFormStore.setEmail(swimmer.username)
+            userFormStore.setRole(swimmer.role)
+            userFormStore.setBirthDate(new Date(swimmer.date_of_birth))
+            userFormStore.setAge(calculateAge(swimmer.date_of_birth))
+            userFormStore.setAddress(swimmer.address || 'Av. Barcelona')
+            userFormStore.setCellphoneNumber(swimmer.cell_phone)
+            userFormStore.setRepresentative(swimmer.representative_name)
+            userFormStore.setRelationship(swimmer.representative_relationship)
+            console.log(swimmer)
+        }
+    }, [homeStore]);
     const handleTabChange = (value) => {
         setActiveTab(value);
     };
@@ -384,7 +375,7 @@ function Update() {
 
     const renderContent = () => {
         if (activeTab === "Actualizar usuario") {
-            return <RegisterMemberForm store={swimmerFormStore} />;
+            return <UpdateUserForm store={userFormStore} />;
         } else if (activeTab === "Actualizar Curso") {
             return <RegisterCourseForm store={courseFormStore} />;
         }
