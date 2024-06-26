@@ -58,11 +58,35 @@ const createAddressSlice = (set) => ({
         }))
 })
 
+const createRepresentativeSlice = (set) => ({
+    representative: "",
+    setRepresentative: (value) =>
+        set(() => ({
+            representative: value
+        }))
+})
+
+const createRelationshipSlice = (set) => ({
+    relationship: "",
+    setRelationship: (value) =>
+        set(() => ({
+            relationship: value
+        }))
+})
+
 const createCellphoneNumberSlice = (set) => ({
     cellphoneNumber: "",
     setCellphoneNumber: (value) =>
         set(() => ({
             cellphoneNumber: value
+        }))
+})
+
+const createInstructorSlice = (set) => ({
+    instructor: null,
+    setInstructor: (value) =>
+        set(() => ({
+            instructor: value
         }))
 })
 
@@ -156,8 +180,46 @@ const createCourseSlice = (set) => ({
         }))
 })
 
+//IS INTRUCTOR
+const createIsInstructorSlice = (set) => ({
+    isInstructor: false,
+    setIsInstructor: (value) =>
+        set(() => ({
+            isInstructor: value
+        }))
+})
 
-const useInstructorFormStore = create((...a) => ({
+const createResetSlice = (set) => ({
+    reset: () =>
+        set(() => ({
+            names: "",
+            lastNames: "",
+            birthDate: new Date(),
+            age: 0,
+            voucherNumber: "",
+            email: "",
+            address: "",
+            representative: "",
+            relationship: "",
+            cellphoneNumber: "",
+            instructor: null,
+            courseType: null,
+            enrollmentStatus: null,
+            enrollmentDuration: [],
+            paymentStatus: null,
+            credit: 0,
+            paymentMethod: "TRANSACTION",
+            payment: 0,
+            role: null,
+            numbersOfDays: "",
+            courseDays: [],
+            course: null,
+            isInstructor: false
+        })
+        )
+})
+
+const useUserFormStore = create((...a) => ({
     ...createNamesSlice(...a),
     ...createLastNamesSlice(...a),
     ...createBirthDateSlice(...a),
@@ -165,7 +227,10 @@ const useInstructorFormStore = create((...a) => ({
     ...createVoucherNumberSlice(...a),
     ...createEmailSlice(...a),
     ...createAddressSlice(...a),
+    ...createRepresentativeSlice(...a),
+    ...createRelationshipSlice(...a),
     ...createCellphoneNumberSlice(...a),
+    ...createInstructorSlice(...a),
     ...createCourseTypeSlice(...a),
     ...createEnrollmentStatusSlice(...a),
     ...createEnrollmentDurationSlice(...a),
@@ -179,6 +244,9 @@ const useInstructorFormStore = create((...a) => ({
     ...createCourseDaysSlice(...a),
     //FOR "OTHERS" COURSE TYPES
     ...createCourseSlice(...a),
+
+    ...createIsInstructorSlice(...a),
+    ...createResetSlice(...a)
 }))
 
-export default useInstructorFormStore;
+export default useUserFormStore;

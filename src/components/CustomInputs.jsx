@@ -1,4 +1,4 @@
-import { ActionIcon, Button, FileInput, Group, NumberInput, PasswordInput, Select, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Button, FileInput, Group, MultiSelect, NumberInput, PasswordInput, Select, Text, TextInput } from "@mantine/core";
 import { DateInput, DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCash, IconPhoto } from "@tabler/icons-react";
@@ -118,6 +118,20 @@ export function CustomSelect(props) {
             label={props.label}
             radius={props.radius || 'sm'}
             placeholder={props.placeholder}
+            className={props.className || 'sm:col-span-2'}
+            value={props.value}
+            onChange={props.onChange}
+            searchable
+        />
+    );
+}
+
+export function CustomMultiSelect(props) {
+    return (
+        <MultiSelect
+            data={props.data || []}
+            label={props.label}
+            radius={props.radius || 'sm'}
             className={props.className || 'sm:col-span-2'}
             value={props.value}
             onChange={props.onChange}

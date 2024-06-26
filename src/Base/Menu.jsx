@@ -12,7 +12,12 @@ function Menu() {
             <nav className='flex flex-col text-white w-full gap-4'>
                 <CustomNavLink
                     to="/"
-                    text="Inicio"
+                    text="Nadadores"
+                    pl={12}
+                />
+                <CustomNavLink
+                    to="/cursos"
+                    text="Cursos"
                     pl={12}
                 />
                 <CustomNavLink
@@ -23,11 +28,6 @@ function Menu() {
                 <CustomNavLink
                     to="/actualizar"
                     text="Actualizar"
-                    pl={12}
-                />
-                <CustomNavLink
-                    to="/cursos"
-                    text="Cursos"
                     pl={12}
                 />
             </nav>

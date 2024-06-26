@@ -32,10 +32,10 @@ function MenuMovil() {
                         <h1>Swimmast</h1>
                     </div>
                     <nav className='flex flex-col gap-8'>
-                        <CustomNavLink to="/" text="Inicio" />
+                        <CustomNavLink to="/" text="Nadadores" />
+                        <CustomNavLink to="/cursos" text="Cursos" />
                         <CustomNavLink to="/registrar" text="Registrar" />
                         <CustomNavLink to="/actualizar" text="Actualizar" />
-                        <CustomNavLink to="/cursos" text="Cursos" />
                     </nav>
                     <div className='bg-black'>
                         <div onClick={

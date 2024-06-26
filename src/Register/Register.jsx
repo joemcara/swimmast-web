@@ -10,19 +10,13 @@ import { CustomButton, CustomDateInput, CustomDatePickerInput, CustomNumberInput
 import useCourseFormStore from './CourseFormStore';
 import useRegisterStore from './RegisterStore';
 import { showDefaultNotificaion, showErrorNotification, showLoadingNotification, updateErrorLoadingNotification, updateSuccessLoadingNotification } from '../util/CustomNotifications';
-import useSwimmerFormStore from './SwimmerFormStore';
-import RegisterInstructorForm from './RegisterInstructorForm';
+import useUserFormStore from './UserFormStore';
 
 const RegisterMemberForm = ({ store }) => {
     const registerStore = useRegisterStore();
     //FILL SELECTS WITH DATA
     useEffect(() => {
-
-        axios.get('instructor/').then(function (response) {
-            const instructors = response.data?.map((instructor) => ({ label: instructor.first_name, value: instructor.id.toString() }))
-            registerStore.setInstructors(instructors)
-        })
-
+        getInstructors()
         axios.get('course_type/').then(function (response) {
             const courseTypes = response.data?.map((courseType) => ({ label: courseType.name, value: courseType.id.toString() }))
             registerStore.setCourseTypes(courseTypes)
@@ -51,6 +45,12 @@ const RegisterMemberForm = ({ store }) => {
         })
     }, []);
 
+    const getInstructors = () => {
+        axios.get('instructor/').then(function (response) {
+            const instructors = response.data?.map((instructor) => ({ label: instructor.first_name, value: instructor.id.toString() }))
+            registerStore.setInstructors(instructors)
+        })
+    }
 
     const calculateAge = (birthdate) => {
         if (!birthdate) return 0;
@@ -61,30 +61,6 @@ const RegisterMemberForm = ({ store }) => {
     };
 
     const [selectedDays, setSelectedDays] = useState([]);
-
-
-    const toggleDaySelection = (day) => {
-        if (selectedDays.includes(day)) {
-            setSelectedDays(selectedDays.filter((selectedDay) => selectedDay !== day));
-        } else {
-            setSelectedDays([...selectedDays, day]);
-        }
-    };
-
-    const createInstructor = async () => {
-        let url = "register/"
-        axios.post(url, {
-            first_name: store.names,
-            last_name: store.lastNames,
-            role: store.role,
-            email: store.email,
-        }).then(function (response) {
-
-            showDefaultNotificaion({ message: 'Instructor creado exitosamente' })
-        }).catch(function (error) {
-            showErrorNotification({ message: 'Error al crear instructor' })
-        })
-    }
 
     const getInstructorData = () => {
         return {
@@ -100,9 +76,11 @@ const RegisterMemberForm = ({ store }) => {
     const getSwimmerData = () => {
         if (store.age < 18) {
             if (store.representative === '') {
-                return showErrorNotification({ message: 'Debe ingresar el nombre del representante' })
+                showErrorNotification({ message: 'Debe ingresar el nombre del representante' })
+                return null
             } else if (store.relationship === '') {
-                return showErrorNotification({ message: 'Debe ingresar el vinculo del representante' })
+                showErrorNotification({ message: 'Debe ingresar el vinculo del representante' })
+                return null
             }
         }
 
@@ -123,52 +101,24 @@ const RegisterMemberForm = ({ store }) => {
     }
 
     const saveUser = async () => {
-        const notificationId = showLoadingNotification({ message: 'Creando registro de usuario' })
         let data = store.isInstructor ? getInstructorData() : getSwimmerData();
         let url = 'register/';
         console.log(data)
+        if (!data) return;
+        const notificationId = showLoadingNotification({ message: 'Creando registro de usuario' })
         axios.post(url, data)
             .then(function (response) {
                 if (!store.isInstructor) {
                     return enrollSwimmer(response.data.id, 1)
                 }
+                store.reset()
+                getInstructors()
                 return updateSuccessLoadingNotification(notificationId)
             }).catch(function (error) {
+                console.log(error)
                 return updateErrorLoadingNotification(notificationId)
 
             })
-    }
-
-    const createSwimmer = () => {
-        if (store.age < 18) {
-            if (store.representative === '') {
-                return showErrorNotification({ message: 'Debe ingresar el nombre del representante' })
-            } else if (store.relationship === '') {
-                return showErrorNotification({ message: 'Debe ingresar el vinculo del representante' })
-            }
-        }
-        const notificationId = showLoadingNotification({ message: 'Creando registro de usuario' })
-
-        let url = 'register/';
-        axios.post(url, {
-            first_name: store.names,
-            last_name: store.lastNames,
-            email: store.email,
-            role: 3,
-            password: '12345678',
-            confirm_password: '12345678',
-            date_of_birth: store.birthDate?.toISOString().split('T')[0],
-            age: store.age,
-            address: store.address,
-            cell_phone: store.cellphoneNumber,
-            representative_name: store.representative,
-            representative_relationship: store.relationship,
-        }).then(function (response) {
-            return enrollSwimmer(response.data.id, notificationId)
-        }).catch(function (error) {
-            console.log(error)
-            return updateErrorLoadingNotification(notificationId)
-        })
     }
 
     const enrollSwimmer = (swimmerId, notificationId) => {
@@ -499,7 +449,7 @@ const RegisterCourseForm = ({ store }) => {
 }
 function Register() {
     const [activeTab, setActiveTab] = useState("Registrar usuario");
-    const swimmerFormStore = useSwimmerFormStore();
+    const userFormStore = useUserFormStore();
     const courseFormStore = useCourseFormStore();
 
     const handleTabChange = (value) => {
@@ -521,7 +471,7 @@ function Register() {
 
     const renderContent = () => {
         if (activeTab === "Registrar usuario") {
-            return <RegisterMemberForm store={swimmerFormStore} />;
+            return <RegisterMemberForm store={userFormStore} />;
         } else if (activeTab === "Registrar Curso") {
             return <RegisterCourseForm store={courseFormStore} />;
         }
