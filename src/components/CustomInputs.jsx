@@ -1,4 +1,4 @@
-import { ActionIcon, Button, FileInput, Group, MultiSelect, NumberInput, PasswordInput, Select, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Button, Checkbox, FileInput, Group, MultiSelect, NumberInput, PasswordInput, Select, Text, TextInput } from "@mantine/core";
 import { DateInput, DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCash, IconPhoto } from "@tabler/icons-react";
@@ -6,7 +6,7 @@ import { useRef } from "react";
 
 export function CustomButton(props) {
     return (
-        <Button bg={props.bgColor || '#0730BE'} w={props.w || 200} radius={'sm'} mt={8} onClick={props.onClick} >
+        <Button bg={props.bgColor || '#0730BE'} w={props.w || 200} radius={'sm'} mt={props.mt || 0} onClick={props.onClick} >
             <Text fw={600}>{props.text}</Text>
         </Button>
     );
@@ -172,4 +172,22 @@ export function SelectPaymentMethod(props) {
             </Group>
         </div>
     );
+}
+
+export function CustomCheckbox(props) {
+    return (
+        <Checkbox
+            label={props.label}
+            styles={{
+                label: {
+                    fontWeight: 600,
+                }
+            }}
+            className={props.className}
+            checked={props.checked}
+            onChange={props.onChange}
+            color={props.color || '#2C3E50'}
+            iconColor="#fff"
+        />
+    )
 }

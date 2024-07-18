@@ -1,11 +1,13 @@
 import React, { lazy, useEffect, useState } from 'react'
 import CustomTable from '../components/CustomTable'
-import { Group, InputLabel, Select } from '@mantine/core'
+import { Checkbox, Group, Input, InputLabel, Select, Stack } from '@mantine/core'
 import CustomSection from '../components/CustomSection'
 import CustomFilter from '../components/CustomFilter'
 import axios from 'axios'
 import useHomeStore from './HomeStore'
 import useHomeFilterStore from './HomeFilterStore'
+import { IconSearch, IconUser } from '@tabler/icons-react'
+import { CustomCheckbox } from '../components/CustomInputs'
 
 function Home() {
     const homeStore = useHomeStore();
@@ -29,42 +31,47 @@ function Home() {
     }, [])
 
     useEffect(() => {
-        console.log(`administrador/registered-students/applicants/${homeFilterStore.enrollmentStatus || 'todos'}/curso/${homeFilterStore.course || 'todos'}/estado-pago/${homeFilterStore.paymentStatus || 'todos'}/pagina/${homeFilterStore.currentPage}/`)
-        axios.get(`administrador/registered-students/applicants/${homeFilterStore.enrollmentStatus || 'todos'}/curso/${homeFilterStore.course || 'todos'}/estado-pago/${homeFilterStore.paymentStatus || 'todos'}/pagina/${homeFilterStore.currentPage}/`).then(function (response) {
+        let url = `http://localhost:8000/api/v2/administration/registered_students/enrollment_status/1/course/1/payment_status/1/page/${homeFilterStore.currentPage}/`
+        axios.get(url).then(function (response) {
             homeStore.setStudents(response.data?.data)
             homeStore.setTotalPages(response.data?.pagesTotales)
         }).catch(function (error) { console.log(error) })
     }, [homeFilterStore])
     return (
-        <CustomSection title="Estudiantes registrados">
+        <CustomSection
+            title="Nadadores registrados"
+            icon={<IconUser size={35} />}
+            searchBar={<Input
+                placeholder='Buscar nadador'
+                className='w-2/6'
+                radius={"sm"}
+                rightSection={<IconSearch />}
+            >
+
+            </Input>
+            }
+
+        >
             <CustomFilter filter={homeFilterStore}>
-                <Group >
-                    <InputLabel className='text-system-label-blue' size={18} fw={700}>Solicitud</InputLabel>
-                    <Select
-                        data={homeStore.enrollmentStatuses}
-                        value={homeFilterStore.enrollmentStatus}
-                        onChange={homeFilterStore.setEnrollmentStatus}
-                    />
-                </Group>
-                <Group >
-                    <InputLabel className='text-system-label-blue' size={18} fw={700}>Curso</InputLabel>
-                    <Select
-                        data={homeStore.courses}
-                        value={homeFilterStore.course}
-                        onChange={homeFilterStore.setCourse}
-                    />
-                </Group>
-                <Group >
-                    <InputLabel className='text-system-label-blue' size={18} fw={700}>Estado de pago</InputLabel>
-                    <Select
-                        data={homeStore.paymentStatuses}
-                        value={homeFilterStore.paymentStatus}
-                        onChange={homeFilterStore.setPaymentStatus}
-                    />
-                </Group>
+                <Stack>
+                    <InputLabel className='text-black' size={18} fw={700}>Estado de inscripción</InputLabel>
+                    <Group >
+                        <CustomCheckbox label="Pendiente" />
+                        <CustomCheckbox label="Aprobada" />
+                        <CustomCheckbox label="Rechazada" />
+                    </Group>
+                </Stack>
+                <Stack>
+                    <InputLabel className='text-black' size={18} fw={700}>Estado de pago</InputLabel>
+                    <Group >
+                        <CustomCheckbox label="Pendiente" />
+                        <CustomCheckbox label="Aprobada" />
+                        <CustomCheckbox label="Rechazada" />
+                    </Group>
+                </Stack>
             </CustomFilter>
             <CustomTable
-                headers={["id", "solicitudInscripcion", 'nombres', 'apellidos', 'celular', 'curso', 'inicioInscripcion', 'finInscripcion', 'estadoPago']}
+                headers={["id", "estadoDeSolicitud", 'nombres', 'apellidos', 'celular', 'curso', 'inicioInscripcion', 'finInscripcion', 'estadoDePago']}
                 getters={['id', 'enrollment_status', 'first_name', 'last_name', 'cell_phone', 'course', 'enrollment_start_date', 'enrollment_due_date', 'payment_status']}
                 data={homeStore.students}
                 notification

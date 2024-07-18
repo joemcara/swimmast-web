@@ -106,12 +106,13 @@ function CustomTable(props) {
                     </Table.Tbody>
                 </Table>
             </Table.ScrollContainer>
-            <Group justify='end'>
+            <Group justify='center'>
                 <Pagination
                     total={props.store?.totalPages || 1}
                     value={props.filter?.currentPage}
                     onChange={props.filter?.setCurrentPage}
                     siblings={0}
+                    color='#2C3E50'
                 />
             </Group>
         </div>

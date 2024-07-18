@@ -24,7 +24,7 @@ function Login() {
             password: passwordRef.current.value
         }
         console.log(data)
-        axios.post('login_user/', data)
+        axios.post('administration/login_user/', data)
             .then((response) => {
                 console.log(response.data);
                 window.localStorage.setItem('token', response.data.token);

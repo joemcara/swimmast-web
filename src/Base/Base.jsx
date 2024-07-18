@@ -12,8 +12,8 @@ function Base() {
         <div className=''>
             <Menu />
             <MenuMovil />
-            <div className='lg:ml-72 min-h-screen'>
-                <Layout />
+            <div className='lg:ml-72 min-h-screen bg-[#ECF0F1]'>
+                {/* <Layout /> */}
                 <Outlet />
             </div>
         </div>
