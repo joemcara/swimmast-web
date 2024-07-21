@@ -4,9 +4,11 @@ import { Loader } from '@mantine/core';
 import axios from 'axios';
 const Base = lazy(() => import("./Base/Base.jsx"));
 const Home = lazy(() => import("./Home/Home.jsx"));
-const Register = lazy(() => import("./Register/Register.jsx"));
+const RegisterSwimmer = lazy(() => import("./Register/RegisterSwimmer.jsx"));
+const RegisterCourse = lazy(() => import("./Register/RegisterCourse.jsx"));
 const Course = lazy(() => import("./Courses/Course.jsx"))
-const Update = lazy(() => import("./Update/Update.jsx"));
+const UpdateSwimmer = lazy(() => import("./Update/UpdateSwimmer.jsx"));
+const UpdateCourse = lazy(() => import("./Update/UpdateCourse.jsx"));
 const PageNotFound = lazy(() => import("./PageNotFound/PageNotFound.jsx"));
 const Logout = lazy(() => import("./Login/Logout.jsx"));
 const Login = lazy(() => import("./Login/Login.jsx"))
@@ -22,14 +24,24 @@ function App() {
           element: <Home />
         },
         {
-          path: "/registrar",
+          path: "/registrar-nadador",
           index: true,
-          element: <Register />,
+          element: <RegisterSwimmer />,
         },
         {
-          path: "/actualizar",
+          path: "/registrar-curso",
           index: true,
-          element: <Update />
+          element: <RegisterCourse />,
+        },
+        {
+          path: "/actualizar-nadador",
+          index: true,
+          element: <UpdateSwimmer />
+        },
+        {
+          path: "/actualizar-curso",
+          index: true,
+          element: <UpdateCourse />
         },
         {
           path: "/cursos",

@@ -16,6 +16,14 @@ const createCourseTypesSlice = (set) => ({
         }))
 })
 
+const createCourseStatusesSlice = (set) => ({
+    courseStatuses: [],
+    setCourseStatuses: (value) =>
+        set(() => ({
+            courseStatuses: value
+        }))
+})
+
 const createEnrollmentStatusesSlice = (set) => ({
     enrollmentStatuses: [],
     setEnrollmentStatuses: (value) =>
@@ -51,6 +59,7 @@ const createRolesSlice = (set) => ({
 const useRegisterStore = create((...a) => ({
     ...createInstructorsSlice(...a),
     ...createCourseTypesSlice(...a),
+    ...createCourseStatusesSlice(...a),
     ...createEnrollmentStatusesSlice(...a),
     ...createPaymentStatusesSlice(...a),
     ...createCoursesSlice(...a),

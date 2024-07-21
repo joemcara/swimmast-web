@@ -16,14 +16,6 @@ const createEnrollmentStatusesSlice = (set) => ({
         }))
 })
 
-const createCoursesSlice = (set) => ({
-    courses: [],
-    setCourses: (value) =>
-        set(() => ({
-            courses: value
-        }))
-})
-
 const createPaymentStatusesSlice = (set) => ({
     paymentStatuses: [],
     setPaymentStatuses: (value) =>
@@ -51,7 +43,6 @@ const createTotalPagesSlice = (set) => ({
 const useHomeStore = create((...a) => ({
     ...createStudentsSlice(...a),
     ...createEnrollmentStatusesSlice(...a),
-    ...createCoursesSlice(...a),
     ...createPaymentStatusesSlice(...a),
     ...createSelectedItemSlice(...a),
 

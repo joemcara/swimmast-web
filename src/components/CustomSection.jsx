@@ -1,9 +1,17 @@
-import { Divider } from '@mantine/core'
-import { IconUser } from '@tabler/icons-react'
+import { ActionIcon, Divider, TextInput } from '@mantine/core'
+import { getHotkeyHandler } from '@mantine/hooks';
+import { IconSearch, IconUser } from '@tabler/icons-react'
 import React from 'react'
 
 
 function CustomSection(props) {
+    const handleKeyDown = (event) => {
+        if (props.filter?.search) props.getData()
+    };
+    const SEARCH = <ActionIcon onClick={props.getData} bg={"transparent"} >
+        <IconSearch color='#818DA3' />
+    </ActionIcon>
+
     return (
         <section className='flex justify-center items'>
             <div className='bg-system-section-white absolute top-16 w-5/6 lg:top-12 lg:w-3/4 self-center lg:min-h-5/6 p-8 rounded-md'>
@@ -12,7 +20,16 @@ function CustomSection(props) {
                         {props.icon}
                         <h1 className='text-xl lg:text-4xl font-bold'>{props.title}</h1>
                     </div>
-                    {props.searchBar}
+                    {props.searchBar && <TextInput
+                        placeholder='Buscar nadador'
+                        className='w-2/6'
+                        radius={"sm"}
+                        rightSection={SEARCH}
+                        onChange={(e) => props.filter?.setSearch(e.currentTarget.value)}
+                        onKeyDown={getHotkeyHandler([
+                            ['Enter', handleKeyDown]
+                        ])}
+                    />}
                 </div>
                 <Divider my={32} size={5} color='#818DA3' />
                 {props.children}

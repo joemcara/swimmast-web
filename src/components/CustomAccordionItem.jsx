@@ -1,10 +1,10 @@
-import { Accordion, Text } from "@mantine/core";
-import { IconMinus, IconPlus, IconPlusMinus } from "@tabler/icons-react";
+import { Accordion } from "@mantine/core";
+import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
-import CustomNavLink from "./CustomNavLink";
 
 export function CustomAccordionItem(props) {
     const [open, setOpen] = useState(true);
+
     return (
         <Accordion.Item value={props.value} label={props.label} variant="contained"
             styles={{
@@ -13,7 +13,10 @@ export function CustomAccordionItem(props) {
                 },
             }}
         >
-            <Accordion.Control style={{ backgroundColor: "#2C3E50", paddingLeft: "3rem" }}
+            <Accordion.Control style={{
+                backgroundColor: props.backgroundColor,
+                paddingLeft: "3rem"
+            }}
                 classNames={{
                     chevron: "text-white text-sm",
                 }}

@@ -219,7 +219,7 @@ const createResetSlice = (set) => ({
         )
 })
 
-const useUserFormStore = create((...a) => ({
+const useSwimmerFormStore = create((...a) => ({
     ...createNamesSlice(...a),
     ...createLastNamesSlice(...a),
     ...createBirthDateSlice(...a),
@@ -249,4 +249,4 @@ const useUserFormStore = create((...a) => ({
     ...createResetSlice(...a)
 }))
 
-export default useUserFormStore;
+export default useSwimmerFormStore;
