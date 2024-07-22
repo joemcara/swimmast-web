@@ -108,8 +108,8 @@ function Home() {
 
             <CustomTable
                 type="nadador"
-                headers={["id", "estadoDeSolicitud", 'nombres', 'apellidos', 'celular', 'curso', 'inicioInscripcion', 'finInscripcion', 'estadoDePago']}
-                getters={['id', 'enrollment_status', 'first_name', 'last_name', 'phone_number', 'course', 'start_date', 'due_date', 'payment_status']}
+                headers={["estadoDeSolicitud", 'usuario', 'nombres', 'apellidos', 'curso', 'finInscripcion', 'estadoDePago']}
+                getters={['enrollment_status', 'username', 'first_name', 'last_name', 'course', 'due_date', 'payment_status']}
                 data={homeStore.students}
                 notification
                 voucher
