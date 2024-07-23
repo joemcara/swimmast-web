@@ -26,14 +26,6 @@ function RegisterSwimmer() {
     //FILL SELECTS WITH DATA
     useEffect(() => {
         getInstructors();
-        axios.get("course_type/").then(function (response) {
-            const courseTypes = response.data?.map((courseType) => ({
-                label: courseType.name,
-                value: courseType.id.toString(),
-            }));
-            registerStore.setCourseTypes(courseTypes);
-        });
-
         axios.get("enrollment_status/").then(function (response) {
             const enrollmentStatuses = response.data?.map(
                 (enrollmentStatus) => ({
@@ -53,15 +45,6 @@ function RegisterSwimmer() {
             registerStore.setPaymentStatuses(paymentStatuses);
         });
 
-        axios.get("course/").then(function (response) {
-            const courses = response.data?.map((course) => ({
-                label: course.name,
-                value: course.id.toString(),
-                course: course,
-            }));
-            registerStore.setCourses(courses);
-        });
-
         axios.get("role/").then(function (response) {
             let filteredRoles = response.data?.filter(
                 (role) => role.name !== "ADMINISTRADOR"
@@ -74,6 +57,39 @@ function RegisterSwimmer() {
         });
     }, []);
 
+    useEffect(() => {
+        getCourses();
+    }, [swimmerFormStore.instructor]);
+
+    useEffect(() => {
+        if (
+            !swimmerFormStore.names ||
+            !swimmerFormStore.lastNames ||
+            !swimmerFormStore.role ||
+            !swimmerFormStore.birthdate
+        )
+            return;
+        axios
+            .post("administration/usernames/", {
+                first_name: swimmerFormStore.names,
+                last_name: swimmerFormStore.lastNames,
+                role: swimmerFormStore.role,
+                birthdate: swimmerFormStore.birthdate,
+            })
+            .then(function (response) {
+                registerStore.setUsernames(response.data);
+                swimmerFormStore.setUsername(response.data[0]);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }, [
+        swimmerFormStore.names,
+        swimmerFormStore.lastNames,
+        swimmerFormStore.role,
+        swimmerFormStore.birthdate,
+    ]);
+
     const getInstructors = () => {
         axios.get("instructor/").then(function (response) {
             const instructors = response.data?.map((instructor) => ({
@@ -81,6 +97,26 @@ function RegisterSwimmer() {
                 value: instructor.id.toString(),
             }));
             registerStore.setInstructors(instructors);
+        });
+    };
+
+    const getCourses = () => {
+        let url = "administration/courses/type_grouped/";
+        let params = new URLSearchParams();
+        if (swimmerFormStore.instructor) {
+            params.append("instructor", swimmerFormStore.instructor);
+        }
+        url += "?" + params.toString();
+        axios.get(url).then(function (response) {
+            const coursesGroups = response.data?.map((courseGroup) => ({
+                group: courseGroup.course_type,
+                items: courseGroup.courses.map((course) => ({
+                    label: course.name,
+                    value: course.id.toString(),
+                    course: course,
+                })),
+            }));
+            registerStore.setCourses(coursesGroups);
         });
     };
 
@@ -117,7 +153,6 @@ function RegisterSwimmer() {
                 return null;
             }
         }
-        console.log("sa");
         return {
             first_name: swimmerFormStore.names,
             last_name: swimmerFormStore.lastNames,
@@ -134,38 +169,20 @@ function RegisterSwimmer() {
         };
     };
 
+    const getEnrollmentData = () => {
+        return {
+            course: swimmerFormStore.course,
+            status: swimmerFormStore.enrollmentStatus,
+            receipt_number: swimmerFormStore.voucherNumber,
+            payment_value: swimmerFormStore.credit,
+            payment_status: swimmerFormStore.paymentStatus,
+        };
+    };
     const saveUser = async () => {
-        // let data = swimmerFormStore.isInstructor ? getInstructorData() : getSwimmerData();
-        // await axios.post('administration/usernames/', data).then(function (response) {
-        //     registerStore.setUsernames(response.data)
-        //     swimmerFormStore.setUsername(response.data[0])
-        // }).catch(function (error) {
-        //     console.log(error)
-        // })
-        // data['username'] = swimmerFormStore.username
-        // data['pass_web'] = true
-        // let url = 'administration/register_user/';
-        // console.log(data)
-        // if (!data) return;
-        // const notificationId = showLoadingNotification({ message: 'Creando registro de usuario' })
-        // axios.post(url, data)
-        //     .then(function (response) {
-        //         if (!swimmerFormStore.isInstructor) {
-        //             console.log(response.data)
-        //             return enrollSwimmer(response.data.id, 1)
-        //         }
-        //         swimmerFormStore.reset()
-        //         getInstructors()
-        //         return updateSuccessLoadingNotification(notificationId)
-        //     }).catch(function (error) {
-        //         console.log(error)
-        //         return updateErrorLoadingNotification(notificationId)
-
-        //     })
         let data = getSwimmerData();
         if (!data) return;
-
         data["username"] = swimmerFormStore.username;
+        data = { ...data, ...getEnrollmentData() };
         axios
             .post(`administration/web_register_enrollment/`, data)
             .then(function (response) {
@@ -175,36 +192,6 @@ function RegisterSwimmer() {
                 console.log(error);
             });
     };
-
-    useEffect(() => {
-        if (
-            !swimmerFormStore.names ||
-            !swimmerFormStore.lastNames ||
-            !swimmerFormStore.role ||
-            !swimmerFormStore.birthdate
-        )
-            return;
-        console.log(swimmerFormStore.birthdate);
-        axios
-            .post("administration/usernames/", {
-                first_name: swimmerFormStore.names,
-                last_name: swimmerFormStore.lastNames,
-                role: swimmerFormStore.role,
-                birthdate: swimmerFormStore.birthdate,
-            })
-            .then(function (response) {
-                registerStore.setUsernames(response.data);
-                swimmerFormStore.setUsername(response.data[0]);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }, [
-        swimmerFormStore.names,
-        swimmerFormStore.lastNames,
-        swimmerFormStore.role,
-        swimmerFormStore.birthdate,
-    ]);
 
     const enrollSwimmer = (swimmerId, notificationId) => {
         let url = "enrollment/generate_enrollment/";
@@ -286,12 +273,6 @@ function RegisterSwimmer() {
 
                 {!swimmerFormStore.isInstructor && (
                     <>
-                        <CustomSelect
-                            label="Usuario"
-                            data={registerStore.usernames}
-                            value={swimmerFormStore.username}
-                            onChange={swimmerFormStore.setUsername}
-                        />
                         <div className="sm:col-span-2 grid grid-cols-4 gap-x-3">
                             <CustomDateInput
                                 label="Fecha de nacimiento"
@@ -355,6 +336,12 @@ function RegisterSwimmer() {
                         />
                     )}
                 </div>
+                <CustomSelect
+                    label="Usuario"
+                    data={registerStore.usernames}
+                    value={swimmerFormStore.username}
+                    onChange={swimmerFormStore.setUsername}
+                />
                 <CustomTextInput
                     leftSectionPointerEvents="none"
                     className="sm:col-span-2 "
@@ -421,7 +408,7 @@ function RegisterSwimmer() {
                             onChange={swimmerFormStore.setInstructor}
                         />
 
-                        <CustomSelect
+                        {/* <CustomSelect
                             label="Tipo de clase:"
                             placeholder="Elegir Paquete "
                             withAsterisk
@@ -429,7 +416,7 @@ function RegisterSwimmer() {
                             className="sm:col-span-2"
                             value={swimmerFormStore.courseType}
                             onChange={swimmerFormStore.setCourseType}
-                        />
+                        /> */}
                         <div className="sm:col-span-2 grid sm:grid-cols-4 gap-x-3">
                             <CustomSelect
                                 label="Curso"
@@ -472,7 +459,27 @@ function RegisterSwimmer() {
                                 step={0.05}
                                 className="sm:col-span-3"
                                 value={swimmerFormStore.credit}
-                                onChange={swimmerFormStore.setCredit}
+                                onChange={(value) => {
+                                    console.log(value);
+                                    swimmerFormStore.setCredit(value);
+                                    let coursePrice =
+                                        registerStore.courses?.find(
+                                            (course) =>
+                                                course.value ===
+                                                swimmerFormStore.course
+                                        )?.course?.price;
+                                    let paymentStatus = "0";
+                                    if (value === coursePrice) {
+                                        paymentStatus = "1";
+                                    } else if (value > coursePrice) {
+                                        paymentStatus = "2";
+                                    }
+                                    console.log(paymentStatus);
+                                    console.log(coursePrice);
+                                    swimmerFormStore.setPaymentState(
+                                        paymentStatus
+                                    );
+                                }}
                             />
                         </div>
                         <CustomSelect
@@ -481,8 +488,8 @@ function RegisterSwimmer() {
                             withAsterisk
                             data={registerStore.paymentStatuses}
                             className="sm:col-span-2"
-                            value={swimmerFormStore.paymentState}
-                            onChange={swimmerFormStore.setPaymentState}
+                            value={swimmerFormStore.paymentStatus}
+                            onChange={swimmerFormStore.setPaymentStatus}
                         />
                         <CustomSelect
                             label="Estado de inscripción: "
