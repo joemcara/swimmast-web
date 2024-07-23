@@ -10,12 +10,14 @@ function Base() {
     }, [])
     return (
         <div className=''>
-            <Menu />
-            <MenuMovil />
-            <div className='lg:ml-72 min-h-screen bg-[#ECF0F1]'>
-                {/* <Layout /> */}
-                <Outlet />
-            </div>
+            {window.localStorage.getItem("token") && <>
+                <Menu />
+                <MenuMovil />
+                <div className='lg:ml-72 min-h-screen bg-[#ECF0F1]'>
+                    {/* <Layout /> */}
+                    <Outlet />
+                </div>
+            </>}
         </div>
     )
 }

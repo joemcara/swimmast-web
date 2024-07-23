@@ -1,14 +1,16 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import CustomSection from '../components/CustomSection';
-import { ActionIcon, Group, rem } from '@mantine/core';
+import { ActionIcon, Group, Radio, rem } from '@mantine/core';
 import { IconBellSchool, IconClock, IconPlus, IconSchool, IconSchoolBell, IconSchoolOff } from '@tabler/icons-react';
 import { CustomButton, CustomDatePickerInput, CustomNumberInput, CustomSelect, CustomTextInput } from '../components/CustomInputs';
 import { TimeInput } from '@mantine/dates';
 import useCourseFormStore from './CourseFormStore';
-import { IconScriptPlus } from '@tabler/icons-react';
+import axios from 'axios';
+import useRegisterStore from './RegisterStore';
 
 function RegisterCourse() {
     const courseFormStore = useCourseFormStore();
+    const registerStore = useRegisterStore();
     const instructor = ["Ricardo Alcivar", "Joseph Carabajo", "Andres Borbor", "Paulina", "Katherine"];
 
     const startTimeRef = useRef(null);
@@ -25,6 +27,46 @@ function RegisterCourse() {
         </ActionIcon>
     )
 
+    useEffect(() => {
+        axios.get("course_type/").then(function (response) {
+            let courseTypes = response.data?.map(cT => {
+                return {
+                    label: cT.name,
+                    value: cT.id.toString()
+                }
+            })
+            registerStore.setCourseTypes(courseTypes)
+        })
+
+        axios.get("instructor/").then(function (response) {
+            let instructors = response.data?.map(instructor => {
+                return {
+                    label: `${instructor.first_name} ${instructor.last_name}`,
+                    value: instructor.id.toString()
+                }
+            })
+            registerStore.setInstructors(instructors)
+        })
+
+        axios.get("course_status/").then(function (response) {
+            let courseStatus = response.data?.map(status => {
+                if (status.name === 'ACTIVO') {
+                    courseFormStore.setCourseState(status.id.toString())
+                }
+                return {
+                    label: status.name,
+                    value: status.id.toString()
+                }
+            })
+            registerStore.setCourseStatuses(courseStatus)
+        })
+
+    }, [])
+
+    useEffect(() => {
+        console.log(courseFormStore)
+    }, [courseFormStore])
+
     return (
         <CustomSection title='Registrar curso' icon={<div className=' relative pr-2'>
             <IconSchool size={40} />
@@ -35,7 +77,7 @@ function RegisterCourse() {
                 <CustomTextInput
                     label="Nombre del curso"
                     withAsterisk
-                    placeholder="Ingrese Curso"
+                    placeholder="Ingrese el nombre del curso"
                     value={courseFormStore.courseName}
                     onChange={e => courseFormStore.setCourseName(e.currentTarget?.value)}
                 />
@@ -43,34 +85,44 @@ function RegisterCourse() {
                     label="Instructor: "
                     placeholder="Elegir Instructor: "
                     withAsterisk
-                    data={instructor}
+                    data={registerStore.instructors}
                     value={courseFormStore.instructor}
                     onChange={courseFormStore.setInstructor}
                 />
+                <Radio.Group label="Tipo de curso" className='col-span-2' value={courseFormStore.courseType} onChange={courseFormStore.setCourseType}>
+                    <Group mt={6}>
+                        {registerStore.courseTypes?.map((type) => (
+                            <Radio
+                                key={type.key + type.value}
+                                value={type.value}
+                                color="blue"
+                                label={type.label?.charAt(0).toUpperCase() + type.label?.slice(1).toLowerCase()}
+                            />
+                        ))}
+                    </Group>
+                </Radio.Group>
 
-                <CustomSelect
-                    label="Tipo de clase"
-                    data={["GRUPAL", "INDIVIDUAL"]}
-                    value={courseFormStore.courseType}
-                    onChange={courseFormStore.setCourseType}
-                />
-
+                <Radio.Group label="Estado del curso" className='col-span-2' value={
+                    courseFormStore.courseState
+                } onChange={courseFormStore.setCourseState}>
+                    <Group mt={6}>
+                        {registerStore.courseStatuses?.map((status) => {
+                            console.log(courseFormStore.courseState === status.value)
+                            return <Radio
+                                key={status.key + status.value}
+                                value={status.value}
+                                color="blue"
+                                label={status.label?.charAt(0).toUpperCase() + status.label?.slice(1).toLowerCase()}
+                            />
+                        })}
+                    </Group>
+                </Radio.Group>
                 <CustomDatePickerInput
                     label="Inicio-Fin de Curso:"
                     placeholder="Inicio-Fin de Curso:"
+                    valueFormat="DD MMM YYYY"
                     value={courseFormStore.enrollmentDuration}
                     onChange={courseFormStore.setEnrollmentDuration}
-                />
-                <CustomSelect
-                    label="Estado"
-                    data={["estado clase"]}
-                />
-                <CustomNumberInput
-                    label="Precio: $"
-                    defaultValue={0.00}
-                    precision={2}
-                    min={-1}
-                    step={0.05}
                 />
                 <TimeInput
                     label="Hora Inicio:"
@@ -88,6 +140,13 @@ function RegisterCourse() {
                     minTime={courseFormStore.startTime}
                     value={courseFormStore.endTime}
                     onChange={e => courseFormStore.setEndTime(e.currentTarget?.value)}
+                />
+                <CustomNumberInput
+                    label="Precio: $"
+                    defaultValue={0.00}
+                    precision={2}
+                    min={-1}
+                    step={0.05}
                 />
 
             </div>

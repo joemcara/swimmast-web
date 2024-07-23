@@ -1,5 +1,5 @@
 import { PasswordInput, Text, TextInput } from '@mantine/core'
-import React, { lazy, useEffect, useRef } from 'react'
+import React, { lazy, useEffect, useRef, useState } from 'react'
 import { CustomButton, LoginPasswordInput, LoginTextInput } from '../components/CustomInputs'
 import snachesOrcasLogo from '../assets/snachesOrcasLogo.png';
 import { NavLink } from 'react-router-dom';
@@ -9,6 +9,7 @@ import loginImage3 from '../assets/loginImage3.png'
 import { getHotkeyHandler, useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
 import useLoginStore from './LoginStore';
+import { showErrorNotification } from '../util/CustomNotifications';
 
 
 function Login() {
@@ -16,7 +17,7 @@ function Login() {
     const usernameRef = useRef(null);
     const passwordRef = useRef(null);
     const [visible, { toggle }] = useDisclosure(false);
-
+    const [incorrectUser, setIncorrectUser] = useState(false);
     function login() {
 
         let data = {
@@ -25,11 +26,16 @@ function Login() {
         }
         axios.post('administration/login_user/', data)
             .then((response) => {
+                if (response.data.role_name !== 'ADMINISTRADOR') {
+                    showErrorNotification({ message: 'Usuario no autorizado' })
+                    return
+                }
                 window.localStorage.setItem('token', response.data.token);
                 loginStore.setUser(response.data.user);
                 window.localStorage.setItem('user', JSON.stringify(response.data.user));
-                window.location.href = '/'
+                window.location.href = "/"
             }).catch((error) => {
+                setIncorrectUser(true)
                 console.log(error)
             })
     }
@@ -48,6 +54,7 @@ function Login() {
                         onKeyDown={getHotkeyHandler([
                             ['Enter', login]
                         ])}
+                    // error={incorrectUser && "Usuario incorrecto"}
                     />
 
                     <PasswordInput
