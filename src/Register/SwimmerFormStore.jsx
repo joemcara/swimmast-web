@@ -19,7 +19,7 @@ const createLastNamesSlice = (set) => ({
 })
 
 const createBirthDateSlice = (set) => ({
-    birthDate: new Date(),
+    birthDate: null,
     setBirthDate: (value) =>
         set(() => ({
             birthDate: value
@@ -74,11 +74,11 @@ const createRelationshipSlice = (set) => ({
         }))
 })
 
-const createCellphoneNumberSlice = (set) => ({
-    cellphoneNumber: "",
-    setCellphoneNumber: (value) =>
+const createPhoneNumberSlice = (set) => ({
+    phoneNumber: "",
+    setPhoneNumber: (value) =>
         set(() => ({
-            cellphoneNumber: value
+            phoneNumber: value
         }))
 })
 
@@ -154,6 +154,14 @@ const createRoleSlice = (set) => ({
         }))
 })
 
+const createUsernameSlice = (set) => ({
+    username: "",
+    setUsername: (value) =>
+        set(() => ({
+            username: value
+        }))
+})
+
 //FOR "INDIVIDUAL" COURSE TYPE
 const createNumberOfDaysSlice = (set) => ({
     numbersOfDays: "",
@@ -219,7 +227,7 @@ const createResetSlice = (set) => ({
         )
 })
 
-const useUserFormStore = create((...a) => ({
+const useSwimmerFormStore = create((...a) => ({
     ...createNamesSlice(...a),
     ...createLastNamesSlice(...a),
     ...createBirthDateSlice(...a),
@@ -229,7 +237,7 @@ const useUserFormStore = create((...a) => ({
     ...createAddressSlice(...a),
     ...createRepresentativeSlice(...a),
     ...createRelationshipSlice(...a),
-    ...createCellphoneNumberSlice(...a),
+    ...createPhoneNumberSlice(...a),
     ...createInstructorSlice(...a),
     ...createCourseTypeSlice(...a),
     ...createEnrollmentStatusSlice(...a),
@@ -239,6 +247,7 @@ const useUserFormStore = create((...a) => ({
     ...createPaymentMethodSlice(...a),
     ...createPaymentSlice(...a),
     ...createRoleSlice(...a),
+    ...createUsernameSlice(...a),
     //FOR "INDIVIDUAL" COURSE TYPE
     ...createNumberOfDaysSlice(...a),
     ...createCourseDaysSlice(...a),
@@ -249,4 +258,4 @@ const useUserFormStore = create((...a) => ({
     ...createResetSlice(...a)
 }))
 
-export default useUserFormStore;
+export default useSwimmerFormStore;

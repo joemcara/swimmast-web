@@ -1,14 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomTable from '../components/CustomTable';
 import CustomSection from '../components/CustomSection';
 import CustomFilter from '../components/CustomFilter';
-import { Autocomplete, Group, InputLabel, Select } from '@mantine/core';
+import { Autocomplete, Group, InputLabel, Select, Input, Stack } from '@mantine/core';
 import axios from 'axios';
 import useCourseStore from './CourseStore';
 import useCoursesFilterStore from './CoursesFilterStore';
+import { IconSearch, IconSwimming } from '@tabler/icons-react';
+import { CustomCheckbox } from '../components/CustomInputs';
 function Curso() {
-    const course = useCourseStore();
+    const courseStore = useCourseStore();
     const courseFilterStore = useCoursesFilterStore();
+
+
     // LLENAR FILTROS
     useEffect(() => {
         axios.get("course_type/").then(function (response) {
@@ -18,72 +22,73 @@ function Curso() {
                     value: cT.id.toString()
                 }
             })
-            course.setCourseTypes(courseTypes)
-        })
-
-        axios.get("instructor/").then(function (response) {
-            let instructors = response.data?.map(instructor => {
-                return {
-                    label: instructor.first_name,
-                    value: instructor.id.toString()
-                }
-            })
-            course.setInstructors(instructors)
-        })
-
-        axios.get("administrador/schedules/").then(function (response) {
-            course.setSchedules(response.data)
+            courseStore.setCourseTypes(courseTypes)
         })
     }, [])
+
+    const getCourses = () => {
+        let url = `administration/courses/page/${courseFilterStore.currentPage}/`
+        let params = new URLSearchParams();
+        if (courseFilterStore.courseType) params.append("course_type", courseFilterStore.courseType)
+        if (courseFilterStore.search) params.append("search", courseFilterStore.search)
+        url += `?${params.toString()}`
+        axios.get(url, {
+            headers: {
+                'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+        }).then(function (response) {
+            courseStore.setCourses(response.data.data)
+            courseStore.setTotalPages(response.data?.pagesTotales)
+
+        }).catch(function (error) { console.log(error) })
+    }
+
     useEffect(() => {
-        axios.get(`administrador/Courses/course_type/${courseFilterStore.courseType || 'todos'}/instructor/${courseFilterStore.instructor || 'todos'}/schedule/${courseFilterStore.schedule || '00:00:00'}/page/${courseFilterStore.currentPage}/`)
-            .then(function (response) {
-                course.setCourses(response.data.data)
-            })
-    }, [courseFilterStore])
+        getCourses()
+    }, [])
+
+    useEffect(() => {
+        if (!courseFilterStore.search) getCourses();
+    }, [courseFilterStore.search])
 
     return (
         <div>
-            <CustomSection className='absolute ' title="Clases">
+            <CustomSection
+                icon={<IconSwimming size={35} />}
+                title="Cursos"
+                searchBar
+                getData={getCourses}
+                filter={courseFilterStore}
+            >
 
-                <CustomFilter filter={courseFilterStore}>
-                    <Group>
-                        <InputLabel className='text-system-label-blue' size={20} fw={700}>
-                            Instructor
-                        </InputLabel>
-                        <Select
-                            searchable
-                            data={course.instructors}
-                            value={courseFilterStore.instructor}
-                            onChange={courseFilterStore.setInstructor}
-                        />
-                    </Group>
-                    <Group>
-                        <InputLabel className='text-system-label-blue' size={20} fw={700}>
-                            Tipo de clase
-                        </InputLabel>
-                        <Select
-                            data={course.courseTypes}
-                            value={courseFilterStore.courseType}
-                            onChange={courseFilterStore.setCourseType}
-                        />
-                    </Group>
-                    <Group>
-                        <InputLabel className='text-system-label-blue' size={20} fw={700}>
-                            Horario
-                        </InputLabel>
-                        <Select
-                            data={course.schedules}
-                            value={courseFilterStore.schedule}
-                            onChange={courseFilterStore.setSchedule}
-                        />
-                    </Group>
+                <CustomFilter filter={courseFilterStore} getData={getCourses}>
+                    <Stack>
+                        <InputLabel className='text-black' size={18} fw={700}>Tipo de curso</InputLabel>
+                        <Group>
+                            {courseStore.courseTypes?.map((type) => (
+                                <CustomCheckbox
+                                    key={type.key + type.value}
+                                    label={type.label?.charAt(0).toUpperCase() + type.label?.slice(1).toLowerCase()}
+                                    checked={courseFilterStore.courseType.includes(type.value)}
+                                    onChange={e => {
+                                        if (e.target.checked) {
+                                            courseFilterStore.setCourseType([...courseFilterStore.courseType, type.value])
+                                        } else {
+                                            courseFilterStore.setCourseType(courseFilterStore.courseType.filter((item) => item !== type.value))
+                                        }
+                                    }}
+                                />
+                            ))}
+                        </Group>
+                    </Stack>
                 </CustomFilter>
+
                 <CustomTable
+                    type='curso'
                     headers={["id", "instructor", "tipoDeClase", "horaInicio", "horaFin", "fechaInicio", "fechaFin"]}
                     getters={['id', 'instructor', 'course_type', 'start_time', 'end_time', 'start_date', 'due_date']}
-                    data={course.courses}
-                    store={course}
+                    data={courseStore.courses}
+                    store={courseStore}
                 />
             </CustomSection>
         </div>

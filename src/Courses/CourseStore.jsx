@@ -16,31 +16,27 @@ const createCourseTypesSlice = (set) => ({
         }))
 })
 
-const createInstructorsSlice = (set) => ({
-    instructod: [],
-    setInstructors: (value) =>
+const createSelectedItemSlice = (set) => ({
+    selectedItem: null,
+    setSelectedItem: (value) =>
         set(() => ({
-            instructors: value
+            selectedItem: value
         }))
 })
 
-const createSchedulesSlice = (set) => ({
-    schedules: [],
-    setSchedules: (value) =>
+const createTotalPagesSlice = (set) => ({
+    totalPages: 0,
+    setTotalPages: (value) =>
         set(() => ({
-            schedules: value
+            totalPages: value
         }))
 })
-
-
 
 const useCourseStore = create((...a) => ({
     ...createCoursesSlice(...a),
     ...createCourseTypesSlice(...a),
-    ...createInstructorsSlice(...a),
-    ...createSchedulesSlice(...a),
-
-
+    ...createSelectedItemSlice(...a),
+    ...createTotalPagesSlice(...a),
 }))
 
 export default useCourseStore;

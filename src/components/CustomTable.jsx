@@ -1,12 +1,11 @@
 import { ActionIcon, Group, Modal, Pagination, Table } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks';
+import { randomId, useDisclosure } from '@mantine/hooks';
 import { IconBellRinging, IconPhone, IconPhoto } from '@tabler/icons-react'
 import React, { useEffect } from 'react'
 import snachesOrcasLogo from '../assets/snachesOrcasLogo.png'
 import { useNavigation } from 'react-router-dom';
 function CustomTable(props) {
     const [opened, { toggle }] = useDisclosure(false);
-    const navigate = useNavigation()
     function camelToSentence(text) {
         // Split the camel case string into words
         const words = text.split(/([A-Z][a-z]+)/);
@@ -68,15 +67,13 @@ function CustomTable(props) {
                         {props.data?.map((element, index) => {
                             let values = Object.values(element)
                             let keys = Object.keys(element)
-                            return <Table.Tr key={element.id} onClick={e => {
+                            return <Table.Tr key={randomId()} onClick={e => {
                                 props.store?.setSelectedItem(element)
-                                console.log(element)
                                 localStorage.setItem('selectedItem', JSON.stringify(element))
-
-                                window.location.href = '/actualizar'
+                                window.open(`/actualizar-${props.type}`, '_self')
                             }}>
                                 {props.getters?.map(value => {
-                                    return <Table.Td className={cellColor(element[value])} key={element[value]} >
+                                    return <Table.Td className={cellColor(element[value])} key={element[value] + randomId()} >
                                         {element[value]}
                                     </Table.Td>
                                 }
@@ -106,12 +103,13 @@ function CustomTable(props) {
                     </Table.Tbody>
                 </Table>
             </Table.ScrollContainer>
-            <Group justify='end'>
+            <Group justify='center'>
                 <Pagination
                     total={props.store?.totalPages || 1}
                     value={props.filter?.currentPage}
                     onChange={props.filter?.setCurrentPage}
                     siblings={0}
+                    color='#2C3E50'
                 />
             </Group>
         </div>

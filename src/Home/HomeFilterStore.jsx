@@ -1,23 +1,23 @@
 import { create } from "zustand";
 
 const createEnrollmentStatusSlice = (set) => ({
-    enrollmentStatus: 'todos',
+    enrollmentStatus: [],
     setEnrollmentStatus: (value) =>
         set(() => ({
             enrollmentStatus: value,
         })),
 });
 
-const createCourseSlice = (set) => ({
-    course: 'todos',
-    setCourse: (value) =>
+const createSearchSlice = (set) => ({
+    search: '',
+    setSearch: (value) =>
         set(() => ({
-            course: value,
+            search: value,
         })),
 });
 
 const createPaymentStatusSlice = (set) => ({
-    paymentStatus: 'todos',
+    paymentStatus: [],
     setPaymentStatus: (value) =>
         set(() => ({
             paymentStatus: value,
@@ -27,9 +27,9 @@ const createPaymentStatusSlice = (set) => ({
 const createResetFiltersSlice = (set) => ({
     resetFilters: () =>
         set(() => ({
-            enrollmentStatus: null,
-            course: null,
-            paymentStatus: null,
+            enrollmentStatus: [],
+            paymentStatus: [],
+            search: "",
         })),
 });
 
@@ -43,7 +43,7 @@ const createCurrentPageSlice = (set) => ({
 
 const useHomeFilterStore = create((...a) => ({
     ...createEnrollmentStatusSlice(...a),
-    ...createCourseSlice(...a),
+    ...createSearchSlice(...a),
     ...createPaymentStatusSlice(...a),
     ...createCurrentPageSlice(...a),
 

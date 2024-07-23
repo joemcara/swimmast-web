@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom';
 import loginImage1 from '../assets/loginImage1.png'
 import loginImage2 from '../assets/loginImage2.png'
 import loginImage3 from '../assets/loginImage3.png'
-import { useDisclosure } from '@mantine/hooks';
+import { getHotkeyHandler, useDisclosure } from '@mantine/hooks';
 import axios from 'axios';
 import useLoginStore from './LoginStore';
 
@@ -23,10 +23,8 @@ function Login() {
             username: usernameRef.current.value,
             password: passwordRef.current.value
         }
-        console.log(data)
-        axios.post('login_user/', data)
+        axios.post('administration/login_user/', data)
             .then((response) => {
-                console.log(response.data);
                 window.localStorage.setItem('token', response.data.token);
                 loginStore.setUser(response.data.user);
                 window.localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -47,6 +45,9 @@ function Login() {
                         ref={usernameRef}
                         radius={'sm'}
                         className={'w-4/6 sm:w-5/12'}
+                        onKeyDown={getHotkeyHandler([
+                            ['Enter', login]
+                        ])}
                     />
 
                     <PasswordInput
@@ -57,6 +58,9 @@ function Login() {
                         ref={passwordRef}
                         onVisibilityChange={toggle}
                         visible={visible}
+                        onKeyDown={getHotkeyHandler([
+                            ['Enter', login]
+                        ])}
                     />
 
                     <CustomButton text='INGRESAR' onClick={login} />

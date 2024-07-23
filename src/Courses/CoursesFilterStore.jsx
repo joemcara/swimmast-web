@@ -1,26 +1,18 @@
 import { create } from 'zustand'
 
 const createCourseTypeSlice = (set) => ({
-    courseType: "todos",
+    courseType: [],
     setCourseType: (value) =>
         set(() => ({
             courseType: value
         }))
 })
 
-const createInstructorSlice = (set) => ({
-    instructor: "todos",
-    setInstructor: (value) =>
+const createSearchStore = (set) => ({
+    search: "",
+    setSearch: (value) =>
         set(() => ({
-            instructor: value
-        }))
-})
-
-const createScheduleSlice = (set) => ({
-    schedule: "00:00:00",
-    setSchedule: (value) =>
-        set(() => ({
-            schedule: value
+            search: value
         }))
 })
 
@@ -35,18 +27,15 @@ const createCurrentPageSlice = (set) => ({
 const createResetFiltersSlice = (set) => ({
     resetFilters: () =>
         set(() => ({
-            courseType: null,
-            instructor: null,
-            schedule: null
+            courseType: "",
+            search: "",
         })
         )
 })
 const useCoursesFilterStore = create((...a) => ({
     ...createCourseTypeSlice(...a),
-    ...createInstructorSlice(...a),
-    ...createScheduleSlice(...a),
+    ...createSearchStore(...a),
     ...createCurrentPageSlice(...a),
-
     ...createResetFiltersSlice(...a)
 }))
 
