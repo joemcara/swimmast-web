@@ -1,201 +1,200 @@
-import { create } from 'zustand'
-
+import { create } from "zustand";
 
 //REGISTER FORM DATA
 const createNamesSlice = (set) => ({
     names: "",
     setNames: (value) =>
         set(() => ({
-            names: value
-        }))
-})
+            names: value,
+        })),
+});
 
 const createLastNamesSlice = (set) => ({
     lastNames: "",
     setLastNames: (value) =>
         set(() => ({
-            lastNames: value
-        }))
-})
+            lastNames: value,
+        })),
+});
 
-const createBirthDateSlice = (set) => ({
-    birthDate: null,
+const createBirthdateSlice = (set) => ({
+    birthdate: null,
     setBirthDate: (value) =>
         set(() => ({
-            birthDate: value
-        }))
-})
+            birthdate: value,
+        })),
+});
 
 const createAgeSlice = (set) => ({
     age: 0,
     setAge: (value) =>
         set(() => ({
-            age: value
-        }))
-})
+            age: value,
+        })),
+});
 
 const createVoucherNumberSlice = (set) => ({
     voucherNumber: "",
     setVoucherNumber: (value) =>
         set(() => ({
-            voucherNumber: value
-        }))
-})
+            voucherNumber: value,
+        })),
+});
 
 const createEmailSlice = (set) => ({
     email: "",
     setEmail: (value) =>
         set(() => ({
-            email: value
-        }))
-})
+            email: value,
+        })),
+});
 
 const createAddressSlice = (set) => ({
     address: "",
     setAddress: (value) =>
         set(() => ({
-            address: value
-        }))
-})
+            address: value,
+        })),
+});
 
 const createRepresentativeSlice = (set) => ({
     representative: "",
     setRepresentative: (value) =>
         set(() => ({
-            representative: value
-        }))
-})
+            representative: value,
+        })),
+});
 
 const createRelationshipSlice = (set) => ({
     relationship: "",
     setRelationship: (value) =>
         set(() => ({
-            relationship: value
-        }))
-})
+            relationship: value,
+        })),
+});
 
 const createPhoneNumberSlice = (set) => ({
     phoneNumber: "",
     setPhoneNumber: (value) =>
         set(() => ({
-            phoneNumber: value
-        }))
-})
+            phoneNumber: value,
+        })),
+});
 
 const createInstructorSlice = (set) => ({
     instructor: null,
     setInstructor: (value) =>
         set(() => ({
-            instructor: value
-        }))
-})
+            instructor: value,
+        })),
+});
 
 const createCourseTypeSlice = (set) => ({
     courseType: null,
     setCourseType: (value) =>
         set(() => ({
-            courseType: value
-        }))
-})
+            courseType: value,
+        })),
+});
 
 const createEnrollmentStatusSlice = (set) => ({
     enrollmentStatus: null,
     setEnrollmentStatus: (value) =>
         set(() => ({
-            enrollmentStatus: value
-        }))
-})
+            enrollmentStatus: value,
+        })),
+});
 
 const createEnrollmentDurationSlice = (set) => ({
     enrollmentDuration: [],
     setEnrollmentDuration: (value) =>
         set(() => ({
-            enrollmentDuration: value
-        }))
-})
+            enrollmentDuration: value,
+        })),
+});
 
 const createPaymentStatusSlice = (set) => ({
     paymentStatus: null,
     setPaymentState: (value) =>
         set(() => ({
-            paymentStatus: value
-        }))
-})
+            paymentStatus: value,
+        })),
+});
 
 const createCreditSlice = (set) => ({
     credit: 0,
     setCredit: (value) =>
         set(() => ({
-            credit: value
-        }))
-})
+            credit: value,
+        })),
+});
 
 const createPaymentMethodSlice = (set) => ({
     paymentMethod: "TRANSACTION",
     setPaymentMethod: (value) =>
         set(() => ({
-            paymentMethod: value
-        }))
-})
+            paymentMethod: value,
+        })),
+});
 
 const createPaymentSlice = (set) => ({
     payment: 0,
     setPayment: (value) =>
         set(() => ({
-            payment: value
-        }))
-})
+            payment: value,
+        })),
+});
 
 const createRoleSlice = (set) => ({
     role: null,
     setRole: (value) =>
         set(() => ({
-            role: value
-        }))
-})
+            role: value,
+        })),
+});
 
 const createUsernameSlice = (set) => ({
     username: "",
     setUsername: (value) =>
         set(() => ({
-            username: value
-        }))
-})
+            username: value,
+        })),
+});
 
 //FOR "INDIVIDUAL" COURSE TYPE
 const createNumberOfDaysSlice = (set) => ({
     numbersOfDays: "",
     setNumberOfDays: (value) =>
         set(() => ({
-            numbersOfDays: value
-        }))
-})
+            numbersOfDays: value,
+        })),
+});
 
 const createCourseDaysSlice = (set) => ({
     courseDays: [],
     setCourseDays: (value) =>
         set(() => ({
-            courseDays: value
-        }))
-})
+            courseDays: value,
+        })),
+});
 
 //FOR "OTHERS" COURSE TYPES
 const createCourseSlice = (set) => ({
     course: null,
     setCourse: (value) =>
         set(() => ({
-            course: value
-        }))
-})
+            course: value,
+        })),
+});
 
 //IS INTRUCTOR
 const createIsInstructorSlice = (set) => ({
     isInstructor: false,
     setIsInstructor: (value) =>
         set(() => ({
-            isInstructor: value
-        }))
-})
+            isInstructor: value,
+        })),
+});
 
 const createResetSlice = (set) => ({
     reset: () =>
@@ -222,15 +221,14 @@ const createResetSlice = (set) => ({
             numbersOfDays: "",
             courseDays: [],
             course: null,
-            isInstructor: false
-        })
-        )
-})
+            isInstructor: false,
+        })),
+});
 
 const useSwimmerFormStore = create((...a) => ({
     ...createNamesSlice(...a),
     ...createLastNamesSlice(...a),
-    ...createBirthDateSlice(...a),
+    ...createBirthdateSlice(...a),
     ...createAgeSlice(...a),
     ...createVoucherNumberSlice(...a),
     ...createEmailSlice(...a),
@@ -255,7 +253,7 @@ const useSwimmerFormStore = create((...a) => ({
     ...createCourseSlice(...a),
 
     ...createIsInstructorSlice(...a),
-    ...createResetSlice(...a)
-}))
+    ...createResetSlice(...a),
+}));
 
 export default useSwimmerFormStore;
