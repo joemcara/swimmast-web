@@ -1,10 +1,11 @@
 import React, { useRef } from 'react'
 import CustomSection from '../components/CustomSection';
 import { ActionIcon, Group, rem } from '@mantine/core';
-import { IconClock } from '@tabler/icons-react';
+import { IconBellSchool, IconClock, IconPlus, IconSchool, IconSchoolBell, IconSchoolOff } from '@tabler/icons-react';
 import { CustomButton, CustomDatePickerInput, CustomNumberInput, CustomSelect, CustomTextInput } from '../components/CustomInputs';
 import { TimeInput } from '@mantine/dates';
 import useCourseFormStore from './CourseFormStore';
+import { IconScriptPlus } from '@tabler/icons-react';
 
 function RegisterCourse() {
     const courseFormStore = useCourseFormStore();
@@ -25,7 +26,10 @@ function RegisterCourse() {
     )
 
     return (
-        <CustomSection title='Registrar curso'>
+        <CustomSection title='Registrar curso' icon={<div className=' relative pr-2'>
+            <IconSchool size={40} />
+            <IconPlus size={17} stroke={4} className='absolute right-0 bottom-0' />
+        </div>}>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8">
 
                 <CustomTextInput

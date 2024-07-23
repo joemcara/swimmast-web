@@ -1,5 +1,5 @@
 import { ActionIcon, Group, rem } from '@mantine/core';
-import { IconClock } from '@tabler/icons-react';
+import { IconClock, IconPencil, IconPencilCode, IconSchool } from '@tabler/icons-react';
 import React, { useEffect, useRef } from 'react'
 import { CustomButton, CustomDatePickerInput, CustomNumberInput, CustomSelect, CustomTextInput } from '../components/CustomInputs';
 import useCourseFormStore from '../Register/CourseFormStore';
@@ -69,7 +69,10 @@ function UpdateCourse() {
     }, [])
 
     return (
-        <CustomSection title='Actualizar curso'>
+        <CustomSection title='Actualizar curso' icon={<div className='relative pr-2'>
+            <IconSchool size={40} />
+            <IconPencil size={17} stroke={3} className='absolute right-0 bottom-0' />
+        </div>}>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8">
 
                 <CustomTextInput

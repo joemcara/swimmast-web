@@ -19,6 +19,7 @@ import {
     updateErrorLoadingNotification,
     updateSuccessLoadingNotification,
 } from "../util/CustomNotifications";
+import { IconUserCheck, IconUserCircle, IconUserEdit, IconUserFilled, IconUserPlus, IconUsersPlus, IconUserUp } from "@tabler/icons-react";
 function RegisterSwimmer() {
     const registerStore = useRegisterStore();
     const swimmerFormStore = useSwimmerFormStore();
@@ -248,7 +249,7 @@ function RegisterSwimmer() {
     };
 
     return (
-        <CustomSection title="Registrar nadador">
+        <CustomSection title="Registrar nadador" icon={<IconUserPlus size={40} />}>
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 pb-4">
                 <CustomTextInput
                     label=" Nombres"

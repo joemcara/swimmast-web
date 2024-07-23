@@ -6,7 +6,7 @@ import { Autocomplete, Group, InputLabel, Select, Input, Stack } from '@mantine/
 import axios from 'axios';
 import useCourseStore from './CourseStore';
 import useCoursesFilterStore from './CoursesFilterStore';
-import { IconSearch, IconSwimming } from '@tabler/icons-react';
+import { IconSchool, IconSearch, IconSwimming } from '@tabler/icons-react';
 import { CustomCheckbox } from '../components/CustomInputs';
 function Curso() {
     const courseStore = useCourseStore();
@@ -54,7 +54,7 @@ function Curso() {
     return (
         <div>
             <CustomSection
-                icon={<IconSwimming size={35} />}
+                icon={<IconSchool size={40} />}
                 title="Cursos"
                 searchBar
                 getData={getCourses}

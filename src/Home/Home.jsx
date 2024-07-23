@@ -6,7 +6,7 @@ import CustomFilter from '../components/CustomFilter'
 import axios from 'axios'
 import useHomeStore from './HomeStore'
 import useHomeFilterStore from './HomeFilterStore'
-import { IconSearch, IconUser } from '@tabler/icons-react'
+import { IconSearch, IconSwimming, IconUser } from '@tabler/icons-react'
 import { CustomCheckbox } from '../components/CustomInputs'
 import { getHotkeyHandler, randomId, useHotkeys } from '@mantine/hooks'
 
@@ -54,7 +54,7 @@ function Home() {
     return (
         <CustomSection
             title="Nadadores registrados"
-            icon={<IconUser size={35} />}
+            icon={<IconUser size={40} />}
             searchBar
             getData={getSwimmers}
             filter={homeFilterStore}

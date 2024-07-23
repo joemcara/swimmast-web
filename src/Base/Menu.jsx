@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import snachesOrcasLogo from '../assets/snachesOrcasLogo.png';
 import CustomNavLink from '../components/CustomNavLink';
 import { Accordion } from '@mantine/core';
-import { IconAddressBook, IconLogout, IconSwimming, IconUser, IconUserEdit } from '@tabler/icons-react';
+import { IconAddressBook, IconEdit, IconFileDescription, IconLogout, IconSchool, IconSwimming, IconUser, IconUserEdit } from '@tabler/icons-react';
 import { CustomAccordionItem } from '../components/CustomAccordionItem';
 import { useLocation } from 'react-router-dom';
 
@@ -10,9 +10,9 @@ const iconSize = 35;
 
 const icons = {
     "SWIMMER": <IconUser size={iconSize} />,
-    "COURSE": <IconSwimming size={iconSize} />,
-    "REGISTER": <IconAddressBook size={iconSize} />,
-    "UPDATE": <IconUserEdit size={iconSize} />,
+    "COURSE": <IconSchool size={iconSize} />,
+    "REGISTER": <IconFileDescription size={iconSize} />,
+    "UPDATE": <IconEdit size={iconSize} />,
     "LOGOUT": <IconLogout size={iconSize} />,
 
 }

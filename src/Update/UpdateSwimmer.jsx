@@ -5,6 +5,7 @@ import useSwimmerFormStore from '../Register/SwimmerFormStore';
 import { Group, InputWrapper, Input } from '@mantine/core';
 import axios from 'axios';
 import CustomSection from '../components/CustomSection';
+import { IconUserEdit } from '@tabler/icons-react';
 
 function UpdateSwimmer() {
     const registerStore = useRegisterStore();
@@ -110,7 +111,7 @@ function UpdateSwimmer() {
     }, []);
 
     return (
-        <CustomSection title="Actualizar nadador">
+        <CustomSection title="Actualizar nadador" icon={<IconUserEdit size={40} />}>
             <form>
                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 pb-4">
                     <CustomTextInput
