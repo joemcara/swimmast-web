@@ -19,7 +19,7 @@ const createLastNamesSlice = (set) => ({
 })
 
 const createBirthDateSlice = (set) => ({
-    birthDate: new Date(),
+    birthDate: null,
     setBirthDate: (value) =>
         set(() => ({
             birthDate: value
@@ -74,11 +74,11 @@ const createRelationshipSlice = (set) => ({
         }))
 })
 
-const createCellphoneNumberSlice = (set) => ({
-    cellphoneNumber: "",
-    setCellphoneNumber: (value) =>
+const createPhoneNumberSlice = (set) => ({
+    phoneNumber: "",
+    setPhoneNumber: (value) =>
         set(() => ({
-            cellphoneNumber: value
+            phoneNumber: value
         }))
 })
 
@@ -151,6 +151,14 @@ const createRoleSlice = (set) => ({
     setRole: (value) =>
         set(() => ({
             role: value
+        }))
+})
+
+const createUsernameSlice = (set) => ({
+    username: "",
+    setUsername: (value) =>
+        set(() => ({
+            username: value
         }))
 })
 
@@ -229,7 +237,7 @@ const useSwimmerFormStore = create((...a) => ({
     ...createAddressSlice(...a),
     ...createRepresentativeSlice(...a),
     ...createRelationshipSlice(...a),
-    ...createCellphoneNumberSlice(...a),
+    ...createPhoneNumberSlice(...a),
     ...createInstructorSlice(...a),
     ...createCourseTypeSlice(...a),
     ...createEnrollmentStatusSlice(...a),
@@ -239,6 +247,7 @@ const useSwimmerFormStore = create((...a) => ({
     ...createPaymentMethodSlice(...a),
     ...createPaymentSlice(...a),
     ...createRoleSlice(...a),
+    ...createUsernameSlice(...a),
     //FOR "INDIVIDUAL" COURSE TYPE
     ...createNumberOfDaysSlice(...a),
     ...createCourseDaysSlice(...a),

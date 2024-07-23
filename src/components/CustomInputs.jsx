@@ -3,7 +3,7 @@ import { DateInput, DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCash, IconPhoto } from "@tabler/icons-react";
 import { useRef } from "react";
-
+import 'dayjs/locale/es';
 export function CustomButton(props) {
     return (
         <Button bg={props.bgColor || '#0730BE'} w={props.w || 200} radius={'sm'} mt={props.mt || 0} onClick={props.onClick} >
@@ -79,6 +79,7 @@ export function CustomDateInput(props) {
             valueFormat={props.valueFormat || 'YYYY-MM-DD'}
             radius={props.radius || 'sm'}
             className={props.className || 'sm:col-span-2'}
+            locale="es"
         />
     );
 }
@@ -91,6 +92,8 @@ export function CustomDatePickerInput(props) {
             placeholder={props.placeholder}
             value={props.value}
             onChange={props.onChange}
+            locale="es"
+            valueFormat={props.valueFormat || 'YYYY-MM-DD'}
             className="sm:col-span-2"
         />
     );

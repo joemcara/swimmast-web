@@ -56,6 +56,14 @@ const createRolesSlice = (set) => ({
         }))
 })
 
+const createUsernamesSlice = (set) => ({
+    usernames: [],
+    setUsernames: (value) =>
+        set(() => ({
+            usernames: value
+        }))
+})
+
 const useRegisterStore = create((...a) => ({
     ...createInstructorsSlice(...a),
     ...createCourseTypesSlice(...a),
@@ -64,6 +72,7 @@ const useRegisterStore = create((...a) => ({
     ...createPaymentStatusesSlice(...a),
     ...createCoursesSlice(...a),
     ...createRolesSlice(...a),
+    ...createUsernamesSlice(...a)
 }))
 
 export default useRegisterStore;

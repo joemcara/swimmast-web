@@ -5,7 +5,7 @@ import { CustomButton, CustomDateInput, CustomDatePickerInput, CustomNumberInput
 import { Group, Input, InputWrapper } from '@mantine/core';
 import axios from 'axios';
 import useSwimmerFormStore from './SwimmerFormStore';
-
+import { showErrorNotification, showLoadingNotification, updateErrorLoadingNotification, updateSuccessLoadingNotification } from '../util/CustomNotifications';
 function RegisterSwimmer() {
     const registerStore = useRegisterStore();
     const swimmerFormStore = useSwimmerFormStore();
@@ -86,10 +86,10 @@ function RegisterSwimmer() {
             role: swimmerFormStore.role,
             password: '12345678',
             confirm_password: '12345678',
-            date_of_birth: swimmerFormStore.birthDate?.toISOString().split('T')[0],
+            birthdate: swimmerFormStore.birthDate?.toISOString().split('T')[0],
             age: swimmerFormStore.age,
             address: swimmerFormStore.address,
-            cell_phone: swimmerFormStore.cellphoneNumber,
+            phone_number: swimmerFormStore.phoneNumber,
             representative_name: swimmerFormStore.representative,
             representative_relationship: swimmerFormStore.relationship,
         }
@@ -97,13 +97,22 @@ function RegisterSwimmer() {
 
     const saveUser = async () => {
         let data = swimmerFormStore.isInstructor ? getInstructorData() : getSwimmerData();
-        let url = 'register/';
+        await axios.post('administration/usernames/', data).then(function (response) {
+            registerStore.setUsernames(response.data)
+            swimmerFormStore.setUsername(response.data[0])
+        }).catch(function (error) {
+            console.log(error)
+        })
+        data['username'] = swimmerFormStore.username
+        data['pass_web'] = true
+        let url = 'administration/register_user/';
         console.log(data)
         if (!data) return;
         const notificationId = showLoadingNotification({ message: 'Creando registro de usuario' })
         axios.post(url, data)
             .then(function (response) {
                 if (!swimmerFormStore.isInstructor) {
+                    console.log(response.data)
                     return enrollSwimmer(response.data.id, 1)
                 }
                 swimmerFormStore.reset()
@@ -122,9 +131,11 @@ function RegisterSwimmer() {
             applicant: swimmerId,
             course: swimmerFormStore.course,
             status: swimmerFormStore.enrollmentStatus,
+            receipt_number: swimmerFormStore.voucherNumber,
         }).then(function (response) {
-            const enrollmentId = response.data.id
-            return generatePaymentReceipt(enrollmentId, notificationId)
+            const enrollmentId = response.data.enrollment
+            const voucherNumber = response.data.payment_receipt
+            return generatePayment(enrollmentId, notificationId, voucherNumber)
         }).catch(function (error) {
             // DELETE USER IF ENROLLMENT CREATION FAILS
             console.log(error)
@@ -132,13 +143,12 @@ function RegisterSwimmer() {
 
         })
     }
-    const generatePaymentReceipt = (enrollmentId, notificationId) => {
+    const generatePayment = (enrollmentId, notificationId, voucherNumber) => {
         let course = registerStore.courses?.find(course => course.value === swimmerFormStore.course)?.course
-        console.log("payment_value", swimmerFormStore.credit)
         if (!course) {
             return updateErrorLoadingNotification(notificationId)
         }
-        let url = 'paymentreceipt/create/';
+        let url = 'payment/create/';
         axios.post(url, {
             receipt_number: swimmerFormStore.voucherNumber,
             payment_status: swimmerFormStore.paymentStatus,
@@ -178,24 +188,30 @@ function RegisterSwimmer() {
                     onChange={e => swimmerFormStore.setLastNames(e.currentTarget.value)}
                 />
 
-                {!swimmerFormStore.isInstructor && <div className="sm:col-span-2 grid grid-cols-4 gap-x-3">
-                    <CustomDateInput
-                        label="Fecha de nacimiento"
-                        withAsterisk
-                        placeholder="00/00/0000"
-                        valueFormat="DD/MM/YYYY"
-                        className='sm:col-span-3'
-                        value={swimmerFormStore.birthDate || new Date()}
-                        onChange={(birthdate) => {
-                            swimmerFormStore.setBirthDate(birthdate);
-                            swimmerFormStore.setAge(calculateAge(birthdate))
-                        }}
-                    />
-                    <InputWrapper label='Edad:'>
-                        <Input value={swimmerFormStore.age || 0} readOnly />
-                    </InputWrapper>
+                {!swimmerFormStore.isInstructor && <><CustomSelect
+                    label="Usuario"
+                    data={registerStore.usernames}
+                    value={swimmerFormStore.username}
+                    onChange={swimmerFormStore.setUsername}
+                /><div className="sm:col-span-2 grid grid-cols-4 gap-x-3">
 
-                </div>
+                        <CustomDateInput
+                            label="Fecha de nacimiento"
+                            withAsterisk
+                            placeholder="día/mes/año"
+                            valueFormat="DD MMMM YYYY"
+                            className='sm:col-span-3'
+                            value={swimmerFormStore.birthDate}
+                            onChange={(birthdate) => {
+                                swimmerFormStore.setBirthDate(birthdate);
+                                swimmerFormStore.setAge(calculateAge(birthdate))
+                            }}
+                        />
+                        <InputWrapper label='Edad:'>
+                            <Input value={swimmerFormStore.age || 0} readOnly />
+                        </InputWrapper>
+
+                    </div></>
                 }
                 <div className='sm:col-span-2 grid sm:grid-cols-7 gap-x-3'>
                     <CustomSelect
@@ -210,7 +226,7 @@ function RegisterSwimmer() {
                         }}
                     />
                     {!swimmerFormStore.isInstructor && <CustomTextInput
-                        label="#Comprobante "
+                        label="#Comprobante"
                         placeholder="Ingrese número de comprobante"
                         className='sm:col-span-3'
                         value={swimmerFormStore.voucherNumber}
@@ -228,15 +244,7 @@ function RegisterSwimmer() {
                     onChange={e => swimmerFormStore.setEmail(e.currentTarget?.value)}
                 />
 
-                {!swimmerFormStore.isInstructor && <> <CustomTextInput
-                    leftSectionPointerEvents="none"
-                    withAsterisk
-                    label="Dirección"
-                    placeholder="Ingrese dirección"
-                    className="sm:col-span-2"
-                    value={swimmerFormStore.address}
-                    onChange={e => swimmerFormStore.setAddress(e.currentTarget?.value)}
-                />
+                {!swimmerFormStore.isInstructor && <>
 
                     <CustomTextInput
                         leftSectionPointerEvents="none"
@@ -263,8 +271,8 @@ function RegisterSwimmer() {
                             label="Teléfono: "
                             placeholder="Ingrese telefono"
                             className="sm:col-span-3"
-                            value={swimmerFormStore.cellphoneNumber}
-                            onChange={e => swimmerFormStore.setCellphoneNumber(e.currentTarget?.value)}
+                            value={swimmerFormStore.phoneNumber}
+                            onChange={e => swimmerFormStore.setPhoneNumber(e.currentTarget?.value)}
                         />
                     </div>
 
@@ -297,7 +305,9 @@ function RegisterSwimmer() {
                             onChange={swimmerFormStore.setCourse}
                         />
                         <InputWrapper label='Precio'>
-                            <Input value={swimmerFormStore.course || 0} readOnly />
+                            <Input value={
+                                registerStore.courses?.find(course => course.value === swimmerFormStore.course)?.course?.price
+                                || 0} readOnly />
                         </InputWrapper>
                     </div>
                 </>}
@@ -339,6 +349,8 @@ function RegisterSwimmer() {
                         type="range"
                         label="Inicio-Fin de Inscripción:"
                         placeholder="Inicio-Fin de Inscripción:"
+                        valueFormat="DD MMMM YYYY"
+                        locale="es"
                         value={swimmerFormStore.applicationDuration}
                         onChange={swimmerFormStore.setApplicationDuration}
                     />
