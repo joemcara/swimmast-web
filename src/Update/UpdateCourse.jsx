@@ -1,4 +1,4 @@
-import { ActionIcon, Group, rem } from '@mantine/core';
+import { ActionIcon, Group, Radio, rem } from '@mantine/core';
 import { IconClock, IconPencil, IconPencilCode, IconSchool } from '@tabler/icons-react';
 import React, { useEffect, useRef } from 'react'
 import { CustomButton, CustomDatePickerInput, CustomNumberInput, CustomSelect, CustomTextInput } from '../components/CustomInputs';
@@ -7,10 +7,12 @@ import { TimeInput } from '@mantine/dates';
 import CustomSection from '../components/CustomSection';
 import useRegisterStore from '../Register/RegisterStore';
 import axios from 'axios';
+import useCourseStore from '../Courses/CourseStore';
 
 function UpdateCourse() {
     const courseFormStore = useCourseFormStore();
     const registerStore = useRegisterStore();
+    const courseStore = useCourseStore();
     const instructor = ["Ricardo Alcivar", "Joseph Carabajo", "Andres Borbor", "Paulina", "Katherine"];
 
     const startTimeRef = useRef(null);
@@ -60,12 +62,16 @@ function UpdateCourse() {
     }, [])
 
     useEffect(() => {
-        courseFormStore.setCourseName("Curso de natación")
-        courseFormStore.setInstructor("Ricardo Alcivar")
-        courseFormStore.setCourseType("GRUPAL")
-        courseFormStore.setEnrollmentDuration([new Date(), new Date()])
-        courseFormStore.setStartTime("08:00")
-        courseFormStore.setEndTime("09:00")
+        let startDate = new Date(courseStore.selectedItem?.start_date || new Date())
+        let dueDate = new Date(courseStore.selectedItem?.due_date || new Date())
+        console.log(courseStore.selectedItem)
+        courseFormStore.setCourseName(courseStore.selectedItem?.name)
+        courseFormStore.setInstructor(courseStore.selectedItem?.instructor?.id?.toString())
+        courseFormStore.setCourseType(courseStore.selectedItem?.course_type?.id?.toString())
+        courseFormStore.setCourseState(courseStore.selectedItem?.course_status?.id?.toString())
+        courseFormStore.setEnrollmentDuration([startDate, dueDate])
+        courseFormStore.setStartTime(courseStore.selectedItem?.start_time)
+        courseFormStore.setEndTime(courseStore.selectedItem?.end_time)
     }, [])
 
     return (
@@ -91,30 +97,47 @@ function UpdateCourse() {
                     onChange={courseFormStore.setInstructor}
                 />
 
-                <CustomSelect
-                    label="Tipo de clase"
+                {/* <CustomSelect
+                    label="Tipo de curso"
                     data={registerStore.courseTypes}
                     value={courseFormStore.courseType}
                     onChange={courseFormStore.setCourseType}
-                />
+                /> */}
+                <Radio.Group label="Tipo de curso" className='col-span-2' value={courseFormStore.courseType} onChange={courseFormStore.setCourseType}>
+                    <Group mt={6}>
+                        {registerStore.courseTypes?.map((type) => (
+                            <Radio
+                                key={type.key + type.value}
+                                value={type.value}
+                                color="#15192F"
+                                label={type.label?.charAt(0).toUpperCase() + type.label?.slice(1).toLowerCase()}
+                            />
+                        ))}
+                    </Group>
+                </Radio.Group>
 
+                <Radio.Group label="Estado del curso" className='col-span-2' value={courseFormStore.courseState} onChange={courseFormStore.setCourseState}>
+                    <Group mt={6}>
+                        {registerStore.courseStatuses?.map((status) => (
+                            <Radio
+                                key={status.key + status.value}
+                                value={status.value}
+                                color="#15192F"
+                                label={status.label?.charAt(0).toUpperCase() + status.label?.slice(1).toLowerCase()}
+                            />
+                        ))}
+                    </Group>
+                </Radio.Group>
                 <CustomDatePickerInput
                     label="Inicio-Fin de Curso:"
                     placeholder="Inicio-Fin de Curso:"
                     value={courseFormStore.enrollmentDuration}
                     onChange={courseFormStore.setEnrollmentDuration}
                 />
-                <CustomSelect
+                {/* <CustomSelect
                     label="Estado"
                     data={registerStore.courseStatuses}
-                />
-                <CustomNumberInput
-                    label="Precio: $"
-                    defaultValue={0.00}
-                    precision={2}
-                    min={-1}
-                    step={0.05}
-                />
+                    /> */}
                 <TimeInput
                     label="Hora Inicio:"
                     maxTime={courseFormStore.endTime}
@@ -131,6 +154,13 @@ function UpdateCourse() {
                     minTime={courseFormStore.startTime}
                     value={courseFormStore.endTime}
                     onChange={e => courseFormStore.setEndTime(e.currentTarget?.value)}
+                />
+                <CustomNumberInput
+                    label="Precio: $"
+                    defaultValue={0.00}
+                    precision={2}
+                    min={-1}
+                    step={0.05}
                 />
 
             </div>

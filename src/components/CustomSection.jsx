@@ -13,8 +13,8 @@ function CustomSection(props) {
     </ActionIcon>
 
     return (
-        <section className='flex justify-center items'>
-            <div className='bg-system-section-white absolute top-16 w-5/6 lg:top-12 lg:w-3/4 self-center lg:min-h-5/6 p-8 rounded-md'>
+        <section className='flex justify-center '>
+            <div className='bg-system-section-white w-5/6 lg:top-12 lg:w-11/12 self-center lg:min-h-5/6 p-8 rounded-md'>
                 <div className='flex gap-2 justify-between items-center'>
                     <div className='flex items-center gap-2'>
                         {props.icon}

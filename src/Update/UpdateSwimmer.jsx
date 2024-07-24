@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import useRegisterStore from '../Register/RegisterStore';
 import { CustomButton, CustomDateInput, CustomSelect, CustomTextInput } from '../components/CustomInputs';
 import useSwimmerFormStore from '../Register/SwimmerFormStore';
-import { Group, InputWrapper, Input } from '@mantine/core';
+import { Group, InputWrapper, Input, Radio } from '@mantine/core';
 import axios from 'axios';
 import CustomSection from '../components/CustomSection';
 import { IconUserEdit } from '@tabler/icons-react';
@@ -69,29 +69,30 @@ function UpdateSwimmer() {
             last_name: swimmerFormStore.lastNames,
             email: swimmerFormStore.email,
             role: swimmerFormStore.role,
-            password: '12345678',
-            confirm_password: '12345678',
-            date_of_birth: swimmerFormStore.birthDate?.toISOString().split('T')[0],
-            age: swimmerFormStore.age,
-            address: swimmerFormStore.address,
-            cell_phone: swimmerFormStore.cellphoneNumber,
-            representative_name: swimmerFormStore.representative,
-            representative_relationship: swimmerFormStore.relationship,
+            // password: '12345678',
+            // confirm_password: '12345678',
+            // birthdate: swimmerFormStore.birthdate?.toISOString().split('T')[0],
+            birthdate: swimmerFormStore.birthdate,
+            // age: swimmerFormStore.age,
+            // address: swimmerFormStore.address,
+            // cell_phone: swimmerFormStore.cellphoneNumber,
+            // representative_name: swimmerFormStore.representative,
+            // representative_relationship: swimmerFormStore.relationship,
         }
     }
 
     const editUser = async () => {
         let data = swimmerFormStore.isInstructor ? getInstructorData() : getSwimmerData();
-        let url = 'member/';
+        let url = `member/edit/${homeStore.selectedItem?.id}/`;
         if (swimmerFormStore.role === 'INSTRUCTOR') {
             url = 'instructor/'
         } else if (swimmerFormStore.role === 'DEPORTISTA') {
             url = 'athlete/'
         }
-        swimmerFormStore.setRole(null)
-        swimmerFormStore.reset();
-
-        axios.put(url, data)
+        // swimmerFormStore.setRole(null)
+        // swimmerFormStore.reset();
+        console.log(data)
+        axios.patch(url, data)
             .then(function (response) {
                 getSelectData();
                 console.log(response)
@@ -102,6 +103,8 @@ function UpdateSwimmer() {
 
     useEffect(() => {
         getSelectData();
+        swimmerFormStore.setNames(homeStore.selectedItem?.first_name)
+        swimmerFormStore.setLastNames(homeStore.selectedItem?.last_name)
         swimmerFormStore.setRole(homeStore.selectedItem?.role_id?.toString())
         swimmerFormStore.setPhoneNumber(homeStore.selectedItem?.phone_number)
         swimmerFormStore.setEmail(homeStore.selectedItem?.email)
@@ -118,7 +121,7 @@ function UpdateSwimmer() {
                         withAsterisk
                         placeholder="Ingrese sus nombres"
                         className='sm:col-span-2'
-                        value={homeStore.selectedItem?.first_name}
+                        value={swimmerFormStore.names}
                         onChange={e => swimmerFormStore.setNames(e.currentTarget.value)}
                     />
                     <CustomTextInput
@@ -126,7 +129,7 @@ function UpdateSwimmer() {
                         withAsterisk
                         placeholder="Ingrese sus apellidos"
                         className="sm:col-span-2"
-                        value={homeStore.selectedItem?.last_name}
+                        value={swimmerFormStore.lastName}
                         onChange={e => swimmerFormStore.setLastNames(e.currentTarget.value)}
                     />
 
@@ -137,26 +140,43 @@ function UpdateSwimmer() {
                             placeholder="día mes año"
                             valueFormat="DD MMMM YYYY"
                             className='sm:col-span-3'
-                            value={new Date(swimmerFormStore.birthdate)}
+                            value={swimmerFormStore.birthdate ? new Date(swimmerFormStore.birthdate) : new Date()}
                             onChange={(birthdate) => {
                                 swimmerFormStore.setBirthdate(birthdate);
                                 swimmerFormStore.setAge(calculateAge(birthdate))
                             }}
                         />
                         <InputWrapper label='Edad:'>
-                            <Input value={swimmerFormStore?.age || 0} readOnly />
+                            <Input value={swimmerFormStore?.age || 0} readOnly variant='filled' />
                         </InputWrapper>
 
                     </div>
                     }
                     <div className='sm:col-span-2 grid sm:grid-cols-7 gap-x-3'>
-                        <CustomSelect
+                        {/* <CustomSelect
                             label="Rol"
                             data={registerStore.roles}
                             className={swimmerFormStore.isInstructor ? 'sm:col-span-7' : 'sm:col-span-4'}
                             value={swimmerFormStore.role}
                             onChange={swimmerFormStore.setRole}
-                        />
+                        /> */}
+                        <Radio.Group label="Rol" className='col-span-6' value={swimmerFormStore.rol} onChange={swimmerFormStore.setRole}>
+                            <Group mt={8}>
+                                {registerStore.roles?.map((role) => (
+                                    <Radio
+                                        styles={{
+                                            label: {
+                                                paddingLeft: 2
+                                            }
+                                        }}
+                                        key={role.key + role.value}
+                                        value={role.value}
+                                        color="#15192F"
+                                        label={role.label?.charAt(0).toUpperCase() + role.label?.slice(1).toLowerCase()}
+                                    />
+                                ))}
+                            </Group>
+                        </Radio.Group>
                         {/* {!store.isInstructor && <CustomTextInput
                         label="#Comprobante "
                         placeholder="Ingrese número de comprobante"

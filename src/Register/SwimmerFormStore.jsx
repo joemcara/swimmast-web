@@ -201,7 +201,7 @@ const createResetSlice = (set) => ({
         set(() => ({
             names: "",
             lastNames: "",
-            birthDate: new Date(),
+            birthdate: new Date(),
             age: 0,
             voucherNumber: "",
             email: "",

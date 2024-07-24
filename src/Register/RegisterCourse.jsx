@@ -112,7 +112,7 @@ function RegisterCourse() {
                             <Radio
                                 key={type.key + type.value}
                                 value={type.value}
-                                color="blue"
+                                color="#15192F"
                                 label={type.label?.charAt(0).toUpperCase() + type.label?.slice(1).toLowerCase()}
                             />
                         ))}
@@ -127,7 +127,7 @@ function RegisterCourse() {
                             return <Radio
                                 key={status.key + status.value}
                                 value={status.value}
-                                color="blue"
+                                color="#15192F"
                                 label={status.label?.charAt(0).toUpperCase() + status.label?.slice(1).toLowerCase()}
                             />
                         })}
