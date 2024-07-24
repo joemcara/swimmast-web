@@ -28,7 +28,7 @@ function Home() {
 
     useEffect(() => {
         getSwimmers()
-    }, [])
+    }, [homeFilterStore.currentPage])
 
     useEffect(() => {
         if (!homeFilterStore.search) getSwimmers();

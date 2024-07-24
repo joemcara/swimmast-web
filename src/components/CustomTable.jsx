@@ -3,9 +3,11 @@ import { randomId, useDisclosure } from '@mantine/hooks';
 import { IconBellRinging, IconPhone, IconPhoto } from '@tabler/icons-react'
 import React, { useEffect } from 'react'
 import snachesOrcasLogo from '../assets/snachesOrcasLogo.png'
-import { useNavigation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 function CustomTable(props) {
     const [opened, { toggle }] = useDisclosure(false);
+    let location = useLocation()
+    const navigate = useNavigate()
     function camelToSentence(text) {
         // Split the camel case string into words
         const words = text.split(/([A-Z][a-z]+)/);
@@ -68,8 +70,11 @@ function CustomTable(props) {
                             let values = Object.values(element)
                             let keys = Object.keys(element)
                             return <Table.Tr key={randomId()} onClick={e => {
+                                element.age = element.age || element.edad
                                 props.store?.setSelectedItem(element)
-                                window.open(`/actualizar-${props.type}`, '_self')
+                                // localStorage.setItem('selectedItem', JSON.stringify(element))
+                                // window.open(`/actualizar-${props.type}`, '_self')
+                                navigate(`/actualizar-${props.type}`)
                             }}>
                                 {props.getters?.map(value => {
                                     return <Table.Td className={cellColor(element[value])} key={element[value] + randomId()} >

@@ -67,6 +67,23 @@ function RegisterCourse() {
         console.log(courseFormStore)
     }, [courseFormStore])
 
+    const createCourse = () => {
+        axios.post("course/create_course/", {
+            start_date: courseFormStore.enrollmentDuration[0]?.toISOString().split('T')[0],
+            due_date: courseFormStore.enrollmentDuration[1]?.toISOString().split('T')[0],
+            start_time: courseFormStore.startTime,
+            end_time: courseFormStore.endTime,
+            instructor: courseFormStore.instructor,
+            name: courseFormStore.courseName,
+            price: courseFormStore.coursePrice,
+            description: courseFormStore.description,
+            course_status: courseFormStore.courseState,
+            course_type: courseFormStore.courseType,
+        }).then(function (response) {
+            console.log(response.data)
+            courseFormStore.reset()
+        })
+    }
     return (
         <CustomSection title='Registrar curso' icon={<div className=' relative pr-2'>
             <IconSchool size={40} />
@@ -107,7 +124,6 @@ function RegisterCourse() {
                 } onChange={courseFormStore.setCourseState}>
                     <Group mt={6}>
                         {registerStore.courseStatuses?.map((status) => {
-                            console.log(courseFormStore.courseState === status.value)
                             return <Radio
                                 key={status.key + status.value}
                                 value={status.value}
@@ -147,12 +163,14 @@ function RegisterCourse() {
                     precision={2}
                     min={-1}
                     step={0.05}
+                    value={courseFormStore.coursePrice}
+                    onChange={courseFormStore.setCoursePrice}
                 />
 
             </div>
             <br />
             <Group justify="center">
-                <CustomButton text='Guardar' bgColor={'#15192F'} />
+                <CustomButton text='Guardar' bgColor={'#15192F'} onClick={createCourse} />
 
             </Group>
         </CustomSection>

@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react'
 import useRegisterStore from '../Register/RegisterStore';
-import { CustomButton, CustomSelect, CustomTextInput } from '../components/CustomInputs';
+import { CustomButton, CustomDateInput, CustomSelect, CustomTextInput } from '../components/CustomInputs';
 import useSwimmerFormStore from '../Register/SwimmerFormStore';
 import { Group, InputWrapper, Input } from '@mantine/core';
 import axios from 'axios';
 import CustomSection from '../components/CustomSection';
 import { IconUserEdit } from '@tabler/icons-react';
+import useHomeStore from '../Home/HomeStore';
 
 function UpdateSwimmer() {
     const registerStore = useRegisterStore();
     const swimmerFormStore = useSwimmerFormStore();
+    const homeStore = useHomeStore();
     const getSelectData = () => {
         axios.get('course_type/').then(function (response) {
             const courseTypes = response.data?.map((courseType) => ({ label: courseType.name, value: courseType.id.toString() }))
@@ -33,7 +35,7 @@ function UpdateSwimmer() {
         })
 
         axios.get('role/').then(function (response) {
-            let filteredRoles = response.data?.filter(role => role.name !== 'ADMINISTRADOR')
+            let filteredRoles = response.data?.filter(role => role.name !== 'ADMINISTRADOR' && role.name !== 'INSTRUCTOR')
             const roles = filteredRoles?.map(role => ({ label: role.name, value: role.id.toString(), role: role }))
             registerStore.setRoles(roles)
         })
@@ -62,14 +64,6 @@ function UpdateSwimmer() {
     }
 
     const getSwimmerData = () => {
-        if (swimmerFormStore.age < 18) {
-            if (swimmerFormStore.representative === '') {
-                return showErrorNotification({ message: 'Debe ingresar el nombre del representante' })
-            } else if (swimmerFormStore.relationship === '') {
-                return showErrorNotification({ message: 'Debe ingresar el vinculo del representante' })
-            }
-        }
-
         return {
             first_name: swimmerFormStore.names,
             last_name: swimmerFormStore.lastNames,
@@ -108,6 +102,11 @@ function UpdateSwimmer() {
 
     useEffect(() => {
         getSelectData();
+        swimmerFormStore.setRole(homeStore.selectedItem?.role_id?.toString())
+        swimmerFormStore.setPhoneNumber(homeStore.selectedItem?.phone_number)
+        swimmerFormStore.setEmail(homeStore.selectedItem?.email)
+        swimmerFormStore.setBirthdate(homeStore.selectedItem?.applicant?.birthdate)
+
     }, []);
 
     return (
@@ -119,7 +118,7 @@ function UpdateSwimmer() {
                         withAsterisk
                         placeholder="Ingrese sus nombres"
                         className='sm:col-span-2'
-                        value={swimmerFormStore.names}
+                        value={homeStore.selectedItem?.first_name}
                         onChange={e => swimmerFormStore.setNames(e.currentTarget.value)}
                     />
                     <CustomTextInput
@@ -127,25 +126,25 @@ function UpdateSwimmer() {
                         withAsterisk
                         placeholder="Ingrese sus apellidos"
                         className="sm:col-span-2"
-                        value={swimmerFormStore.lastNames}
+                        value={homeStore.selectedItem?.last_name}
                         onChange={e => swimmerFormStore.setLastNames(e.currentTarget.value)}
                     />
 
                     {!swimmerFormStore.isInstructor && <div className="sm:col-span-2 grid grid-cols-4 gap-x-3">
-                        {/* <CustomDateInput
-                        label="Fecha de nacimiento"
-                        withAsterisk
-                        placeholder="00/00/0000"
-                        valueFormat="DD/MM/YYYY"
-                        className='sm:col-span-3'
-                        value={store.birthDate || new Date()}
-                        onChange={(birthdate) => {
-                            store.setBirthDate(birthdate);
-                            store.setAge(calculateAge(birthdate))
-                        }}
-                    /> */}
+                        <CustomDateInput
+                            label="Fecha de nacimiento"
+                            withAsterisk
+                            placeholder="día mes año"
+                            valueFormat="DD MMMM YYYY"
+                            className='sm:col-span-3'
+                            value={new Date(swimmerFormStore.birthdate)}
+                            onChange={(birthdate) => {
+                                swimmerFormStore.setBirthdate(birthdate);
+                                swimmerFormStore.setAge(calculateAge(birthdate))
+                            }}
+                        />
                         <InputWrapper label='Edad:'>
-                            <Input value={swimmerFormStore.age || 0} readOnly />
+                            <Input value={swimmerFormStore?.age || 0} readOnly />
                         </InputWrapper>
 
                     </div>
@@ -155,15 +154,8 @@ function UpdateSwimmer() {
                             label="Rol"
                             data={registerStore.roles}
                             className={swimmerFormStore.isInstructor ? 'sm:col-span-7' : 'sm:col-span-4'}
-                            value={
-                                registerStore.roles?.filter(role => role.label === swimmerFormStore.role)[0]?.value
-                                || '0'}
-                            onChange={v => {
-                                swimmerFormStore.setRole(v)
-                                console.log(v)
-                                const isInstructor = registerStore.roles?.filter(role => role.value === v)[0]?.label === 'INSTRUCTOR'
-                                swimmerFormStore.setIsInstructor(isInstructor)
-                            }}
+                            value={swimmerFormStore.role}
+                            onChange={swimmerFormStore.setRole}
                         />
                         {/* {!store.isInstructor && <CustomTextInput
                         label="#Comprobante "
@@ -175,7 +167,6 @@ function UpdateSwimmer() {
 
                     </div>
                     <CustomTextInput
-                        leftSectionPointerEvents="none"
                         className="sm:col-span-2 "
                         withAsterisk
                         label="Correo Electrónico: "
@@ -185,16 +176,6 @@ function UpdateSwimmer() {
                     />
 
                     {!swimmerFormStore.isInstructor && <>
-                        <CustomTextInput
-                            leftSectionPointerEvents="none"
-                            withAsterisk
-                            label="Dirección"
-                            placeholder="Ingrese dirección"
-                            className="sm:col-span-2"
-                            value={swimmerFormStore.address}
-                            onChange={e => swimmerFormStore.setAddress(e.currentTarget?.value)}
-                        />
-
                         {/* <CustomTextInput
                         leftSectionPointerEvents="none"
                         withAsterisk={store.age < 18}
@@ -219,9 +200,9 @@ function UpdateSwimmer() {
                                 withAsterisk
                                 label="Teléfono: "
                                 placeholder="Ingrese telefono"
-                                className="sm:col-span-3"
-                                value={swimmerFormStore.cellphoneNumber}
-                                onChange={e => swimmerFormStore.setCellphoneNumber(e.currentTarget?.value)}
+                                className="sm:col-span-8"
+                                value={swimmerFormStore.phoneNumber}
+                                onChange={e => swimmerFormStore.setPhoneNumber(e.currentTarget?.value)}
                             />
                         </div>
 

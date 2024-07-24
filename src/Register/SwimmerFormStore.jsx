@@ -19,7 +19,7 @@ const createLastNamesSlice = (set) => ({
 
 const createBirthdateSlice = (set) => ({
     birthdate: null,
-    setBirthDate: (value) =>
+    setBirthdate: (value) =>
         set(() => ({
             birthdate: value,
         })),
@@ -115,7 +115,7 @@ const createEnrollmentDurationSlice = (set) => ({
 
 const createPaymentStatusSlice = (set) => ({
     paymentStatus: null,
-    setPaymentState: (value) =>
+    setPaymentStatus: (value) =>
         set(() => ({
             paymentStatus: value,
         })),
@@ -208,7 +208,7 @@ const createResetSlice = (set) => ({
             address: "",
             representative: "",
             relationship: "",
-            cellphoneNumber: "",
+            phoneNumber: "",
             instructor: null,
             courseType: null,
             enrollmentStatus: null,

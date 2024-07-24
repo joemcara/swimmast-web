@@ -65,6 +65,20 @@ const createEndTimeSlice = (set) => ({
         }))
 })
 
+const createResetSlice = (set) => ({
+    reset: () =>
+        set(() => ({
+            courseName: "",
+            instructor: null,
+            courseType: null,
+            enrollmentDuration: [],
+            courseState: null,
+            coursePrice: 0.0,
+            startTime: "",
+            endTime: ""
+        }))
+})
+
 const useCourseFormStore = create((...a) => ({
     ...createCourseNameSlice(...a),
     ...createInstructorSlice(...a),
@@ -73,7 +87,8 @@ const useCourseFormStore = create((...a) => ({
     ...createCourseStateSlice(...a),
     ...createCoursePriceSlice(...a),
     ...createStartTimeSlice(...a),
-    ...createEndTimeSlice(...a)
+    ...createEndTimeSlice(...a),
+    ...createResetSlice(...a)
 }))
 
 export default useCourseFormStore;

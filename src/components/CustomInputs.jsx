@@ -47,6 +47,9 @@ export function CustomTextInput(props) {
             className={props.className || 'sm:col-span-2'}
             value={props.value}
             onChange={props.onChange}
+            disabled={props.disabled}
+            variant={props.variant}
+            readOnly={props.readOnly}
         />
     );
 }
@@ -94,7 +97,7 @@ export function CustomDatePickerInput(props) {
             onChange={props.onChange}
             locale="es"
             valueFormat={props.valueFormat || 'YYYY-MM-DD'}
-            className="sm:col-span-2"
+            className={props.className || 'sm:col-span-2'}
         />
     );
 }
@@ -124,7 +127,7 @@ export function CustomSelect(props) {
             className={props.className || 'sm:col-span-2'}
             value={props.value}
             onChange={props.onChange}
-            searchable
+            searchable={props.searchable || false}
         />
     );
 }
@@ -146,9 +149,9 @@ export function SelectPaymentMethod(props) {
 
     const fileInputRef = useRef(null);
     return (
-        <div className="sm:col-span-4 grid grid-cols-2">
-            <label className="col-span-2 block text-sm font-medium leading-6 text-gray-900">Forma de pago </label>
-            <Group className="col-span-2" grow gap={0}>
+        <div className="sm:col-span-2 grid grid-cols-2">
+            <label className="col-span-2  text-sm font-semibold leading-6 text-gray-900">Forma de pago </label>
+            <Group className="col-span-2" grow gap={0} mt={0}>
                 <ActionIcon
                     variant="default"
                     size="lg"
