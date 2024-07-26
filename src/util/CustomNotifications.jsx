@@ -37,24 +37,24 @@ export function showLoadingNotification(props) {
     return id;
 }
 
-export function updateSuccessLoadingNotification(idNotificacion) {
+export function updateSuccessLoadingNotification(idNotificacion, message) {
     return notifications.update({
         id: idNotificacion,
         color: 'teal',
         title: 'Registro creado',
-        message: 'El registro ha sido creado exitosamente',
+        message: message || 'El registro ha sido creado con éxito',
         icon: <IconCheck style={{ width: 20, height: 20 }} />,
         loading: false,
         autoClose: 1500,
     });
 
 }
-export function updateErrorLoadingNotification(idNotificacion) {
+export function updateErrorLoadingNotification(idNotificacion, message) {
     return notifications.update({
         id: idNotificacion,
         color: 'red',
         title: 'Error',
-        message: 'El registro no ha podido crearse',
+        message: message || 'El registro no ha podido crearse',
         icon: <IconX style={{ width: 20, height: 20 }} />,
         loading: false,
         autoClose: 1500,

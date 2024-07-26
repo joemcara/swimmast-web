@@ -20,7 +20,7 @@ const icons = {
 function Menu() {
     let location = useLocation();
     return (
-        <div className='bg-system-menu-gray w-72 min-h-screen fixed top-0 left-0 flex flex-col items-center hidden lg:flex text-white' >
+        <div className='bg-system-menu-gray w-64 min-h-screen fixed top-0 left-0 flex flex-col items-center hidden lg:flex text-white' >
             <div className='flex flex-col items-center mb-8'>
                 <a href="/">
                     <img alt="snaches-orcas" src={snachesOrcasLogo} className='h-40 w-40 object-contain' />
@@ -32,13 +32,13 @@ function Menu() {
                     <CustomNavLink
                         to="/"
                         text="Nadadores"
-                        padding={"pl-12"}
+                        padding={"pl-8"}
                         icon={icons["SWIMMER"]}
                     />
                     <CustomNavLink
                         to="/cursos"
                         text="Cursos"
-                        padding={"pl-12"}
+                        padding={"pl-8"}
                         icon={icons["COURSE"]}
                     />
                     <CustomAccordionItem
@@ -50,12 +50,12 @@ function Menu() {
                         <CustomNavLink
                             to="/registrar-nadador"
                             text="Registrar nadador"
-                            padding={"pl-20"}
+                            padding={"pl-16"}
                         />
                         <CustomNavLink
                             to="/registrar-curso"
                             text="Registrar curso"
-                            padding={"pl-20"}
+                            padding={"pl-16"}
                         />
                     </CustomAccordionItem>
                     <CustomAccordionItem
@@ -67,12 +67,12 @@ function Menu() {
                         <CustomNavLink
                             to="/actualizar-nadador"
                             text="Actualizar nadador"
-                            padding={"pl-20"}
+                            padding={"pl-16"}
                         />
                         <CustomNavLink
                             to="/actualizar-curso"
                             text="Actualizar curso"
-                            padding={"pl-20"}
+                            padding={"pl-16"}
                         />
                     </CustomAccordionItem>
                 </Accordion>
@@ -81,7 +81,7 @@ function Menu() {
                         text="Cerrar sesión"
                         to="/logout"
                         icon={icons["LOGOUT"]}
-                        padding={"pl-12"}
+                        padding={"pl-8"}
                     />
                 </div>
             </nav>

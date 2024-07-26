@@ -13,7 +13,7 @@ function Base() {
             {window.localStorage.getItem("token") && <>
                 <Menu />
                 <MenuMovil />
-                <div className='lg:ml-72 bg-[#ECF0F1] min-h-screen pt-8'>
+                <div className='lg:ml-64 bg-[#F1F3F5] min-h-screen pt-4'>
                     {/* <Layout /> */}
                     <Outlet />
                 </div>

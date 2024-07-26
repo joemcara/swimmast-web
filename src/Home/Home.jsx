@@ -14,6 +14,7 @@ function Home() {
     const homeStore = useHomeStore();
     const homeFilterStore = useHomeFilterStore();
 
+
     useEffect(() => {
         axios.get("enrollment_status/").then(function (response) {
             const enrollmentStatuses = response.data?.map((status) => ({ value: status.id.toString(), label: status.name }))
@@ -54,7 +55,7 @@ function Home() {
     return (
         <CustomSection
             title="Nadadores registrados"
-            icon={<IconUser size={40} />}
+            icon={<IconUser size={35} />}
             searchBar
             getData={getSwimmers}
             filter={homeFilterStore}
@@ -63,7 +64,7 @@ function Home() {
             <CustomFilter filter={homeFilterStore} getData={getSwimmers} >
 
                 <Stack>
-                    <InputLabel className='text-black' size={18} fw={700}>Estado de inscripción</InputLabel>
+                    <InputLabel className='text-black' size={16} fw={700}>Estado de inscripción</InputLabel>
                     <Group >
                         {homeStore.enrollmentStatuses?.map((status) => (
                             <CustomCheckbox
@@ -82,7 +83,7 @@ function Home() {
                     </Group>
                 </Stack>
                 <Stack>
-                    <InputLabel className='text-black' size={18} fw={700}>Estado de pago</InputLabel>
+                    <InputLabel className='text-black' size={16} fw={700}>Estado de pago</InputLabel>
                     <Group >
                         {
                             homeStore.paymentStatuses?.map((status) => (

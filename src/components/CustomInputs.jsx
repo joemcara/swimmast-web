@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Checkbox, FileInput, Group, MultiSelect, NumberInput, PasswordInput, Select, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Button, Checkbox, FileInput, Group, MultiSelect, NumberInput, PasswordInput, Radio, Select, Text, TextInput } from "@mantine/core";
 import { DateInput, DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCash, IconPhoto } from "@tabler/icons-react";
@@ -6,8 +6,8 @@ import { useRef } from "react";
 import 'dayjs/locale/es';
 export function CustomButton(props) {
     return (
-        <Button bg={props.bgColor || '#0730BE'} w={props.w || 200} radius={'sm'} mt={props.mt || 0} onClick={props.onClick} >
-            <Text fw={600}>{props.text}</Text>
+        <Button bg={props.bgColor || '#0730BE'} w={props.w || 200} radius={'sm'} mt={0} onClick={props.onClick}>
+            <p fw={600} className="text-sm">{props.text}</p>
         </Button>
     );
 }
@@ -90,6 +90,7 @@ export function CustomDateInput(props) {
 export function CustomDatePickerInput(props) {
     return (
         <DatePickerInput
+            variant={props.variant}
             type="range"
             label={props.label}
             placeholder={props.placeholder}
@@ -195,5 +196,22 @@ export function CustomCheckbox(props) {
             color={props.color || '#2C3E50'}
             iconColor="#fff"
         />
+    )
+}
+
+export function CustomRadioGroup(props) {
+    return (
+        <Radio.Group label={props.label} className='col-span-2' value={props.value} onChange={props.onChange}>
+            <Group mt={6}>
+                {props.data?.map((item) => (
+                    <Radio
+                        key={item.key + item.value}
+                        value={item.value}
+                        color="#15192F"
+                        label={item.label?.charAt(0).toUpperCase() + item.label?.slice(1).toLowerCase()}
+                    />
+                ))}
+            </Group>
+        </Radio.Group>
     )
 }

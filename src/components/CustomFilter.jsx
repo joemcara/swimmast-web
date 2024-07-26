@@ -10,7 +10,7 @@ function CustomFilter(props) {
     return (
         <Group justify='space-between' >
             {props.children}
-            <Stack gap={12}>
+            <Stack gap={4}>
                 <CustomButton
                     mt={0}
                     text='Aplicar filtros'

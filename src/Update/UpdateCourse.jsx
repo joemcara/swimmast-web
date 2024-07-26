@@ -68,7 +68,7 @@ function UpdateCourse() {
         courseFormStore.setCourseName(courseStore.selectedItem?.name)
         courseFormStore.setInstructor(courseStore.selectedItem?.instructor?.id?.toString())
         courseFormStore.setCourseType(courseStore.selectedItem?.course_type?.id?.toString())
-        courseFormStore.setCourseState(courseStore.selectedItem?.course_status?.id?.toString())
+        courseFormStore.setCourseStatus(courseStore.selectedItem?.course_status?.id?.toString())
         courseFormStore.setEnrollmentDuration([startDate, dueDate])
         courseFormStore.setStartTime(courseStore.selectedItem?.start_time)
         courseFormStore.setEndTime(courseStore.selectedItem?.end_time)
@@ -116,7 +116,7 @@ function UpdateCourse() {
                     </Group>
                 </Radio.Group>
 
-                <Radio.Group label="Estado del curso" className='col-span-2' value={courseFormStore.courseState} onChange={courseFormStore.setCourseState}>
+                <Radio.Group label="Estado del curso" className='col-span-2' value={courseFormStore.courseStatus} onChange={courseFormStore.setCourseStatus}>
                     <Group mt={6}>
                         {registerStore.courseStatuses?.map((status) => (
                             <Radio

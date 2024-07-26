@@ -40,7 +40,7 @@ function CustomTable(props) {
             >
                 <img src={snachesOrcasLogo} alt="a" loading='lazy' height={300} width={300} />
             </Modal>
-            <Table.ScrollContainer className='absolute mt-6' >
+            <Table.ScrollContainer className='absolute mt-5' >
                 <Table striped highlightOnHover classNames={{
                     th: "text-center  justify-center"
                 }}>

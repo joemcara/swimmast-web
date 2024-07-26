@@ -33,11 +33,11 @@ const createEnrollmentDuration = (set) => ({
         }))
 })
 
-const createCourseStateSlice = (set) => ({
-    courseState: null,
-    setCourseState: (value) =>
+const createCourseStatusSlice = (set) => ({
+    courseStatus: null,
+    setCourseStatus: (value) =>
         set(() => ({
-            courseState: value
+            courseStatus: value
         }))
 })
 
@@ -72,7 +72,7 @@ const createResetSlice = (set) => ({
             instructor: null,
             courseType: null,
             enrollmentDuration: [],
-            courseState: null,
+            courseStatus: null,
             coursePrice: 0.0,
             startTime: "",
             endTime: ""
@@ -84,7 +84,7 @@ const useCourseFormStore = create((...a) => ({
     ...createInstructorSlice(...a),
     ...createCourseTypeSlice(...a),
     ...createEnrollmentDuration(...a),
-    ...createCourseStateSlice(...a),
+    ...createCourseStatusSlice(...a),
     ...createCoursePriceSlice(...a),
     ...createStartTimeSlice(...a),
     ...createEndTimeSlice(...a),

@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 
 
 function CustomNavLink(props) {
-    const navItemStyles = `${props.padding} h-12 flex items-center gap-2 ${props.icon ? "text-xl font-bold" : "text-lg font-semibold"}`;
+    const navItemStyles = `${props.padding} h-12 flex items-center gap-2 ${props.icon ? "text-lg font-bold" : "text-md font-semibold"}`;
     return (
         <NavLink
             to={props.to}

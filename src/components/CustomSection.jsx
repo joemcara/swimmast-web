@@ -14,11 +14,11 @@ function CustomSection(props) {
 
     return (
         <section className='flex justify-center '>
-            <div className='bg-system-section-white w-5/6 lg:top-12 lg:w-11/12 self-center lg:min-h-5/6 p-8 rounded-md'>
+            <div className='bg-system-section-white w-5/6 lg:w-11/12 self-center lg:min-h-5/6 p-4 rounded-md'>
                 <div className='flex gap-2 justify-between items-center'>
                     <div className='flex items-center gap-2'>
                         {props.icon}
-                        <h1 className='text-xl lg:text-4xl font-bold'>{props.title}</h1>
+                        <h1 className='text-xl lg:text-3xl font-bold'>{props.title}</h1>
                     </div>
                     {props.searchBar && <TextInput
                         placeholder='Buscar nadador'
@@ -31,7 +31,7 @@ function CustomSection(props) {
                         ])}
                     />}
                 </div>
-                <Divider my={32} size={5} color='#818DA3' />
+                <Divider my={6} size={5} color='#818DA3' />
                 {props.children}
             </div>
         </section>

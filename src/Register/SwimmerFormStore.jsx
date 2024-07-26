@@ -1,19 +1,19 @@
 import { create } from "zustand";
 
 //REGISTER FORM DATA
-const createNamesSlice = (set) => ({
-    names: "",
-    setNames: (value) =>
+const createFirstNameSlice = (set) => ({
+    firstName: "",
+    setFirstName: (value) =>
         set(() => ({
-            names: value,
+            firstName: value,
         })),
 });
 
-const createLastNamesSlice = (set) => ({
-    lastNames: "",
-    setLastNames: (value) =>
+const createLastNameSlice = (set) => ({
+    lastName: "",
+    setLastName: (value) =>
         set(() => ({
-            lastNames: value,
+            lastName: value,
         })),
 });
 
@@ -33,11 +33,11 @@ const createAgeSlice = (set) => ({
         })),
 });
 
-const createVoucherNumberSlice = (set) => ({
-    voucherNumber: "",
-    setVoucherNumber: (value) =>
+const createReceiptNumberSlice = (set) => ({
+    receiptNumber: "",
+    setReceiptNumber: (value) =>
         set(() => ({
-            voucherNumber: value,
+            receiptNumber: value,
         })),
 });
 
@@ -199,11 +199,12 @@ const createIsInstructorSlice = (set) => ({
 const createResetSlice = (set) => ({
     reset: () =>
         set(() => ({
-            names: "",
-            lastNames: "",
-            birthdate: new Date(),
+            username: null,
+            firstName: "",
+            lastName: "",
+            birthdate: null,
             age: 0,
-            voucherNumber: "",
+            receiptNumber: "",
             email: "",
             address: "",
             representative: "",
@@ -226,11 +227,11 @@ const createResetSlice = (set) => ({
 });
 
 const useSwimmerFormStore = create((...a) => ({
-    ...createNamesSlice(...a),
-    ...createLastNamesSlice(...a),
+    ...createFirstNameSlice(...a),
+    ...createLastNameSlice(...a),
     ...createBirthdateSlice(...a),
     ...createAgeSlice(...a),
-    ...createVoucherNumberSlice(...a),
+    ...createReceiptNumberSlice(...a),
     ...createEmailSlice(...a),
     ...createAddressSlice(...a),
     ...createRepresentativeSlice(...a),

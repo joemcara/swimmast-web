@@ -37,6 +37,7 @@ function UpdateSwimmer() {
         axios.get('role/').then(function (response) {
             let filteredRoles = response.data?.filter(role => role.name !== 'ADMINISTRADOR' && role.name !== 'INSTRUCTOR')
             const roles = filteredRoles?.map(role => ({ label: role.name, value: role.id.toString(), role: role }))
+            console.log(roles)
             registerStore.setRoles(roles)
         })
     }
@@ -54,8 +55,8 @@ function UpdateSwimmer() {
 
     const getInstructorData = () => {
         return {
-            first_name: swimmerFormStore.names,
-            last_name: swimmerFormStore.lastNames,
+            first_name: swimmerFormStore.firstName,
+            last_name: swimmerFormStore.lastName,
             email: swimmerFormStore.email,
             role: swimmerFormStore.role,
             password: '12345678',
@@ -65,8 +66,8 @@ function UpdateSwimmer() {
 
     const getSwimmerData = () => {
         return {
-            first_name: swimmerFormStore.names,
-            last_name: swimmerFormStore.lastNames,
+            first_name: swimmerFormStore.firstName,
+            last_name: swimmerFormStore.lastName,
             email: swimmerFormStore.email,
             role: swimmerFormStore.role,
             // password: '12345678',
@@ -103,12 +104,12 @@ function UpdateSwimmer() {
 
     useEffect(() => {
         getSelectData();
-        swimmerFormStore.setNames(homeStore.selectedItem?.first_name)
-        swimmerFormStore.setLastNames(homeStore.selectedItem?.last_name)
+        swimmerFormStore.setFirstName(homeStore.selectedItem?.first_name)
+        swimmerFormStore.setLastName(homeStore.selectedItem?.last_name)
         swimmerFormStore.setRole(homeStore.selectedItem?.role_id?.toString())
         swimmerFormStore.setPhoneNumber(homeStore.selectedItem?.phone_number)
         swimmerFormStore.setEmail(homeStore.selectedItem?.email)
-        swimmerFormStore.setBirthdate(homeStore.selectedItem?.applicant?.birthdate)
+        swimmerFormStore.setBirthdate(new Date(homeStore.selectedItem?.applicant?.birthdate))
 
     }, []);
 
@@ -121,8 +122,8 @@ function UpdateSwimmer() {
                         withAsterisk
                         placeholder="Ingrese sus nombres"
                         className='sm:col-span-2'
-                        value={swimmerFormStore.names}
-                        onChange={e => swimmerFormStore.setNames(e.currentTarget.value)}
+                        value={swimmerFormStore.firstName}
+                        onChange={e => swimmerFormStore.setFirstName(e.currentTarget.value)}
                     />
                     <CustomTextInput
                         label="Apellidos"
@@ -130,7 +131,7 @@ function UpdateSwimmer() {
                         placeholder="Ingrese sus apellidos"
                         className="sm:col-span-2"
                         value={swimmerFormStore.lastName}
-                        onChange={e => swimmerFormStore.setLastNames(e.currentTarget.value)}
+                        onChange={e => swimmerFormStore.setLastName(e.currentTarget.value)}
                     />
 
                     {!swimmerFormStore.isInstructor && <div className="sm:col-span-2 grid grid-cols-4 gap-x-3">
@@ -160,7 +161,7 @@ function UpdateSwimmer() {
                             value={swimmerFormStore.role}
                             onChange={swimmerFormStore.setRole}
                         /> */}
-                        <Radio.Group label="Rol" className='col-span-6' value={swimmerFormStore.rol} onChange={swimmerFormStore.setRole}>
+                        <Radio.Group label="Rol" className='col-span-6' value={swimmerFormStore.role} onChange={swimmerFormStore.setRole}>
                             <Group mt={8}>
                                 {registerStore.roles?.map((role) => (
                                     <Radio
@@ -181,8 +182,8 @@ function UpdateSwimmer() {
                         label="#Comprobante "
                         placeholder="Ingrese número de comprobante"
                         className='sm:col-span-3'
-                        value={store.voucherNumber}
-                        onChange={e => store.setVoucherNumber(e.currentTarget.value)}
+                        value={store.receiptNumber}
+                        onChange={e => store.setReceiptNumber(e.currentTarget.value)}
                     />} */}
 
                     </div>

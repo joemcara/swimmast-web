@@ -54,7 +54,7 @@ function Curso() {
     return (
         <div>
             <CustomSection
-                icon={<IconSchool size={40} />}
+                icon={<IconSchool size={35} />}
                 title="Cursos"
                 searchBar
                 getData={getCourses}
@@ -63,7 +63,7 @@ function Curso() {
 
                 <CustomFilter filter={courseFilterStore} getData={getCourses}>
                     <Stack>
-                        <InputLabel className='text-black' size={18} fw={700}>Tipo de curso</InputLabel>
+                        <InputLabel className='text-black' size={16} fw={700}>Tipo de curso</InputLabel>
                         <Group>
                             {courseStore.courseTypes?.map((type) => (
                                 <CustomCheckbox

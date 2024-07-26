@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import CustomSection from '../components/CustomSection';
 import { ActionIcon, Group, Radio, rem } from '@mantine/core';
 import { IconBellSchool, IconClock, IconPlus, IconSchool, IconSchoolBell, IconSchoolOff } from '@tabler/icons-react';
-import { CustomButton, CustomDatePickerInput, CustomNumberInput, CustomSelect, CustomTextInput } from '../components/CustomInputs';
+import { CustomButton, CustomDatePickerInput, CustomNumberInput, CustomRadioGroup, CustomSelect, CustomTextInput } from '../components/CustomInputs';
 import { TimeInput } from '@mantine/dates';
 import useCourseFormStore from './CourseFormStore';
 import axios from 'axios';
@@ -28,6 +28,7 @@ function RegisterCourse() {
     )
 
     useEffect(() => {
+        courseFormStore.reset()
         axios.get("course_type/").then(function (response) {
             let courseTypes = response.data?.map(cT => {
                 return {
@@ -51,7 +52,7 @@ function RegisterCourse() {
         axios.get("course_status/").then(function (response) {
             let courseStatus = response.data?.map(status => {
                 if (status.name === 'ACTIVO') {
-                    courseFormStore.setCourseState(status.id.toString())
+                    courseFormStore.setCourseStatus(status.id.toString())
                 }
                 return {
                     label: status.name,
@@ -77,7 +78,7 @@ function RegisterCourse() {
             name: courseFormStore.courseName,
             price: courseFormStore.coursePrice,
             description: courseFormStore.description,
-            course_status: courseFormStore.courseState,
+            course_status: courseFormStore.courseStatus,
             course_type: courseFormStore.courseType,
         }).then(function (response) {
             console.log(response.data)
@@ -106,33 +107,18 @@ function RegisterCourse() {
                     value={courseFormStore.instructor}
                     onChange={courseFormStore.setInstructor}
                 />
-                <Radio.Group label="Tipo de curso" className='col-span-2' value={courseFormStore.courseType} onChange={courseFormStore.setCourseType}>
-                    <Group mt={6}>
-                        {registerStore.courseTypes?.map((type) => (
-                            <Radio
-                                key={type.key + type.value}
-                                value={type.value}
-                                color="#15192F"
-                                label={type.label?.charAt(0).toUpperCase() + type.label?.slice(1).toLowerCase()}
-                            />
-                        ))}
-                    </Group>
-                </Radio.Group>
-
-                <Radio.Group label="Estado del curso" className='col-span-2' value={
-                    courseFormStore.courseState
-                } onChange={courseFormStore.setCourseState}>
-                    <Group mt={6}>
-                        {registerStore.courseStatuses?.map((status) => {
-                            return <Radio
-                                key={status.key + status.value}
-                                value={status.value}
-                                color="#15192F"
-                                label={status.label?.charAt(0).toUpperCase() + status.label?.slice(1).toLowerCase()}
-                            />
-                        })}
-                    </Group>
-                </Radio.Group>
+                <CustomRadioGroup
+                    data={registerStore.courseTypes}
+                    label="Tipo de curso"
+                    value={courseFormStore.courseType}
+                    onChange={courseFormStore.setCourseType}
+                />
+                <CustomRadioGroup
+                    data={registerStore.courseStatuses}
+                    label="Estado del curso"
+                    value={courseFormStore.courseStatus}
+                    onChange={courseFormStore.setCourseStatus}
+                />
                 <CustomDatePickerInput
                     label="Inicio-Fin de Curso:"
                     placeholder="Inicio-Fin de Curso:"
