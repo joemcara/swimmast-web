@@ -4,6 +4,7 @@ import { IconBellRinging, IconPhone, IconPhoto } from '@tabler/icons-react'
 import React, { useEffect } from 'react'
 import snachesOrcasLogo from '../assets/snachesOrcasLogo.png'
 import { useLocation, useNavigate } from 'react-router-dom';
+import { calculateAge } from '../util/Hooks';
 function CustomTable(props) {
     const [opened, { toggle }] = useDisclosure(false);
     let location = useLocation()
@@ -70,7 +71,7 @@ function CustomTable(props) {
                             let values = Object.values(element)
                             let keys = Object.keys(element)
                             return <Table.Tr key={randomId()} onClick={e => {
-                                element.age = element.age || element.edad
+                                element.age = element?.applicant?.birthdate ? calculateAge(new Date(element?.applicant?.birthdate)) : 0
                                 props.store?.setSelectedItem(element)
                                 navigate(`/actualizar-${props.type}`)
                             }}>

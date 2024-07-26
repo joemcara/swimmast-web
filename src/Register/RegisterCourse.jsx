@@ -7,6 +7,7 @@ import { TimeInput } from '@mantine/dates';
 import useCourseFormStore from './CourseFormStore';
 import axios from 'axios';
 import useRegisterStore from './RegisterStore';
+import { useNavigate } from 'react-router-dom';
 
 function RegisterCourse() {
     const courseFormStore = useCourseFormStore();
@@ -15,7 +16,7 @@ function RegisterCourse() {
 
     const startTimeRef = useRef(null);
     const finishTimeRef = useRef(null);
-
+    const navigate = useNavigate();
     const startPickerControl = (
         <ActionIcon variant="subtle" color="gray" onClick={() => startTimeRef.current?.showPicker()}>
             <IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
@@ -83,6 +84,7 @@ function RegisterCourse() {
         }).then(function (response) {
             console.log(response.data)
             courseFormStore.reset()
+            navigate("/")
         })
     }
     return (

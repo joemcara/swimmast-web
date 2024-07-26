@@ -23,6 +23,7 @@ import {
 import { IconUserCheck, IconUserCircle, IconUserEdit, IconUserFilled, IconUserPlus, IconUsersPlus, IconUserUp } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import ReadOnly from "../components/ReadOnly";
+import { calculateAge } from "../util/Hooks";
 function RegisterSwimmer() {
     const registerStore = useRegisterStore();
     const swimmerFormStore = useSwimmerFormStore();
@@ -74,7 +75,6 @@ function RegisterSwimmer() {
             let maxReceiptNumber = response.data?.reduce((max, current) => {
                 return parseInt(current.receipt_number) > parseInt(max.receipt_number) ? current : max;
             }).receipt_number
-            console.log(maxReceiptNumber)
             swimmerFormStore.setReceiptNumber(parseInt(maxReceiptNumber) + 1);
         });
 
@@ -164,17 +164,7 @@ function RegisterSwimmer() {
         });
     };
 
-    const calculateAge = (birthdate) => {
-        if (!birthdate) return 0;
-        // Calculate the difference in milliseconds between the current date and the provided date of birth
-        let diff_ms = Date.now() - birthdate.getTime();
-        // Create a new Date object representing the difference in milliseconds and store it in the variable age_dt (age Date object)
-        let age_dt = new Date(diff_ms);
 
-        // Calculate the absolute value of the difference in years between the age Date object and the year 1970 (UNIX epoch)
-        console.log(Math.abs(age_dt.getUTCFullYear() - 1970));
-        return Math.abs(age_dt.getUTCFullYear() - 1970);
-    }
     const getInstructorData = () => {
         return {
             first_name: swimmerFormStore.firstName,
@@ -420,7 +410,10 @@ function RegisterSwimmer() {
                     data={registerStore.instructors}
                     className="sm:col-span-2"
                     value={swimmerFormStore.instructor}
-                    onChange={swimmerFormStore.setInstructor}
+                    onChange={v => {
+                        swimmerFormStore.setInstructor(v)
+                        swimmerFormStore.setCourse(null)
+                    }}
                 />
                 {/* <div className="sm:col-span-2 grid sm:grid-cols-6 gap-x-3"> */}
                 <CustomSelect
@@ -434,6 +427,7 @@ function RegisterSwimmer() {
                             courseGroup.items.find(course => {
                                 if (course.value === value) {
                                     swimmerFormStore.setEnrollmentDuration([new Date(course.course.start_date), new Date(course.course.due_date)])
+                                    swimmerFormStore.setInstructor(course?.course?.instructor?.id?.toString())
                                 }
                             })
                         }

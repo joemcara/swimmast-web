@@ -100,8 +100,9 @@ function UpdateSwimmer() {
 
     useEffect(() => {
         getSelectData();
-        console.log(homeStore.selectedItem)
         swimmerFormStore.edit(homeStore.selectedItem)
+        // console.log(swimmerFormStore)
+        console.log(homeStore.selectedItem)
         // swimmerFormStore.setFirstName(homeStore.selectedItem?.first_name)
         // swimmerFormStore.setLastName(homeStore.selectedItem?.last_name)
         // swimmerFormStore.setRole(homeStore.selectedItem?.role_id?.toString())
@@ -139,14 +140,14 @@ function UpdateSwimmer() {
                             placeholder="día mes año"
                             valueFormat="DD MMMM YYYY"
                             className='sm:col-span-3'
-                            value={swimmerFormStore.birthdate ? new Date(swimmerFormStore.birthdate) : new Date()}
+                            value={swimmerFormStore.birthdate ? new Date(swimmerFormStore.birthdate) : null}
                             onChange={(birthdate) => {
                                 swimmerFormStore.setBirthdate(birthdate);
                                 swimmerFormStore.setAge(calculateAge(birthdate))
                             }}
                         />
                         <InputWrapper label='Edad:'>
-                            <Input value={swimmerFormStore?.age || 0} readOnly variant='filled' />
+                            <Input value={swimmerFormStore?.age} readOnly variant='filled' />
                         </InputWrapper>
 
                     </div>

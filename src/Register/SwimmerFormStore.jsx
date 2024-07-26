@@ -1,6 +1,14 @@
 import { create } from "zustand";
 
 //REGISTER FORM DATA
+const createIdSlice = (set) => ({
+    id: null,
+    setId: (value) =>
+        set(() => ({
+            id: value,
+        })),
+});
+
 const createFirstNameSlice = (set) => ({
     firstName: "",
     setFirstName: (value) =>
@@ -199,6 +207,7 @@ const createIsInstructorSlice = (set) => ({
 const createResetSlice = (set) => ({
     reset: () =>
         set(() => ({
+            id: null,
             username: null,
             firstName: "",
             lastName: "",
@@ -229,6 +238,7 @@ const createResetSlice = (set) => ({
 const createEditSlice = (set) => ({
     edit: (data) =>
         set(() => ({
+            id: data?.applicant?.id,
             username: data?.username,
             firstName: data?.first_name,
             lastName: data?.last_name,
@@ -237,9 +247,9 @@ const createEditSlice = (set) => ({
             receiptNumber: data?.receiptNumber,
             email: data?.email,
             address: data?.address,
-            representative: data?.representative,
-            relationship: data?.relationship,
-            phoneNumber: data?.phoneNumber,
+            representative: data?.applicant?.representative?.name,
+            relationship: data?.applicant?.representative?.relationship,
+            phoneNumber: data?.phone_number,
             instructor: data?.instructor,
             courseType: data?.courseType,
             enrollmentStatus: data?.enrollmentStatus,
@@ -282,6 +292,7 @@ const useSwimmerFormStore = create((...a) => ({
     ...createCourseDaysSlice(...a),
     //FOR "OTHERS" COURSE TYPES
     ...createCourseSlice(...a),
+    ...createIdSlice(...a),
 
     ...createIsInstructorSlice(...a),
     ...createResetSlice(...a),
