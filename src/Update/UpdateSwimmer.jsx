@@ -37,7 +37,6 @@ function UpdateSwimmer() {
         axios.get('role/').then(function (response) {
             let filteredRoles = response.data?.filter(role => role.name !== 'ADMINISTRADOR' && role.name !== 'INSTRUCTOR')
             const roles = filteredRoles?.map(role => ({ label: role.name, value: role.id.toString(), role: role }))
-            console.log(roles)
             registerStore.setRoles(roles)
         })
     }
@@ -90,9 +89,6 @@ function UpdateSwimmer() {
         } else if (swimmerFormStore.role === 'DEPORTISTA') {
             url = 'athlete/'
         }
-        // swimmerFormStore.setRole(null)
-        // swimmerFormStore.reset();
-        console.log(data)
         axios.patch(url, data)
             .then(function (response) {
                 getSelectData();
@@ -104,12 +100,14 @@ function UpdateSwimmer() {
 
     useEffect(() => {
         getSelectData();
-        swimmerFormStore.setFirstName(homeStore.selectedItem?.first_name)
-        swimmerFormStore.setLastName(homeStore.selectedItem?.last_name)
-        swimmerFormStore.setRole(homeStore.selectedItem?.role_id?.toString())
-        swimmerFormStore.setPhoneNumber(homeStore.selectedItem?.phone_number)
-        swimmerFormStore.setEmail(homeStore.selectedItem?.email)
-        swimmerFormStore.setBirthdate(new Date(homeStore.selectedItem?.applicant?.birthdate))
+        console.log(homeStore.selectedItem)
+        swimmerFormStore.edit(homeStore.selectedItem)
+        // swimmerFormStore.setFirstName(homeStore.selectedItem?.first_name)
+        // swimmerFormStore.setLastName(homeStore.selectedItem?.last_name)
+        // swimmerFormStore.setRole(homeStore.selectedItem?.role_id?.toString())
+        // swimmerFormStore.setPhoneNumber(homeStore.selectedItem?.phone_number)
+        // swimmerFormStore.setEmail(homeStore.selectedItem?.email)
+        // swimmerFormStore.setBirthdate(new Date(homeStore.selectedItem?.applicant?.birthdate))
 
     }, []);
 

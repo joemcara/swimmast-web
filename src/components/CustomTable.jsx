@@ -72,8 +72,6 @@ function CustomTable(props) {
                             return <Table.Tr key={randomId()} onClick={e => {
                                 element.age = element.age || element.edad
                                 props.store?.setSelectedItem(element)
-                                // localStorage.setItem('selectedItem', JSON.stringify(element))
-                                // window.open(`/actualizar-${props.type}`, '_self')
                                 navigate(`/actualizar-${props.type}`)
                             }}>
                                 {props.getters?.map(value => {

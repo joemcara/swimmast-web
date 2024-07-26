@@ -6,11 +6,12 @@ import {
     CustomDateInput,
     CustomDatePickerInput,
     CustomNumberInput,
+    CustomRadioGroup,
     CustomSelect,
     CustomTextInput,
     SelectPaymentMethod,
 } from "../components/CustomInputs";
-import { Group, Input, InputWrapper, Radio } from "@mantine/core";
+import { Group, Input, InputLabel, InputWrapper, Radio } from "@mantine/core";
 import axios from "axios";
 import useSwimmerFormStore from "./SwimmerFormStore";
 import {
@@ -21,6 +22,7 @@ import {
 } from "../util/CustomNotifications";
 import { IconUserCheck, IconUserCircle, IconUserEdit, IconUserFilled, IconUserPlus, IconUsersPlus, IconUserUp } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import ReadOnly from "../components/ReadOnly";
 function RegisterSwimmer() {
     const registerStore = useRegisterStore();
     const swimmerFormStore = useSwimmerFormStore();
@@ -28,31 +30,38 @@ function RegisterSwimmer() {
     const navigate = useNavigate();
     //FILL SELECTS WITH DATA
     useEffect(() => {
-        swimmerFormStore.reset();
         console.log(swimmerFormStore)
+        swimmerFormStore.reset();
         getInstructors();
         axios.get("enrollment_status/").then(function (response) {
-            const enrollmentStatuses = response.data?.map(
-                (enrollmentStatus) => ({
+            const enrollmentStatuses = response.data?.map((enrollmentStatus) => {
+                if (enrollmentStatus.name === "PENDIENTE") {
+                    swimmerFormStore.setEnrollmentStatus(enrollmentStatus?.id.toString());
+                }
+                return {
                     label: enrollmentStatus.name,
                     value: enrollmentStatus.id.toString(),
-                })
-            );
-            swimmerFormStore.setEnrollmentStatus(enrollmentStatuses[1].value);
+                }
+            });
             registerStore.setEnrollmentStatuses(enrollmentStatuses);
         });
 
         axios.get("payment_status/").then(function (response) {
-            const paymentStatuses = response.data?.map((paymentStatus) => ({
-                label: paymentStatus.name,
-                value: paymentStatus.id.toString(),
-            }));
+            const paymentStatuses = response.data?.map((paymentStatus) => {
+                if (paymentStatus.name === "NO PAGADA") {
+                    swimmerFormStore.setPaymentStatus(paymentStatus.id.toString());
+                }
+                return {
+                    label: paymentStatus.name,
+                    value: paymentStatus.id.toString(),
+                }
+            });
             registerStore.setPaymentStatuses(paymentStatuses);
         });
 
         axios.get("role/").then(function (response) {
             let filteredRoles = response.data?.filter(
-                (role) => role.name !== "ADMINISTRADOR" && role.name !== "INSTRUCTOR"
+                (role) => role.name !== "ADMINISTRADOR"
             );
             const roles = filteredRoles?.map((role) => ({
                 label: role.name,
@@ -72,6 +81,15 @@ function RegisterSwimmer() {
         setQueryUsernames(true);
 
     }, []);
+
+    useEffect(() => {
+        if (queryUsernames) getUsernames();
+    }, [
+        swimmerFormStore.firstName,
+        swimmerFormStore.lastName,
+        swimmerFormStore.role,
+        swimmerFormStore.birthdate,
+    ]);
 
     const [coursePrice, setCoursePrice] = useState(0);
     useEffect(() => {
@@ -115,14 +133,6 @@ function RegisterSwimmer() {
             });
     }
 
-    useEffect(() => {
-        if (queryUsernames) getUsernames();
-    }, [
-        swimmerFormStore.firstName,
-        swimmerFormStore.lastName,
-        swimmerFormStore.role,
-        swimmerFormStore.birthdate,
-    ]);
 
     const getInstructors = () => {
         axios.get("instructor/").then(function (response) {
@@ -145,7 +155,7 @@ function RegisterSwimmer() {
             const coursesGroups = response.data?.map((courseGroup) => ({
                 group: courseGroup.course_type,
                 items: courseGroup.courses.map((course) => ({
-                    label: course.name,
+                    label: `${course.name} - $${course.price}`,
                     value: course.id.toString(),
                     course: course,
                 })),
@@ -156,12 +166,15 @@ function RegisterSwimmer() {
 
     const calculateAge = (birthdate) => {
         if (!birthdate) return 0;
-        const birthdateYear = new Date(birthdate).getFullYear();
-        const currentYear = new Date().getFullYear();
-        const calculatedAge = currentYear - birthdateYear;
-        return calculatedAge.toString();
-    };
+        // Calculate the difference in milliseconds between the current date and the provided date of birth
+        let diff_ms = Date.now() - birthdate.getTime();
+        // Create a new Date object representing the difference in milliseconds and store it in the variable age_dt (age Date object)
+        let age_dt = new Date(diff_ms);
 
+        // Calculate the absolute value of the difference in years between the age Date object and the year 1970 (UNIX epoch)
+        console.log(Math.abs(age_dt.getUTCFullYear() - 1970));
+        return Math.abs(age_dt.getUTCFullYear() - 1970);
+    }
     const getInstructorData = () => {
         return {
             first_name: swimmerFormStore.firstName,
@@ -174,7 +187,7 @@ function RegisterSwimmer() {
     };
 
     const getSwimmerData = () => {
-        if (swimmerFormStore.age < 18) {
+        if (!swimmerFormStore.isInstructor && swimmerFormStore.age < 18) {
             if (swimmerFormStore.representative === "") {
                 showErrorNotification({
                     message: "Debe ingresar el nombre del representante",
@@ -213,7 +226,7 @@ function RegisterSwimmer() {
             payment_status: swimmerFormStore.paymentStatus,
         };
     };
-    const saveUser = async () => {
+    const saveUser = () => {
         let data = getSwimmerData();
         if (!data) return;
         data["username"] = swimmerFormStore.username;
@@ -234,30 +247,6 @@ function RegisterSwimmer() {
             });
     };
 
-    const enrollSwimmer = (swimmerId, notificationId) => {
-        let url = "enrollment/generate_enrollment/";
-        axios
-            .post(url, {
-                applicant: swimmerId,
-                course: swimmerFormStore.course,
-                status: swimmerFormStore.enrollmentStatus,
-                receipt_number: swimmerFormStore.receiptNumber,
-            })
-            .then(function (response) {
-                const enrollmentId = response.data.enrollment;
-                const receiptNumber = response.data.payment_receipt;
-                return generatePayment(
-                    enrollmentId,
-                    notificationId,
-                    receiptNumber
-                );
-            })
-            .catch(function (error) {
-                // DELETE USER IF ENROLLMENT CREATION FAILS
-                console.log(error);
-                return updateErrorLoadingNotification(notificationId);
-            });
-    };
     const generatePayment = (enrollmentId, notificationId, receiptNumber) => {
         let course = registerStore.courses?.find(
             (course) => course.value === swimmerFormStore.course
@@ -288,14 +277,10 @@ function RegisterSwimmer() {
             });
     };
 
-    useEffect(() => {
-        console.log(swimmerFormStore)
-    }, [swimmerFormStore])
-
     return (
         <CustomSection title="Registrar nadador" icon={<IconUserPlus size={35} />}>
-            <div className="col-span-8 grid grid-cols-8 gap-x-6 gap-y-4 bg-[#F1F3F5] p-6 rounded-md my-8">
-                <h2 className="text-lg col-span-8 font-semibold">Datos del nadador</h2>
+            <div className="grid grid-cols-10 gap-y-4 bg-[#F1F3F5] p-6 rounded-md my-8 gap-x-3">
+                <h2 className="text-lg col-span-10 font-semibold">Datos del nadador</h2>
                 <CustomTextInput
                     label=" Nombres"
                     withAsterisk
@@ -317,16 +302,15 @@ function RegisterSwimmer() {
                     }
                 />
 
-                <div className="sm:col-span-2 grid grid-cols-4 gap-x-3">
+                <div className="sm:col-span-2 grid grid-cols-4 gap-x-2">
                     <CustomDateInput
                         label="Fecha de nacimiento"
                         withAsterisk
                         placeholder="día mes año"
                         valueFormat="DD MMMM YYYY"
                         className="sm:col-span-3"
-                        value={swimmerFormStore.birthdate}
+                        // value={swimmerFormStore.birthdate}
                         onChange={(birthdate) => {
-                            console.log(birthdate)
                             swimmerFormStore.setBirthdate(
                                 birthdate);
                             swimmerFormStore.setAge(
@@ -334,7 +318,7 @@ function RegisterSwimmer() {
                             );
                         }}
                     />
-                    <InputWrapper label="Edad:">
+                    <InputWrapper label="Edad:" className="pointer-events-none">
                         <Input
                             value={swimmerFormStore.age || 0}
                             readOnly
@@ -342,26 +326,16 @@ function RegisterSwimmer() {
                         />
                     </InputWrapper>
                 </div>
-
-                <div className="sm:col-span-2 grid sm:grid-cols-7 gap-x-3">
-                    <Radio.Group label="Rol" className='col-span-6' value={swimmerFormStore.rol} onChange={swimmerFormStore.setRole}>
-                        <Group mt={8}>
-                            {registerStore.roles?.map((role) => (
-                                <Radio
-                                    styles={{
-                                        label: {
-                                            paddingLeft: 2
-                                        }
-                                    }}
-                                    key={role.key + role.value}
-                                    value={role.value}
-                                    color="#15192F"
-                                    label={role.label?.charAt(0).toUpperCase() + role.label?.slice(1).toLowerCase()}
-                                />
-                            ))}
-                        </Group>
-                    </Radio.Group>
-                </div>
+                <CustomRadioGroup
+                    label="Rol"
+                    className="sm:col-span-4"
+                    data={registerStore.roles}
+                    value={swimmerFormStore.role}
+                    onChange={value => {
+                        let role = registerStore.roles?.find(role => role.value === value).label === "INSTRUCTOR" ? swimmerFormStore.setIsInstructor(true) : swimmerFormStore.setIsInstructor(false)
+                        swimmerFormStore.setRole(value)
+                    }}
+                />
                 <CustomSelect
                     label="Usuario"
                     data={registerStore.usernames}
@@ -370,7 +344,7 @@ function RegisterSwimmer() {
                 />
                 <CustomTextInput
                     leftSectionPointerEvents="none"
-                    className="sm:col-span-2 "
+                    className="sm:col-span-2"
                     withAsterisk
                     label="Correo Electrónico: "
                     placeholder="nombre@dominio.com"
@@ -379,26 +353,39 @@ function RegisterSwimmer() {
                         swimmerFormStore.setEmail(e.currentTarget?.value)
                     }
                 />
-
                 <CustomTextInput
                     leftSectionPointerEvents="none"
-                    withAsterisk={swimmerFormStore.age < 18}
-                    label="Representante: "
-                    placeholder="Ingrese el nombre del representante"
-                    className="sm:col-span-2"
-                    value={swimmerFormStore.representantive}
+                    withAsterisk
+                    label="Teléfono: "
+                    placeholder="Ingrese telefono"
+                    className="sm:col-span-2    "
+                    value={swimmerFormStore.phoneNumber}
                     onChange={(e) =>
-                        swimmerFormStore.setRepresentative(
+                        swimmerFormStore.setPhoneNumber(
                             e.currentTarget?.value
                         )
                     }
                 />
-                <div className="sm:col-span-2 grid sm:grid-cols-7 gap-x-3">
+
+                {!swimmerFormStore.isInstructor && <div className="sm:col-span-4 grid sm:grid-cols-4 gap-x-3">
+                    <CustomTextInput
+                        leftSectionPointerEvents="none"
+                        withAsterisk={swimmerFormStore.age < 18}
+                        label="Representante: "
+                        placeholder="Ingrese el nombre"
+                        className="sm:col-span-2"
+                        value={swimmerFormStore.representantive}
+                        onChange={(e) =>
+                            swimmerFormStore.setRepresentative(
+                                e.currentTarget?.value
+                            )
+                        }
+                    />
                     <CustomTextInput
                         label="Vínculo:"
-                        placeholder="Escriba el vínculo"
+                        placeholder="Vínculo"
                         withAsterisk={swimmerFormStore.age < 18}
-                        className="sm:col-span-4"
+                        className="sm:col-span-1"
                         value={swimmerFormStore.relationship}
                         onChange={(e) =>
                             swimmerFormStore.setRelationship(
@@ -407,167 +394,111 @@ function RegisterSwimmer() {
                         }
                     />
 
-                    <CustomTextInput
-                        leftSectionPointerEvents="none"
-                        withAsterisk
-                        label="Teléfono: "
-                        placeholder="Ingrese telefono"
-                        className="sm:col-span-3"
-                        value={swimmerFormStore.phoneNumber}
-                        onChange={(e) =>
-                            swimmerFormStore.setPhoneNumber(
-                                e.currentTarget?.value
-                            )
-                        }
-                    />
-                </div>
+
+                </div>}
             </div>
-            <div className="col-span-8 grid grid-cols-8 bg-[#F1F3F5] p-6 rounded-md gap-x-6 gap-y-4">
-                <h2 className="col-span-8 font-semibold ">Datos de inscripción</h2>
-                {!swimmerFormStore.isInstructor && (
-                    <>
-                        <CustomTextInput
-                            label="#Comprobante"
-                            variant="outlined"
-                            placeholder="Número comprobante"
-                            className="sm:col-span-1"
-                            value={swimmerFormStore.receiptNumber}
-                            onChange={(e) =>
-                                swimmerFormStore.setReceiptNumber(
-                                    e.currentTarget.value
-                                )
-                            }
-                        />
-                        <CustomSelect
-                            label="Instructor: "
-                            placeholder="Elegir Instructor: "
-                            withAsterisk
-                            data={registerStore.instructors}
-                            className="sm:col-span-2"
-                            value={swimmerFormStore.instructor}
-                            onChange={swimmerFormStore.setInstructor}
-                        />
+            {!swimmerFormStore.isInstructor && <div className=" grid grid-cols-12 bg-[#F1F3F5] p-6 rounded-md gap-x-3 gap-y-4">
+                <h2 className="col-span-12 font-semibold ">Datos de inscripción</h2>
 
-                        {/* <CustomSelect
-                            label="Tipo de clase:"
-                            placeholder="Elegir Paquete "
-                            withAsterisk
-                            data={registerStore.courseTypes}
-                            className="sm:col-span-2"
-                            value={swimmerFormStore.courseType}
-                            onChange={swimmerFormStore.setCourseType}
-                        /> */}
-                        <div className="sm:col-span-2 grid sm:grid-cols-4 gap-x-3">
-                            <CustomSelect
-                                label="Curso"
-                                className={
-                                    swimmerFormStore.isInstructor
-                                        ? "sm:col-span-4"
-                                        : "sm:col-span-3"
+                <CustomTextInput
+                    label="# Ingreso"
+                    placeholder="Número comprobante"
+                    className="sm:col-span-1 pointer-events-none"
+                    variant="filled"
+                    readOnly
+                    value={swimmerFormStore.receiptNumber}
+                    onChange={(e) =>
+                        swimmerFormStore.setReceiptNumber(
+                            e.currentTarget.value
+                        )
+                    }
+                />
+                <CustomSelect
+                    label="Instructor: "
+                    placeholder="Elegir Instructor: "
+                    withAsterisk
+                    data={registerStore.instructors}
+                    className="sm:col-span-2"
+                    value={swimmerFormStore.instructor}
+                    onChange={swimmerFormStore.setInstructor}
+                />
+                {/* <div className="sm:col-span-2 grid sm:grid-cols-6 gap-x-3"> */}
+                <CustomSelect
+                    label="Curso"
+                    className="col-span-2"
+                    data={registerStore.courses}
+                    value={swimmerFormStore.course}
+                    onChange={value => {
+                        swimmerFormStore.setCourse(value);
+                        registerStore.courses.find(courseGroup => {
+                            courseGroup.items.find(course => {
+                                if (course.value === value) {
+                                    swimmerFormStore.setEnrollmentDuration([new Date(course.course.start_date), new Date(course.course.due_date)])
                                 }
-                                data={registerStore.courses}
-                                value={swimmerFormStore.course}
-                                onChange={value => {
-                                    swimmerFormStore.setCourse(value);
-                                    registerStore.courses.find(courseGroup => {
-                                        courseGroup.items.find(course => {
+                            })
+                        }
+                        )
+                    }}
+                />
+                {/* <InputWrapper label="Precio" className="pointer-events-none col-span-2">
+                        <Input variant="filled" value={`${coursePrice}$`} />
+                    </InputWrapper> */}
+                {/* </div> */}
 
-                                            console.log(course.value, value)
-                                            if (course.value === value) {
-                                                swimmerFormStore.setEnrollmentDuration([new Date(course.course.start_date), new Date(course.course.due_date)])
-                                            }
-                                        })
-                                    }
-                                    )
-                                }}
-                            />
-                            <InputWrapper label="Precio">
-                                <Input
-                                    variant="filled"
-                                    value={
-                                        coursePrice
-                                    }
-                                    readOnly
-                                />
-                            </InputWrapper>
-                        </div>
-                    </>
-                )}
 
                 <CustomDatePickerInput
                     type="range"
                     label="Inicio-Fin de Inscripción:"
+                    className="pointer-events-non col-span-3"
                     placeholder="Inicio-Fin de Inscripción:"
                     valueFormat="DD MMMM YYYY"
                     locale="es"
-                    variant="filled"
+                    readOnly
+                    variant={"filled"}
                     value={swimmerFormStore.enrollmentDuration}
                     onChange={swimmerFormStore.setEnrollmentDuration}
                 />
-                <Radio.Group label="Estado de inscripción" className='sm:col-span-3 bg-red-20 p-0'
-                    value={swimmerFormStore.enrollmentStatus} onChange={swimmerFormStore.setEnrollmentStatus}>
-                    <Group mt={8}>
-                        {registerStore.enrollmentStatuses?.map((enrollmentStatus) => (
-                            <Radio
-                                styles={{
-                                    label: {
-                                        paddingLeft: 2
-                                    }
-                                }}
-                                key={enrollmentStatus.key + enrollmentStatus.value}
-                                value={enrollmentStatus.value}
-                                color="#15192F"
-                                label={enrollmentStatus.label?.charAt(0).toUpperCase() + enrollmentStatus.label?.slice(1).toLowerCase()}
-                            />
-                        ))}
-                    </Group>
-                </Radio.Group>
-
-                <Radio.Group label="Estado de pago" className='sm:col-span-3' value={swimmerFormStore.paymentStatus} onChange={swimmerFormStore.setPaymentStatus}>
-                    <Group mt={8}>
-                        {registerStore.paymentStatuses?.map((paymentStatus) => (
-                            <Radio
-                                styles={{
-                                    label: {
-                                        paddingLeft: 2
-                                    }
-                                }}
-                                key={paymentStatus.key + paymentStatus.value}
-                                value={paymentStatus.value}
-                                color="#15192F"
-                                label={paymentStatus.label?.charAt(0).toUpperCase() + paymentStatus.label?.slice(1).toLowerCase()}
-                            />
-                        ))}
-                    </Group>
-                </Radio.Group>
-                <div className="sm:col-span-3 grid sm:grid-cols-6 gap-x-3">
-                    <SelectPaymentMethod store={swimmerFormStore} />
-
+                <CustomRadioGroup
+                    label="Estado de inscripción"
+                    className="sm:col-span-4"
+                    data={registerStore.enrollmentStatuses}
+                    value={swimmerFormStore.enrollmentStatus}
+                    onChange={swimmerFormStore.setEnrollmentStatus}
+                />
+                <div className="col-span-3 grid grid-cols-10 gap-x-3">
                     <CustomNumberInput
                         label="Valor a pagar"
-                        defaultValue={0.0}
-                        precision={2}
-                        min={-1}
-                        step={0.05}
-                        className="sm:col-span-2"
+                        max={coursePrice}
+                        className="col-span-4"
                         value={swimmerFormStore.credit}
                         onChange={(value) => {
                             swimmerFormStore.setCredit(value);
                             let paymentStatus = "3";
-                            if (value === parseInt(coursePrice)) {
+                            if (value === parseFloat(coursePrice)) {
                                 paymentStatus = "1";
-                            } else {
+                            } else if (value > 0 && value < parseFloat(coursePrice)) {
                                 paymentStatus = "2"
+                            } else {
+                                paymentStatus = "3"
                             }
                             swimmerFormStore.setPaymentStatus(
                                 paymentStatus
                             );
                         }}
                     />
+                    <SelectPaymentMethod store={swimmerFormStore} className="col-span-6" />
                 </div>
-            </div>
 
-            <Group justify="center">
+                <CustomRadioGroup
+                    label="Estado de pago"
+                    className="sm:col-span-4"
+                    data={registerStore.paymentStatuses}
+                    value={swimmerFormStore.paymentStatus}
+                    onChange={swimmerFormStore.setPaymentStatus}
+                />
+            </div>}
+
+            <Group justify="center" mt={32}>
                 <CustomButton
                     onClick={saveUser}
                     text={"Guardar"}

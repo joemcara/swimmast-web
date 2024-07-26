@@ -97,6 +97,7 @@ export function CustomDatePickerInput(props) {
             value={props.value}
             onChange={props.onChange}
             locale="es"
+            readOnly={props.readOnly}
             valueFormat={props.valueFormat || 'YYYY-MM-DD'}
             className={props.className || 'sm:col-span-2'}
         />
@@ -106,12 +107,17 @@ export function CustomDatePickerInput(props) {
 export function CustomNumberInput(props) {
     return (
         <NumberInput
+            defaultValue={0.0}
+            precision={2}
+            min={0.0}
+            step={0.5}
+            max={props.max}
             allowDecimal={props.allowDecimal}
             withAsterisk={props.withAsterisk}
             value={props.value}
             label={props.label}
             hideControls={props.hideControls}
-            className={props.className || 'col-span-1'}
+            className={props.className}
             onChange={props.onChange}
         />
     );
@@ -150,9 +156,18 @@ export function SelectPaymentMethod(props) {
 
     const fileInputRef = useRef(null);
     return (
-        <div className="sm:col-span-2 grid grid-cols-2">
+        <div className={`${props.className} grid grid-cols-2`}>
             <label className="col-span-2  text-sm font-semibold leading-6 text-gray-900">Forma de pago </label>
             <Group className="col-span-2" grow gap={0} mt={0}>
+                <ActionIcon
+                    variant="default"
+                    size="lg"
+                    aria-label="Settings"
+                    onClick={() => props.store?.setPaymentMethod('CASH')}
+                    style={{ backgroundColor: props.store?.paymentMethod === 'CASH' ? '#16A34A' : 'transparent' }}
+                >
+                    <IconCash style={{ width: '50px' }} stroke={1.5} />
+                </ActionIcon>
                 <ActionIcon
                     variant="default"
                     size="lg"
@@ -161,21 +176,12 @@ export function SelectPaymentMethod(props) {
                         props.store?.setPaymentMethod('TRANSACTION')
                         fileInputRef.current?.click()
                     }}
-                    style={{ backgroundColor: props.store?.paymentMethod === 'TRANSACTION' ? 'green' : 'transparent' }}
+                    style={{ backgroundColor: props.store?.paymentMethod === 'TRANSACTION' ? '#16A34A' : 'transparent' }}
                 >
                     <IconPhoto style={{ width: '50px' }} stroke={1.25} />
                 </ActionIcon>
 
                 {<FileInput size="xs" multiple onChange={(e) => console.log(e)} ref={fileInputRef} className="hidden" />}
-                <ActionIcon
-                    variant="default"
-                    size="lg"
-                    aria-label="Settings"
-                    onClick={() => props.store?.setPaymentMethod('CASH')}
-                    style={{ backgroundColor: props.store?.paymentMethod === 'CASH' ? 'green' : 'transparent' }}
-                >
-                    <IconCash style={{ width: '50px' }} stroke={1.5} />
-                </ActionIcon>
             </Group>
         </div>
     );
@@ -201,7 +207,7 @@ export function CustomCheckbox(props) {
 
 export function CustomRadioGroup(props) {
     return (
-        <Radio.Group label={props.label} className='col-span-2' value={props.value} onChange={props.onChange}>
+        <Radio.Group label={props.label} className={props.className || 'col-span-2'} value={props.value} onChange={props.onChange}>
             <Group mt={6}>
                 {props.data?.map((item) => (
                     <Radio

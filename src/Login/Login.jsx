@@ -32,7 +32,7 @@ function Login() {
                 }
                 window.localStorage.setItem('token', response.data.token);
                 loginStore.setUser(response.data.user);
-                window.localStorage.setItem('user', JSON.stringify(response.data.user));
+                window.localStorage.setItem('user', response.data.username);
                 window.location.href = "/"
             }).catch((error) => {
                 setIncorrectUser(true)

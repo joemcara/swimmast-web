@@ -8,6 +8,8 @@ export function CustomAccordionItem(props) {
     return (
         <Accordion.Item value={props.value} label={props.label} variant="contained"
             styles={{
+                root: {
+                },
                 item: {
                     borderColor: "transparent",
                 },
@@ -15,7 +17,8 @@ export function CustomAccordionItem(props) {
         >
             <Accordion.Control style={{
                 backgroundColor: props.backgroundColor,
-                paddingLeft: "2rem"
+                paddingLeft: "2rem",
+                margin: "0.5rem 0 ",
             }}
                 classNames={{
                     chevron: "text-white text-sm",
@@ -31,7 +34,7 @@ export function CustomAccordionItem(props) {
                 chevron={open ? <IconMinus /> : <IconPlus />}
                 onClick={() => setOpen(!open)}
             >
-                <div className="flex gap-2 text-white text-lg font-bold items-center">
+                <div className="flex gap-2 text-white text-md font-semibold items-center">
                     {props.icon}
                     {props.label}
                 </div>

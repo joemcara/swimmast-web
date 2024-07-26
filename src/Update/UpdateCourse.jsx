@@ -64,7 +64,6 @@ function UpdateCourse() {
     useEffect(() => {
         let startDate = new Date(courseStore.selectedItem?.start_date || new Date())
         let dueDate = new Date(courseStore.selectedItem?.due_date || new Date())
-        console.log(courseStore.selectedItem)
         courseFormStore.setCourseName(courseStore.selectedItem?.name)
         courseFormStore.setInstructor(courseStore.selectedItem?.instructor?.id?.toString())
         courseFormStore.setCourseType(courseStore.selectedItem?.course_type?.id?.toString())

@@ -3,10 +3,17 @@ import Menu from './Menu'
 import { Outlet } from 'react-router-dom'
 import Layout from '../components/Layout'
 import MenuMovil from './MenuMovil'
+import axios from 'axios'
 
 function Base() {
     useEffect(() => {
-        if (window.localStorage.getItem('token') === null) window.location.href = '/login'
+        axios.get('administration/check_token_expiration/', { headers: { "Authorization": `Token ${window.localStorage.getItem("token")}` } }).then(res => {
+            window.localStorage.setItem('user', res.data)
+        }).catch(err => {
+            console.log(err)
+            window.localStorage.clear()
+            window.location.href = '/login'
+        })
     }, [])
     return (
         <div className=''>

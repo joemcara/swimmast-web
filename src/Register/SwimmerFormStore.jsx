@@ -130,7 +130,7 @@ const createCreditSlice = (set) => ({
 });
 
 const createPaymentMethodSlice = (set) => ({
-    paymentMethod: "TRANSACTION",
+    paymentMethod: "CASH",
     setPaymentMethod: (value) =>
         set(() => ({
             paymentMethod: value,
@@ -216,13 +216,43 @@ const createResetSlice = (set) => ({
             enrollmentDuration: [],
             paymentStatus: null,
             credit: 0,
-            paymentMethod: "TRANSACTION",
+            paymentMethod: "CASH",
             payment: 0,
             role: null,
             numbersOfDays: "",
             courseDays: [],
             course: null,
             isInstructor: false,
+        })),
+});
+
+const createEditSlice = (set) => ({
+    edit: (data) =>
+        set(() => ({
+            username: data?.username,
+            firstName: data?.first_name,
+            lastName: data?.last_name,
+            birthdate: data?.applicant?.birthdate,
+            age: data?.age,
+            receiptNumber: data?.receiptNumber,
+            email: data?.email,
+            address: data?.address,
+            representative: data?.representative,
+            relationship: data?.relationship,
+            phoneNumber: data?.phoneNumber,
+            instructor: data?.instructor,
+            courseType: data?.courseType,
+            enrollmentStatus: data?.enrollmentStatus,
+            enrollmentDuration: data?.enrollmentDuration,
+            paymentStatus: data?.paymentStatus,
+            credit: data?.credit,
+            paymentMethod: data?.paymentMethod,
+            payment: data?.payment,
+            role: data?.role_id,
+            numbersOfDays: data?.numbersOfDays,
+            courseDays: data?.courseDays,
+            course: data?.course,
+            isInstructor: data?.isInstructor,
         })),
 });
 
@@ -255,6 +285,7 @@ const useSwimmerFormStore = create((...a) => ({
 
     ...createIsInstructorSlice(...a),
     ...createResetSlice(...a),
+    ...createEditSlice(...a),
 }));
 
 export default useSwimmerFormStore;
