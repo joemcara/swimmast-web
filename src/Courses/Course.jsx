@@ -85,8 +85,8 @@ function Curso() {
 
                 <CustomTable
                     type='curso'
-                    headers={["instructor", "tipoDeClase", "horaInicio", "horaFin", "fechaInicio", "fechaFin"]}
-                    getters={['instructor_name', 'course_type_name', 'start_time', 'end_time', 'start_date', 'due_date']}
+                    headers={["nombre", "instructor", "tipoDeClase", "horaInicio", "horaFin", "fechaInicio", "fechaFin"]}
+                    getters={['name', 'instructor_name', 'course_type_name', 'start_time', 'end_time', 'start_date', 'due_date']}
                     data={courseStore.courses}
                     store={courseStore}
                 />

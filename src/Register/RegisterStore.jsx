@@ -64,6 +64,14 @@ const createUsernamesSlice = (set) => ({
         }))
 })
 
+const createWeekdaysSlice = (set) => ({
+    weekdays: [],
+    setWeekdays: (value) =>
+        set(() => ({
+            weekdays: value
+        }))
+})
+
 const useRegisterStore = create((...a) => ({
     ...createInstructorsSlice(...a),
     ...createCourseTypesSlice(...a),
@@ -72,7 +80,8 @@ const useRegisterStore = create((...a) => ({
     ...createPaymentStatusesSlice(...a),
     ...createCoursesSlice(...a),
     ...createRolesSlice(...a),
-    ...createUsernamesSlice(...a)
+    ...createUsernamesSlice(...a),
+    ...createWeekdaysSlice(...a)
 }))
 
 export default useRegisterStore;

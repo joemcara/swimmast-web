@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Checkbox, FileInput, Group, MultiSelect, NumberInput, PasswordInput, Radio, Select, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Button, Checkbox, FileInput, Group, InputLabel, MultiSelect, NumberInput, PasswordInput, Radio, Select, Stack, Text, Textarea, TextInput } from "@mantine/core";
 import { DateInput, DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCash, IconPhoto } from "@tabler/icons-react";
@@ -54,6 +54,21 @@ export function CustomTextInput(props) {
     );
 }
 
+export function CustomTextArea(props) {
+    return (
+        <Textarea
+            label={props.label}
+            placeholder={props.placeholder}
+            radius={props.radius || 'sm'}
+            className={props.className || 'sm:col-span-2'}
+            value={props.value}
+            onChange={props.onChange}
+            disabled={props.disabled}
+            variant={props.variant}
+            readOnly={props.readOnly}
+        />)
+}
+
 export function CustomPasswordInput(props) {
     const [visible, { toggle }] = useDisclosure(false);
     return (
@@ -83,6 +98,8 @@ export function CustomDateInput(props) {
             radius={props.radius || 'sm'}
             className={props.className || 'sm:col-span-2'}
             locale="es"
+            allowDeselect
+            clearable
         />
     );
 }
@@ -193,7 +210,7 @@ export function CustomCheckbox(props) {
             label={props.label}
             styles={{
                 label: {
-                    fontWeight: 600,
+                    fontWeight: props.fontWeight || 600,
                 }
             }}
             className={props.className}
@@ -219,5 +236,32 @@ export function CustomRadioGroup(props) {
                 ))}
             </Group>
         </Radio.Group>
+    )
+}
+
+export function CustomCheckboxGroup(props) {
+    return (
+        <Stack className={props.className}>
+            <InputLabel className='text-black' >{props.label}</InputLabel>
+            <Group>
+                {props.data?.map((item) => {
+                    return (
+                        <CustomCheckbox
+                            fontWeight={props.fontWeight}
+                            key={item.key + item.value}
+                            label={item.label?.charAt(0).toUpperCase() + item.label?.slice(1).toLowerCase()}
+                            checked={props.value.includes(item.value.toString())}
+                            onChange={e => {
+                                if (e.target.checked) {
+                                    props.setFormList([...props.value, item.value])
+                                } else {
+                                    props.setFormList(props.value.filter((valueItem) => valueItem !== item.value))
+                                }
+                            }}
+                        />
+                    )
+                })}
+            </Group>
+        </Stack>
     )
 }

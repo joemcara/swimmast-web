@@ -37,11 +37,11 @@ export function showLoadingNotification(props) {
     return id;
 }
 
-export function updateSuccessLoadingNotification(idNotificacion, message) {
+export function updateSuccessLoadingNotification(idNotificacion, title, message) {
     return notifications.update({
         id: idNotificacion,
         color: 'teal',
-        title: 'Registro creado',
+        title: title || 'Éxito',
         message: message || 'El registro ha sido creado con éxito',
         icon: <IconCheck style={{ width: 20, height: 20 }} />,
         loading: false,
@@ -49,11 +49,11 @@ export function updateSuccessLoadingNotification(idNotificacion, message) {
     });
 
 }
-export function updateErrorLoadingNotification(idNotificacion, message) {
+export function updateErrorLoadingNotification(idNotificacion, title, message) {
     return notifications.update({
         id: idNotificacion,
         color: 'red',
-        title: 'Error',
+        title: title || 'Error',
         message: message || 'El registro no ha podido crearse',
         icon: <IconX style={{ width: 20, height: 20 }} />,
         loading: false,

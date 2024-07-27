@@ -100,20 +100,12 @@ function UpdateSwimmer() {
 
     useEffect(() => {
         getSelectData();
-        swimmerFormStore.edit(homeStore.selectedItem)
-        // console.log(swimmerFormStore)
-        console.log(homeStore.selectedItem)
-        // swimmerFormStore.setFirstName(homeStore.selectedItem?.first_name)
-        // swimmerFormStore.setLastName(homeStore.selectedItem?.last_name)
-        // swimmerFormStore.setRole(homeStore.selectedItem?.role_id?.toString())
-        // swimmerFormStore.setPhoneNumber(homeStore.selectedItem?.phone_number)
-        // swimmerFormStore.setEmail(homeStore.selectedItem?.email)
-        // swimmerFormStore.setBirthdate(new Date(homeStore.selectedItem?.applicant?.birthdate))
+        if (homeStore.selectedItem) swimmerFormStore.edit(homeStore.selectedItem)
 
     }, []);
 
     return (
-        <CustomSection title="Actualizar nadador" icon={<IconUserEdit size={40} />}>
+        <CustomSection title="Actualizar nadador" icon={<IconUserEdit size={35} />}>
             <form>
                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 pb-4">
                     <CustomTextInput
@@ -134,7 +126,7 @@ function UpdateSwimmer() {
                     />
 
                     {!swimmerFormStore.isInstructor && <div className="sm:col-span-2 grid grid-cols-4 gap-x-3">
-                        <CustomDateInput
+                        {/* <CustomDateInput
                             label="Fecha de nacimiento"
                             withAsterisk
                             placeholder="día mes año"
@@ -145,10 +137,15 @@ function UpdateSwimmer() {
                                 swimmerFormStore.setBirthdate(birthdate);
                                 swimmerFormStore.setAge(calculateAge(birthdate))
                             }}
-                        />
-                        <InputWrapper label='Edad:'>
-                            <Input value={swimmerFormStore?.age} readOnly variant='filled' />
-                        </InputWrapper>
+                        /> */}
+                        {/* <CustomTextInput
+                            label="Edad"
+                            className="sm:col-span-1 pointer-events-none"
+                            value={swimmerFormStore.age || 0}
+                            onChange={e => null}
+                            variant="filled"
+                        /> */}
+
 
                     </div>
                     }

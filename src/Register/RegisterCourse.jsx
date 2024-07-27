@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import CustomSection from '../components/CustomSection';
 import { ActionIcon, Group, Radio, rem } from '@mantine/core';
 import { IconBellSchool, IconClock, IconPlus, IconSchool, IconSchoolBell, IconSchoolOff } from '@tabler/icons-react';
-import { CustomButton, CustomDatePickerInput, CustomNumberInput, CustomRadioGroup, CustomSelect, CustomTextInput } from '../components/CustomInputs';
+import { CustomButton, CustomCheckbox, CustomCheckboxGroup, CustomDatePickerInput, CustomNumberInput, CustomRadioGroup, CustomSelect, CustomTextArea, CustomTextInput } from '../components/CustomInputs';
 import { TimeInput } from '@mantine/dates';
 import useCourseFormStore from './CourseFormStore';
 import axios from 'axios';
@@ -63,11 +63,18 @@ function RegisterCourse() {
             registerStore.setCourseStatuses(courseStatus)
         })
 
+        axios.get("weekday/").then(function (response) {
+            let weekdays = response.data?.map(weekday => {
+                return {
+                    label: weekday.name,
+                    value: weekday.id.toString()
+                }
+            })
+            registerStore.setWeekdays(weekdays)
+        })
+
     }, [])
 
-    useEffect(() => {
-        console.log(courseFormStore)
-    }, [courseFormStore])
 
     const createCourse = () => {
         axios.post("course/create_course/", {
@@ -81,18 +88,20 @@ function RegisterCourse() {
             description: courseFormStore.description,
             course_status: courseFormStore.courseStatus,
             course_type: courseFormStore.courseType,
+            weekdays: courseFormStore.weekdays
         }).then(function (response) {
             console.log(response.data)
             courseFormStore.reset()
             navigate("/")
         })
     }
+
     return (
         <CustomSection title='Registrar curso' icon={<div className=' relative pr-2'>
-            <IconSchool size={40} />
-            <IconPlus size={17} stroke={4} className='absolute right-0 bottom-0' />
+            <IconSchool size={35} />
+            <IconPlus size={15} stroke={4} className='absolute right-0 bottom-0' />
         </div>}>
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8">
+            <div className="mt-10 grid grid-cols-1 gap-x-3 gap-y-8 sm:grid-cols-10">
 
                 <CustomTextInput
                     label="Nombre del curso"
@@ -121,6 +130,17 @@ function RegisterCourse() {
                     value={courseFormStore.courseStatus}
                     onChange={courseFormStore.setCourseStatus}
                 />
+                <CustomNumberInput
+                    label="Precio"
+                    value={courseFormStore.coursePrice}
+                    onChange={courseFormStore.setCoursePrice}
+                />
+                <CustomCheckbox
+                    className="mt-8"
+                    label="Disponible"
+                    checked={courseFormStore.available}
+                    onChange={courseFormStore.setAvailable}
+                />
                 <CustomDatePickerInput
                     label="Inicio-Fin de Curso:"
                     placeholder="Inicio-Fin de Curso:"
@@ -145,14 +165,19 @@ function RegisterCourse() {
                     value={courseFormStore.endTime}
                     onChange={e => courseFormStore.setEndTime(e.currentTarget?.value)}
                 />
-                <CustomNumberInput
-                    label="Precio: $"
-                    defaultValue={0.00}
-                    precision={2}
-                    min={-1}
-                    step={0.05}
-                    value={courseFormStore.coursePrice}
-                    onChange={courseFormStore.setCoursePrice}
+                <CustomCheckboxGroup
+                    label="Días de clase"
+                    className="col-span-6"
+                    fontWeight={400}
+                    value={courseFormStore.weekdays}
+                    setFormList={courseFormStore.setWeekdays}
+                    data={registerStore.weekdays}
+                />
+                <CustomTextArea
+                    label="Descripción"
+                    className="col-span-4"
+                    value={courseFormStore.description}
+                    onChange={e => courseFormStore.setDescription(e.currentTarget?.value)}
                 />
 
             </div>
