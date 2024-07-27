@@ -72,12 +72,55 @@ function UpdateCourse() {
         })
     }, [])
 
+    const getPaginatedCourses = () => {
+        let url = `administration/courses/page/${1}/`
+        let params = new URLSearchParams();
+        params.append("not_paginated", true)
+        url += `?${params.toString()}`
+        axios.get(url, {
+            headers: {
+                'Authorization': `Token ${localStorage.getItem('token')}`
+            }
+        }).then(function (response) {
+            console.log(response.data.data.length)
+            courseStore.setCourses(response.data.data)
+            courseStore.setTotalPages(response.data?.pagesTotales)
+
+        }).catch(function (error) { console.log(error) })
+    }
+
+
+    const getCourses = () => {
+        let url = "administration/courses/type_grouped/";
+        let params = new URLSearchParams();
+        // if (swimmerFormStore.instructor) {
+        //     params.append("instructor", courseFormStore.instructor);
+        // }
+        url += "?" + params.toString();
+        axios.get(url).then(function (response) {
+            const coursesGroups = response.data?.map((courseGroup) => ({
+                group: courseGroup.course_type,
+                items: courseGroup.courses.map((course) => ({
+                    label: `${course.name} - $${course.price}`,
+                    value: course.id.toString(),
+                    course: course,
+                })),
+            }));
+            registerStore.setCourses(coursesGroups);
+        });
+    };
+
     useEffect(() => {
         if (courseStore.selectedItem) courseFormStore.edit(courseStore.selectedItem)
-    }, [])
+        else {
+            getPaginatedCourses()
+            getCourses()
+        }
+    }, [courseStore.selectedItem])
 
     const updateCourse = () => {
         let notificationId = showLoadingNotification("Actualizando curso")
+        console.log(courseFormStore.courseStatus)
         axios.put(`administration/web_update_course/`, {
             course_id: courseFormStore.id,
             name: courseFormStore.courseName,
@@ -106,10 +149,26 @@ function UpdateCourse() {
 
 
     return (
-        <CustomSection title='Actualizar curso' icon={<div className='relative pr-2'>
-            <IconSchool size={35} />
-            <IconPencil size={15} stroke={3} className='absolute right-0 bottom-0' />
-        </div>}>
+        <CustomSection
+            title='Actualizar curso'
+            icon={<div className='relative pr-2'>
+                <IconSchool size={35} />
+                <IconPencil size={15} stroke={3} className='absolute right-0 bottom-0' />
+            </div>}
+            update={
+                <CustomSelect
+                    label={`Seleccionar curso`}
+                    placeholder={`Elegir curso actualizar`}
+                    searchable
+                    data={registerStore.courses}
+                    value={courseStore.selectedItem?.id?.toString()}
+                    onChange={(value) => {
+                        let course = courseStore.courses?.find(course => course.id?.toString() === value)
+                        courseStore.setSelectedItem(course)
+                    }}
+                />
+            }
+        >
             <div className="mt-10 grid grid-cols-1 gap-x-3 gap-y-8 sm:grid-cols-10">
 
                 <CustomTextInput
@@ -144,6 +203,7 @@ function UpdateCourse() {
                 />
                 <CustomNumberInput
                     label="Precio:"
+                    max={courseStore.selectedItem?.price}
                     value={courseFormStore.coursePrice}
                     onChange={courseFormStore.setCoursePrice}
                 />

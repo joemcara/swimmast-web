@@ -2,6 +2,7 @@ import { ActionIcon, Divider, TextInput } from '@mantine/core'
 import { getHotkeyHandler } from '@mantine/hooks';
 import { IconSearch, IconUser } from '@tabler/icons-react'
 import React from 'react'
+import { CustomSelect } from './CustomInputs';
 
 
 function CustomSection(props) {
@@ -20,8 +21,11 @@ function CustomSection(props) {
                         {props.icon}
                         <h1 className='text-xl lg:text-3xl font-bold'>{props.title}</h1>
                     </div>
+                    {
+                        props.update
+                    }
                     {props.searchBar && <TextInput
-                        placeholder='Buscar nadador'
+                        placeholder={props.searchBar}
                         className='w-2/6'
                         radius={"sm"}
                         rightSection={SEARCH}

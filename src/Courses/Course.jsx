@@ -56,7 +56,7 @@ function Curso() {
             <CustomSection
                 icon={<IconSchool size={35} />}
                 title="Cursos"
-                searchBar
+                searchBar="Buscar curso"
                 getData={getCourses}
                 filter={courseFilterStore}
             >

@@ -238,7 +238,7 @@ const createResetSlice = (set) => ({
 const createEditSlice = (set) => ({
     edit: (data) =>
         set(() => ({
-            id: data?.applicant?.id,
+            id: data?.id?.toString(),
             username: data?.username,
             firstName: data?.first_name,
             lastName: data?.last_name,

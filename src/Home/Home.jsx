@@ -56,7 +56,7 @@ function Home() {
         <CustomSection
             title="Nadadores registrados"
             icon={<IconUser size={35} />}
-            searchBar
+            searchBar="Buscar nadador"
             getData={getSwimmers}
             filter={homeFilterStore}
         >

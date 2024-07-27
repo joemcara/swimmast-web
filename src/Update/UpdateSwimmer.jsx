@@ -98,14 +98,36 @@ function UpdateSwimmer() {
             })
     }
 
+    const getUsers = () => {
+        axios.get('administration/web_swimmast_users/').then(function (response) {
+            // console.log(response.data)
+            let users = response.data?.map(user => ({ label: user?.swimmast_user?.first_name + ' ' + user.swimmast_user?.last_name, value: user.swimmast_user?.id?.toString(), user: user.swimmast_user }))
+
+            homeStore.setStudents(users)
+        })
+    }
+
     useEffect(() => {
         getSelectData();
+        console.log(homeStore.selectedItem)
         if (homeStore.selectedItem) swimmerFormStore.edit(homeStore.selectedItem)
-
-    }, []);
+        else {
+            getUsers()
+        }
+    }, [homeStore.selectedItem]);
 
     return (
-        <CustomSection title="Actualizar nadador" icon={<IconUserEdit size={35} />}>
+        <CustomSection title="Actualizar nadador" icon={<IconUserEdit size={35} />}
+            update={
+                <CustomSelect label="Seleccionar usuario"
+                    data={homeStore.students}
+                    value={homeStore.selectedItem?.id?.toString()}
+                    onChange={value => {
+                        let user = homeStore.students?.find(student => student.value === value)?.user
+                        homeStore.setSelectedItem(user)
+                    }}
+                />}
+        >
             <form>
                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-8 pb-4">
                     <CustomTextInput
