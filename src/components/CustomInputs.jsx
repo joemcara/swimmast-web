@@ -1,13 +1,37 @@
-import { ActionIcon, Button, Checkbox, FileInput, Group, InputLabel, MultiSelect, NumberInput, PasswordInput, Radio, Select, Stack, Text, Textarea, TextInput } from "@mantine/core";
+import {
+    ActionIcon,
+    Button,
+    Checkbox,
+    FileInput,
+    Group,
+    InputLabel,
+    MultiSelect,
+    NumberInput,
+    PasswordInput,
+    Radio,
+    Select,
+    Stack,
+    Text,
+    Textarea,
+    TextInput,
+} from "@mantine/core";
 import { DateInput, DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCash, IconPhoto } from "@tabler/icons-react";
 import { useRef } from "react";
-import 'dayjs/locale/es';
+import "dayjs/locale/es";
 export function CustomButton(props) {
     return (
-        <Button bg={props.bgColor || '#0730BE'} w={props.w || 200} radius={'sm'} mt={0} onClick={props.onClick}>
-            <p fw={600} className="text-sm">{props.text}</p>
+        <Button
+            bg={props.bgColor || "#0730BE"}
+            w={props.w || 200}
+            radius={"sm"}
+            mt={0}
+            onClick={props.onClick}
+        >
+            <p fw={600} className="text-sm">
+                {props.text}
+            </p>
         </Button>
     );
 }
@@ -18,23 +42,21 @@ export const LoginTextInput = (props) => {
             label={props.label}
             placeholder={props.placeholder}
             type={props.type}
-            radius={'sm'}
-            className={'w-4/6 sm:w-5/12'}
+            radius={"sm"}
+            className={"w-4/6 sm:w-5/12"}
         />
     );
-
-}
+};
 
 export function LoginPasswordInput(props) {
     return (
         <CustomPasswordInput
             label={props.label}
             placeholder={props.placeholder}
-            radius={'sm'}
-            className={'w-4/6 sm:w-5/12'}
+            radius={"sm"}
+            className={"w-4/6 sm:w-5/12"}
         />
     );
-
 }
 
 export function CustomTextInput(props) {
@@ -42,9 +64,9 @@ export function CustomTextInput(props) {
         <TextInput
             label={props.label}
             placeholder={props.placeholder}
-            radius={props.radius || 'sm'}
-            type={props.type || 'text'}
-            className={props.className || 'sm:col-span-2'}
+            radius={props.radius || "sm"}
+            type={props.type || "text"}
+            className={props.className || "sm:col-span-2"}
             value={props.value}
             onChange={props.onChange}
             disabled={props.disabled}
@@ -59,14 +81,15 @@ export function CustomTextArea(props) {
         <Textarea
             label={props.label}
             placeholder={props.placeholder}
-            radius={props.radius || 'sm'}
-            className={props.className || 'sm:col-span-2'}
+            radius={props.radius || "sm"}
+            className={props.className || "sm:col-span-2"}
             value={props.value}
             onChange={props.onChange}
             disabled={props.disabled}
             variant={props.variant}
             readOnly={props.readOnly}
-        />)
+        />
+    );
 }
 
 export function CustomPasswordInput(props) {
@@ -75,10 +98,10 @@ export function CustomPasswordInput(props) {
         <PasswordInput
             label={props.label}
             placeholder={props.placeholder}
-            radius={props.radius || 'sm'}
+            radius={props.radius || "sm"}
             visible={visible}
             onVisibilityChange={toggle}
-            className={props.className || 'w-4/6 sm:w-5/12'}
+            className={props.className || "w-4/6 sm:w-5/12"}
             value={props.value}
             onChange={props.onChange}
         />
@@ -94,9 +117,9 @@ export function CustomDateInput(props) {
             defaultValue={props.defaultValue}
             withAsterisk={props.withAsterisk}
             onChange={props.onChange}
-            valueFormat={props.valueFormat || 'YYYY-MM-DD'}
-            radius={props.radius || 'sm'}
-            className={props.className || 'sm:col-span-2'}
+            valueFormat={props.valueFormat || "YYYY-MM-DD"}
+            radius={props.radius || "sm"}
+            className={props.className || "sm:col-span-2"}
             locale="es"
             allowDeselect
             clearable
@@ -115,8 +138,8 @@ export function CustomDatePickerInput(props) {
             onChange={props.onChange}
             locale="es"
             readOnly={props.readOnly}
-            valueFormat={props.valueFormat || 'YYYY-MM-DD'}
-            className={props.className || 'sm:col-span-2'}
+            valueFormat={props.valueFormat || "YYYY-MM-DD"}
+            className={props.className || "sm:col-span-2"}
         />
     );
 }
@@ -146,12 +169,14 @@ export function CustomSelect(props) {
             data={props.data}
             withAsterisk={props.withAsterisk}
             label={props.label}
-            radius={props.radius || 'sm'}
+            radius={props.radius || "sm"}
             placeholder={props.placeholder}
-            className={props.className || 'sm:col-span-2'}
+            className={props.className || "sm:col-span-2"}
             value={props.value}
             onChange={props.onChange}
             searchable={props.searchable || false}
+            readOnly={props.readOnly}
+            variant={props.variant}
         />
     );
 }
@@ -161,8 +186,8 @@ export function CustomMultiSelect(props) {
         <MultiSelect
             data={props.data || []}
             label={props.label}
-            radius={props.radius || 'sm'}
-            className={props.className || 'sm:col-span-2'}
+            radius={props.radius || "sm"}
+            className={props.className || "sm:col-span-2"}
             value={props.value}
             onChange={props.onChange}
         />
@@ -170,35 +195,54 @@ export function CustomMultiSelect(props) {
 }
 
 export function SelectPaymentMethod(props) {
-
     const fileInputRef = useRef(null);
     return (
         <div className={`${props.className} grid grid-cols-2`}>
-            <label className="col-span-2  text-sm font-semibold leading-6 text-gray-900">Forma de pago </label>
+            <label className="col-span-2  text-sm font-semibold leading-6 text-gray-900">
+                Forma de pago{" "}
+            </label>
             <Group className="col-span-2" grow gap={0} mt={0}>
                 <ActionIcon
                     variant="default"
                     size="lg"
                     aria-label="Settings"
-                    onClick={() => props.store?.setPaymentMethod('CASH')}
-                    style={{ backgroundColor: props.store?.paymentMethod === 'CASH' ? '#16A34A' : 'transparent' }}
+                    onClick={() => props.store?.setPaymentMethod("CASH")}
+                    style={{
+                        backgroundColor:
+                            props.store?.paymentMethod === "CASH"
+                                ? "#16A34A"
+                                : "transparent",
+                    }}
                 >
-                    <IconCash style={{ width: '50px' }} stroke={1.5} />
+                    <IconCash style={{ width: "50px" }} stroke={1.5} />
                 </ActionIcon>
                 <ActionIcon
                     variant="default"
                     size="lg"
                     aria-label="Gallery"
                     onClick={() => {
-                        props.store?.setPaymentMethod('TRANSACTION')
-                        fileInputRef.current?.click()
+                        props.store?.setPaymentMethod("TRANSACTION");
+                        fileInputRef.current?.click();
                     }}
-                    style={{ backgroundColor: props.store?.paymentMethod === 'TRANSACTION' ? '#16A34A' : 'transparent' }}
+                    style={{
+                        backgroundColor:
+                            props.store?.paymentMethod === "TRANSACTION"
+                                ? "#16A34A"
+                                : "transparent",
+                    }}
                 >
-                    <IconPhoto style={{ width: '50px' }} stroke={1.25} />
+                    <IconPhoto style={{ width: "50px" }} stroke={1.25} />
                 </ActionIcon>
 
-                {<FileInput size="xs" multiple onChange={(e) => console.log(e)} ref={fileInputRef} className="hidden" />}
+                {
+                    <FileInput
+                        size="xs"
+                        multiple
+                        onChange={(e) => console.log(e)}
+                        ref={fileInputRef}
+                        className="hidden"
+                    />
+                }
             </Group>
         </div>
     );
@@ -211,57 +255,78 @@ export function CustomCheckbox(props) {
             styles={{
                 label: {
                     fontWeight: props.fontWeight || 600,
-                }
+                },
             }}
             className={props.className}
             checked={props.checked}
             onChange={props.onChange}
-            color={props.color || '#2C3E50'}
+            color={props.color || "#2C3E50"}
             iconColor="#fff"
         />
-    )
+    );
 }
 
 export function CustomRadioGroup(props) {
     return (
-        <Radio.Group label={props.label} className={props.className || 'col-span-2'} value={props.value} onChange={props.onChange}>
+        <Radio.Group
+            label={props.label}
+            className={props.className || "col-span-2"}
+            value={props.value}
+            onChange={props.onChange}
+        >
             <Group mt={6}>
                 {props.data?.map((item) => (
                     <Radio
                         key={item.key + item.value}
                         value={item.value}
                         color="#15192F"
-                        label={item.label?.charAt(0).toUpperCase() + item.label?.slice(1).toLowerCase()}
+                        label={
+                            item.label?.charAt(0).toUpperCase() +
+                            item.label?.slice(1).toLowerCase()
+                        }
                     />
                 ))}
             </Group>
         </Radio.Group>
-    )
+    );
 }
 
 export function CustomCheckboxGroup(props) {
     return (
         <Stack className={props.className}>
-            <InputLabel className='text-black' >{props.label}</InputLabel>
+            <InputLabel className="text-black">{props.label}</InputLabel>
             <Group>
                 {props.data?.map((item) => {
                     return (
                         <CustomCheckbox
                             fontWeight={props.fontWeight}
                             key={item.key + item.value}
-                            label={item.label?.charAt(0).toUpperCase() + item.label?.slice(1).toLowerCase()}
-                            checked={props.value.includes(item.value.toString())}
-                            onChange={e => {
+                            label={
+                                item.label?.charAt(0).toUpperCase() +
+                                item.label?.slice(1).toLowerCase()
+                            }
+                            checked={props.value.includes(
+                                item.value.toString()
+                            )}
+                            onChange={(e) => {
                                 if (e.target.checked) {
-                                    props.setFormList([...props.value, item.value])
+                                    props.setFormList([
+                                        ...props.value,
+                                        item.value,
+                                    ]);
                                 } else {
-                                    props.setFormList(props.value.filter((valueItem) => valueItem !== item.value))
+                                    props.setFormList(
+                                        props.value.filter(
+                                            (valueItem) =>
+                                                valueItem !== item.value
+                                        )
+                                    );
                                 }
                             }}
                         />
-                    )
+                    );
                 })}
             </Group>
         </Stack>
-    )
+    );
 }
