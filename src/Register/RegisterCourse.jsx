@@ -104,6 +104,7 @@ function RegisterCourse() {
             <div className="mt-10 grid grid-cols-1 gap-x-3 gap-y-8 sm:grid-cols-10">
 
                 <CustomTextInput
+                    required
                     label="Nombre del curso"
                     withAsterisk
                     placeholder="Ingrese el nombre del curso"
@@ -111,6 +112,7 @@ function RegisterCourse() {
                     onChange={e => courseFormStore.setCourseName(e.currentTarget?.value)}
                 />
                 <CustomSelect
+                    required
                     label="Instructor: "
                     placeholder="Elegir Instructor: "
                     withAsterisk
@@ -119,12 +121,14 @@ function RegisterCourse() {
                     onChange={courseFormStore.setInstructor}
                 />
                 <CustomRadioGroup
+                    required
                     data={registerStore.courseTypes}
                     label="Tipo de curso"
                     value={courseFormStore.courseType}
                     onChange={courseFormStore.setCourseType}
                 />
                 <CustomRadioGroup
+                    required
                     data={registerStore.courseStatuses}
                     label="Estado del curso"
                     value={courseFormStore.courseStatus}
@@ -132,7 +136,7 @@ function RegisterCourse() {
                 />
                 <CustomNumberInput
                     label="Precio"
-                    value={courseFormStore.coursePrice}
+                    required value={courseFormStore.coursePrice}
                     onChange={courseFormStore.setCoursePrice}
                 />
                 <CustomCheckbox
@@ -142,6 +146,7 @@ function RegisterCourse() {
                     onChange={courseFormStore.setAvailable}
                 />
                 <CustomDatePickerInput
+                    required
                     label="Inicio-Fin de Curso:"
                     placeholder="Inicio-Fin de Curso:"
                     valueFormat="DD MMM YYYY"
@@ -149,6 +154,7 @@ function RegisterCourse() {
                     onChange={courseFormStore.setEnrollmentDuration}
                 />
                 <TimeInput
+                    required
                     label="Hora Inicio:"
                     maxTime={courseFormStore.endTime}
                     rightSection={startPickerControl}
@@ -158,6 +164,7 @@ function RegisterCourse() {
                 />
 
                 <TimeInput
+                    required
                     label="Hora Fin:"
                     rightSection={finishPickerControl}
                     ref={finishTimeRef}
@@ -166,6 +173,7 @@ function RegisterCourse() {
                     onChange={e => courseFormStore.setEndTime(e.currentTarget?.value)}
                 />
                 <CustomCheckboxGroup
+                    required
                     label="Días de clase"
                     className="col-span-6"
                     fontWeight={400}

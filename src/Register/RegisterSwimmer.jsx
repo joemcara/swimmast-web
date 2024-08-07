@@ -298,8 +298,9 @@ function RegisterSwimmer() {
                     Datos del usuario
                 </h2>
                 <CustomTextInput
-                    label=" Nombres"
-                    withAsterisk
+                    maxLength={15}
+                    label="Nombres"
+                    required
                     placeholder="Ingrese sus nombres"
                     className="sm:col-span-2"
                     value={swimmerFormStore.firstName}
@@ -308,7 +309,9 @@ function RegisterSwimmer() {
                     }
                 />
                 <CustomTextInput
+                    maxLength={15}
                     label="Apellidos"
+                    required
                     withAsterisk
                     placeholder="Ingrese sus apellidos"
                     className="sm:col-span-2"
@@ -345,6 +348,7 @@ function RegisterSwimmer() {
                 </div>
                 <CustomRadioGroup
                     label="Rol"
+                    required
                     className="sm:col-span-4"
                     data={registerStore.roles}
                     value={swimmerFormStore.role}
@@ -360,11 +364,13 @@ function RegisterSwimmer() {
                 />
                 <CustomSelect
                     label="Usuario"
+                    required
                     data={registerStore.usernames}
                     value={swimmerFormStore.username}
                     onChange={swimmerFormStore.setUsername}
                 />
                 <CustomTextInput
+                    required
                     leftSectionPointerEvents="none"
                     className="sm:col-span-2"
                     withAsterisk
@@ -376,6 +382,8 @@ function RegisterSwimmer() {
                     }
                 />
                 <CustomTextInput
+                    maxLength={10}
+                    required
                     leftSectionPointerEvents="none"
                     withAsterisk
                     label="Teléfono: "
@@ -390,9 +398,11 @@ function RegisterSwimmer() {
                 {!swimmerFormStore.isInstructor && (
                     <div className="sm:col-span-4 grid sm:grid-cols-4 gap-x-3">
                         <CustomTextInput
+                            required={swimmerFormStore.age < 18}
                             leftSectionPointerEvents="none"
                             withAsterisk={swimmerFormStore.age < 18}
                             label="Representante: "
+                            maxLength={15}
                             placeholder="Ingrese el nombre"
                             className="sm:col-span-2"
                             value={swimmerFormStore.representative}
@@ -403,6 +413,8 @@ function RegisterSwimmer() {
                             }
                         />
                         <CustomTextInput
+                            maxLength={10}
+                            required={swimmerFormStore.age < 18}
                             label="Vínculo:"
                             placeholder="Vínculo"
                             withAsterisk={swimmerFormStore.age < 18}
@@ -449,6 +461,7 @@ function RegisterSwimmer() {
                     />
                     {/* <div className="sm:col-span-2 grid sm:grid-cols-6 gap-x-3"> */}
                     <CustomSelect
+                        required
                         label="Curso"
                         className="col-span-2"
                         data={registerStore.courses}
@@ -496,6 +509,7 @@ function RegisterSwimmer() {
                     <div className="col-span-3 grid grid-cols-10 gap-x-3">
                         <CustomNumberInput
                             label="Valor a pagar"
+                            required
                             max={coursePrice}
                             className="col-span-4"
                             value={swimmerFormStore.credit}

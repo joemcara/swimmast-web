@@ -62,6 +62,7 @@ export function LoginPasswordInput(props) {
 export function CustomTextInput(props) {
     return (
         <TextInput
+            maxLength={props.maxLength}
             label={props.label}
             placeholder={props.placeholder}
             radius={props.radius || "sm"}
@@ -72,6 +73,7 @@ export function CustomTextInput(props) {
             disabled={props.disabled}
             variant={props.variant}
             readOnly={props.readOnly}
+            required={props.required}
         />
     );
 }
@@ -140,6 +142,7 @@ export function CustomDatePickerInput(props) {
             readOnly={props.readOnly}
             valueFormat={props.valueFormat || "YYYY-MM-DD"}
             className={props.className || "sm:col-span-2"}
+            required={props.required}
         />
     );
 }
@@ -159,6 +162,7 @@ export function CustomNumberInput(props) {
             hideControls={props.hideControls}
             className={props.className}
             onChange={props.onChange}
+            required={props.required}
         />
     );
 }
@@ -178,6 +182,7 @@ export function CustomSelect(props) {
             readOnly={props.readOnly}
             variant={props.variant}
             allowDeselect={props.allowDeselect}
+            required={props.required}
         />
     );
 }
@@ -274,6 +279,7 @@ export function CustomRadioGroup(props) {
             className={props.className || "col-span-2"}
             value={props.value}
             onChange={props.onChange}
+            required={props.required}
         >
             <Group mt={6}>
                 {props.data?.map((item) => (
@@ -296,7 +302,7 @@ export function CustomRadioGroup(props) {
 export function CustomCheckboxGroup(props) {
     return (
         <Stack className={props.className}>
-            <InputLabel className="text-black">{props.label}</InputLabel>
+            <InputLabel className="text-black" required={props.required}>{props.label}</InputLabel>
             <Group>
                 {props.data?.map((item) => {
                     return (
