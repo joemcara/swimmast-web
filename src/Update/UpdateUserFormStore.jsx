@@ -189,6 +189,7 @@ const createResetSlice = (set) => ({
             enrollmentId: null,
             enrollmentStatus: null,
             paymentStatus: null,
+            paymentValue: 0,
         })),
 });
 

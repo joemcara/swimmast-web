@@ -178,6 +178,7 @@ function UpdateSwimmer() {
                     value: enrollment.id.toString(),
                     enrollment: enrollment,
                 }));
+                console.log(enrollments[0])
                 updateStore.setEnrollments(enrollments);
                 updateUserFormStore.edit(response.data?.user);
                 updateUserFormStore.setEnrollmentId(enrollments ? enrollments[0].value : null);
@@ -192,7 +193,11 @@ function UpdateSwimmer() {
     useEffect(() => {
         console.log("enrolment", updateUserFormStore.enrollmentId);
         if (updateUserFormStore?.enrollmentId) {
-            updateStore.setSelectedEnrollment(updateStore.enrollments?.find(enrollment => enrollment.value === updateUserFormStore.enrollmentId));
+            let enrollment = updateStore.enrollments?.find(enrollment => enrollment.value === updateUserFormStore.enrollmentId)
+            console.log(enrollment)
+            updateStore.setSelectedEnrollment(enrollment);
+            updateUserFormStore.setEnrollmentStatus(enrollment?.enrollment?.enrollment_status_id?.toString());
+            updateUserFormStore.setPaymentStatus(enrollment?.enrollment?.payment_status_id?.toString());
             axios.get(`payment_receipt/outstanding_balance/${updateUserFormStore.enrollmentId}`).then((response) => {
                 setPendingValue(response.data?.outstanding_balance);
             });
@@ -215,6 +220,8 @@ function UpdateSwimmer() {
             enrollment_id: updateUserFormStore.enrollmentId,
             enrollment_status: updateUserFormStore.enrollmentStatus,
             role_id: updateUserFormStore.role_id,
+            payment_status: updateUserFormStore.paymentStatus,
+            payment_value: updateUserFormStore.paymentValue,
         }
         const idNotification = showLoadingNotification("Actualizando usuario");
         axios.put(`administration/web_update_user_enrollment/`, data).then((response) => {
@@ -275,7 +282,6 @@ function UpdateSwimmer() {
                     <div className="sm:col-span-2 grid grid-cols-4 gap-x-2">
                         <CustomDateInput
                             label="Fecha de nacimiento"
-                            withAsterisk
                             placeholder="día mes año"
                             valueFormat="DD MMMM YYYY"
                             className="sm:col-span-3"
@@ -375,7 +381,6 @@ function UpdateSwimmer() {
                             label={"Instructor"}
                             text={updateStore.selectedEnrollment?.enrollment?.instructor}
                             className="sm:col-span-2"
-                            required
                         />
                         {/* <CustomSelect
                             label="Instructor: "
@@ -395,7 +400,6 @@ function UpdateSwimmer() {
                         <ReadOnly
                             label={"Curso"}
                             text={updateStore.selectedEnrollment?.enrollment?.course?.name}
-                            required
                             className={"col-span-2"}
                         />
 
