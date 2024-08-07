@@ -92,7 +92,7 @@ function RegisterCourse() {
         }).then(function (response) {
             console.log(response.data)
             courseFormStore.reset()
-            navigate("/")
+            navigate("/cursos")
         })
     }
 

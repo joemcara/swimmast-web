@@ -111,10 +111,9 @@ function UpdateCourse() {
     };
 
     useEffect(() => {
+        getCourses()
         if (courseStore.selectedItem) courseFormStore.edit(courseStore.selectedItem)
         else {
-            getPaginatedCourses()
-            getCourses()
         }
     }, [courseStore.selectedItem])
 
