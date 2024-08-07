@@ -109,12 +109,12 @@ function Menu() {
                             />
                         </CustomAccordionItem>
                     </Accordion>
-                    <CustomNavLink
+                    {/* <CustomNavLink
                         text="Reportes"
                         to="/"
                         icon={icons["REPORTS"]}
                         padding={"pl-8"}
-                    />
+                    /> */}
                     <CustomNavLink
                         text="Cerrar sesión"
                         to="/logout"

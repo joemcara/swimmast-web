@@ -204,6 +204,16 @@ const createIsInstructorSlice = (set) => ({
         })),
 });
 
+
+const createEnrollmentIdSlice = (set) => ({
+    enrollmentId: null,
+    setEnrollmentId: (value) =>
+        set(() => ({
+            enrollmentId: value,
+        })),
+});
+
+
 const createResetSlice = (set) => ({
     reset: () =>
         set(() => ({
@@ -242,7 +252,7 @@ const createEditSlice = (set) => ({
             username: data?.username,
             firstName: data?.first_name,
             lastName: data?.last_name,
-            birthdate: data?.applicant?.birthdate,
+            birthdate: data?.applicant?.birthdate ? new Date(data?.applicant?.birthdate) : null,
             age: data?.age,
             receiptNumber: data?.receiptNumber,
             email: data?.email,
@@ -252,17 +262,19 @@ const createEditSlice = (set) => ({
             phoneNumber: data?.phone_number,
             instructor: data?.instructor,
             courseType: data?.courseType,
-            enrollmentStatus: data?.enrollmentStatus,
-            enrollmentDuration: data?.enrollmentDuration,
-            paymentStatus: data?.paymentStatus,
+            enrollmentStatus: data?.enrollment_status_id?.toString(),
+            enrollmentDuration: [new Date(data?.start_date), new Date(data?.due_date)],
+            paymentStatus: data?.payment_status_id?.toString(),
             credit: data?.credit,
-            paymentMethod: data?.paymentMethod,
+            paymentMethod: "CASH",
             payment: data?.payment,
-            role: data?.role_id,
+            role: data?.role_id?.toString(),
             numbersOfDays: data?.numbersOfDays,
             courseDays: data?.courseDays,
             course: data?.course,
             isInstructor: data?.isInstructor,
+            enrollmentId: data?.id,
+
         })),
 });
 
@@ -297,6 +309,7 @@ const useSwimmerFormStore = create((...a) => ({
     ...createIsInstructorSlice(...a),
     ...createResetSlice(...a),
     ...createEditSlice(...a),
+    ...createEnrollmentIdSlice(...a),
 }));
 
 export default useSwimmerFormStore;

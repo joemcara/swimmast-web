@@ -277,6 +277,7 @@ export function CustomRadioGroup(props) {
             <Group mt={6}>
                 {props.data?.map((item) => (
                     <Radio
+                        disabled={props.disabled}
                         key={item.key + item.value}
                         value={item.value}
                         color="#15192F"

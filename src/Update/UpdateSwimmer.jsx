@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useRegisterStore from "../Register/RegisterStore";
 import {
     CustomButton,
@@ -18,12 +18,15 @@ import { IconUserEdit } from "@tabler/icons-react";
 import useHomeStore from "../Home/HomeStore";
 import ReadOnly from "../components/ReadOnly";
 import useUpdateStore from "./UpdateStore";
+import { useNavigate } from "react-router-dom";
+import { showLoadingNotification, updateErrorLoadingNotification, updateSuccessLoadingNotification } from "../util/CustomNotifications";
 
 function UpdateSwimmer() {
     const registerStore = useRegisterStore();
     const swimmerFormStore = useSwimmerFormStore();
     const homeStore = useHomeStore();
     const updateStore = useUpdateStore();
+    const navigate = useNavigate();
     const getSelectData = () => {
         axios.get("enrollment_status/").then(function (response) {
             const enrollmentStatuses = response.data?.map(
@@ -151,10 +154,16 @@ function UpdateSwimmer() {
                 updateStore.setStudents(users);
             });
     };
-
+    const [pendingValue, setPendingValue] = useState(0);
     useEffect(() => {
         getUsers();
         getSelectData();
+        console.log("selected item", homeStore.selectedItem);
+        axios.get(`payment_receipt/outstanding_balance/${homeStore?.selectedItem?.id}`).then((response) => {
+            console.log(response.data);
+            setPendingValue(response.data?.outstanding_balance);
+        });
+
         if (homeStore.selectedItem) {
             swimmerFormStore.edit(homeStore.selectedItem);
             homeStore.setSelectedItem(
@@ -166,6 +175,33 @@ function UpdateSwimmer() {
         }
     }, []);
 
+    const updateUser = () => {
+        let data = {
+            first_name: swimmerFormStore.firstName,
+            last_name: swimmerFormStore.lastName,
+            birthdate: swimmerFormStore.birthdate?.toISOString().split("T")[0],
+            phone_number: swimmerFormStore.phoneNumber,
+            representative_name: swimmerFormStore.representative,
+            representative_relationship: swimmerFormStore.relationship,
+            enrollment_id: swimmerFormStore.enrollmentId,
+            enrollment_status: swimmerFormStore.enrollmentStatus,
+            swimmast_user_id: swimmerFormStore.id,
+            role_id: swimmerFormStore.role,
+        }
+        const idNotification = showLoadingNotification("Actualizando usuario");
+        axios.put(`administration/web_update_user_enrollment/`, data).then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+                updateSuccessLoadingNotification(idNotification, "Éxito", "El usuario ha sido actualizado con éxito");
+                console.log(response.status)
+                navigate("/");
+            }
+        }).catch((error) => {
+            updateErrorLoadingNotification(idNotification, "Error", "El usuario no ha podido ser actualizado");
+            console.log(error);
+        });
+    };
+
     return (
         <CustomSection
             title="Actualizar usuario"
@@ -176,6 +212,13 @@ function UpdateSwimmer() {
                     data={updateStore.students}
                     // CORREGIR LOS DATOS QUE DEVUELVE EN LA TABLA DE USUARIOS REGISTRADOS
                     value={swimmerFormStore.id}
+                    onChange={(value) => {
+                        homeStore.setSelectedItem(
+                            updateStore.students.find(
+                                (student) => student.value === value
+                            )?.user
+                        );
+                    }}
                 />
             }
         >
@@ -236,7 +279,7 @@ function UpdateSwimmer() {
 
                     <CustomRadioGroup
                         label="Rol"
-                        className="sm:col-span-4"
+                        className="sm:col-span-4 pointer-events-none"
                         data={registerStore.roles}
                         value={swimmerFormStore.role}
                         onChange={(value) => {
@@ -249,11 +292,11 @@ function UpdateSwimmer() {
                             swimmerFormStore.setRole(value);
                         }}
                     />
-                    <CustomSelect
+
+                    <ReadOnly
                         label="Usuario"
-                        data={registerStore.usernames}
-                        value={swimmerFormStore.username}
-                        onChange={swimmerFormStore.setUsername}
+                        text={swimmerFormStore.username}
+                        className="sm:col-span-2"
                     />
                     <CustomTextInput
                         leftSectionPointerEvents="none"
@@ -340,40 +383,10 @@ function UpdateSwimmer() {
                             }}
                         /> */}
                         {/* <div className="sm:col-span-2 grid sm:grid-cols-6 gap-x-3"> */}
-                        <CustomSelect
-                            label="Curso"
-                            variant="filled"
-                            className="col-span-2"
-                            data={registerStore.courses}
-                            value={swimmerFormStore.course}
-                            onChange={(value) => {
-                                swimmerFormStore.setCourse(value);
-                                registerStore.courses.find((courseGroup) => {
-                                    courseGroup.items.find((course) => {
-                                        if (course.value === value) {
-                                            swimmerFormStore.setEnrollmentDuration(
-                                                [
-                                                    new Date(
-                                                        course.course.start_date
-                                                    ),
-                                                    new Date(
-                                                        course.course.due_date
-                                                    ),
-                                                ]
-                                            );
-                                            swimmerFormStore.setInstructor(
-                                                course?.course?.instructor?.id?.toString()
-                                            );
-                                        }
-                                    });
-                                });
-                            }}
-                            readOnly
-                        />
 
                         <ReadOnly
                             label={"Curso"}
-                            text={homeStore.selectedItem?.course}
+                            text={swimmerFormStore?.course}
                             required
                             className={"col-span-2"}
                         />
@@ -404,24 +417,24 @@ function UpdateSwimmer() {
                         <CustomTextInput
                             label="Pendiente"
                             className="sm:col-span-1"
-                            value={`$ ${10}`}
+                            value={`$ ${pendingValue}`}
                             variant="filled"
                             readOnly
                         />
                         <div className="col-span-3 grid grid-cols-10 gap-x-3">
                             <CustomNumberInput
                                 label="Valor a pagar"
-                                max={coursePrice}
+                                max={pendingValue}
                                 className="col-span-4"
                                 value={swimmerFormStore.credit}
                                 onChange={(value) => {
                                     swimmerFormStore.setCredit(value);
                                     let paymentStatus = "3";
-                                    if (value === parseFloat(coursePrice)) {
+                                    if (value === parseFloat(pendingValue)) {
                                         paymentStatus = "1";
                                     } else if (
                                         value > 0 &&
-                                        value < parseFloat(coursePrice)
+                                        value < parseFloat(pendingValue)
                                     ) {
                                         paymentStatus = "2";
                                     } else {
@@ -440,7 +453,7 @@ function UpdateSwimmer() {
 
                         <CustomRadioGroup
                             label="Estado de pago"
-                            className="sm:col-span-4"
+                            className="sm:col-span-4 pointer-events-none"
                             data={registerStore.paymentStatuses}
                             value={swimmerFormStore.paymentStatus}
                             onChange={swimmerFormStore.setPaymentStatus}
@@ -449,7 +462,7 @@ function UpdateSwimmer() {
                 )}
                 <Group justify="center">
                     <CustomButton
-                        onClick={editUser}
+                        onClick={updateUser}
                         text={"Guardar"}
                         bgColor={"#15192F"}
                     />

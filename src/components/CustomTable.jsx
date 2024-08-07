@@ -93,13 +93,12 @@ function CustomTable(props) {
                                         element.age = element?.applicant
                                             ?.birthdate
                                             ? calculateAge(
-                                                  new Date(
-                                                      element?.applicant?.birthdate
-                                                  )
-                                              )
+                                                new Date(
+                                                    element?.applicant?.birthdate
+                                                )
+                                            )
                                             : 0;
                                         props.store?.setSelectedItem(element);
-                                        console.log(element);
                                         navigate(`/actualizar-${props.type}`);
                                     }}
                                 >
