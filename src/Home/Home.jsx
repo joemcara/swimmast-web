@@ -18,12 +18,15 @@ import useHomeFilterStore from "./HomeFilterStore";
 import { IconSearch, IconSwimming, IconUser } from "@tabler/icons-react";
 import { CustomCheckbox } from "../components/CustomInputs";
 import { getHotkeyHandler, randomId, useHotkeys } from "@mantine/hooks";
+import useUpdateUserFormStore from "../Update/UpdateUserFormStore";
 
 function Home() {
     const homeStore = useHomeStore();
     const homeFilterStore = useHomeFilterStore();
-
+    const updateUserFormStore = useUpdateUserFormStore();
     useEffect(() => {
+        updateUserFormStore.reset();
+        homeStore.setSelectedItem(null);
         axios
             .get("enrollment_status/")
             .then(function (response) {

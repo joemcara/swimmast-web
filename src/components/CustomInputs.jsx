@@ -177,6 +177,7 @@ export function CustomSelect(props) {
             searchable={props.searchable || false}
             readOnly={props.readOnly}
             variant={props.variant}
+            allowDeselect={props.allowDeselect}
         />
     );
 }

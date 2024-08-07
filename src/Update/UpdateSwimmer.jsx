@@ -20,6 +20,7 @@ import ReadOnly from "../components/ReadOnly";
 import useUpdateStore from "./UpdateStore";
 import { useNavigate } from "react-router-dom";
 import { showLoadingNotification, updateErrorLoadingNotification, updateSuccessLoadingNotification } from "../util/CustomNotifications";
+import useUpdateFormStore from "./UpdateUserFormStore";
 
 function UpdateSwimmer() {
     const registerStore = useRegisterStore();
@@ -27,6 +28,7 @@ function UpdateSwimmer() {
     const homeStore = useHomeStore();
     const updateStore = useUpdateStore();
     const navigate = useNavigate();
+    const updateUserFormStore = useUpdateFormStore();
     const getSelectData = () => {
         axios.get("enrollment_status/").then(function (response) {
             const enrollmentStatuses = response.data?.map(
@@ -155,38 +157,64 @@ function UpdateSwimmer() {
             });
     };
     const [pendingValue, setPendingValue] = useState(0);
+
+    //EXECUTE WHEN FIRST TIME RENDER
     useEffect(() => {
         getUsers();
         getSelectData();
-        console.log("selected item", homeStore.selectedItem);
-        axios.get(`payment_receipt/outstanding_balance/${homeStore?.selectedItem?.id}`).then((response) => {
-            console.log(response.data);
-            setPendingValue(response.data?.outstanding_balance);
-        });
-
+        updateUserFormStore.reset();
         if (homeStore.selectedItem) {
-            swimmerFormStore.edit(homeStore.selectedItem);
-            homeStore.setSelectedItem(
-                homeStore.students?.find(
-                    (student) =>
-                        student.value === homeStore.selectedItem?.id?.toString()
-                )?.user
-            );
+            // updateStore.setSelectedItem(homeStore.selectedItem?.applicant);
+            updateUserFormStore.setUserId(homeStore.selectedItem?.applicant?.id.toString());
         }
     }, []);
 
+    useEffect(() => {
+        console.log("user", updateUserFormStore.userId);
+        if (updateUserFormStore?.userId) {
+            axios.get(`administration/web_user_enrollments/${updateUserFormStore?.userId}/`).then((response) => {
+                let enrollments = response.data.enrollments?.map((enrollment) => ({
+                    label: enrollment.receipt_number,
+                    value: enrollment.id.toString(),
+                    enrollment: enrollment,
+                }));
+                updateStore.setEnrollments(enrollments);
+                updateUserFormStore.edit(response.data?.user);
+                updateUserFormStore.setEnrollmentId(enrollments ? enrollments[0].value : null);
+                updateUserFormStore.setEnrollmentStatus(enrollments ? enrollments[0].enrollment?.enrollment_status_id?.toString() : null);
+                updateUserFormStore.setPaymentStatus(enrollments ? enrollments[0].enrollment?.payment_status_id?.toString() : null);
+
+            });
+        }
+    }, [updateUserFormStore.userId]);
+
+
+    useEffect(() => {
+        console.log("enrolment", updateUserFormStore.enrollmentId);
+        if (updateUserFormStore?.enrollmentId) {
+            updateStore.setSelectedEnrollment(updateStore.enrollments?.find(enrollment => enrollment.value === updateUserFormStore.enrollmentId));
+            axios.get(`payment_receipt/outstanding_balance/${updateUserFormStore.enrollmentId}`).then((response) => {
+                setPendingValue(response.data?.outstanding_balance);
+            });
+
+            // console.log(updateStore.enrollments?.find(enrollment => enrollment.value === updateUserFormStore.enrollmentId))
+        }
+
+    }, [updateUserFormStore.enrollmentId]);
+
     const updateUser = () => {
+        console.log(updateUserFormStore);
         let data = {
-            first_name: swimmerFormStore.firstName,
-            last_name: swimmerFormStore.lastName,
-            birthdate: swimmerFormStore.birthdate?.toISOString().split("T")[0],
-            phone_number: swimmerFormStore.phoneNumber,
-            representative_name: swimmerFormStore.representative,
-            representative_relationship: swimmerFormStore.relationship,
-            enrollment_id: swimmerFormStore.enrollmentId,
-            enrollment_status: swimmerFormStore.enrollmentStatus,
-            swimmast_user_id: swimmerFormStore.id,
-            role_id: swimmerFormStore.role,
+            swimmast_user_id: updateUserFormStore.userId,
+            first_name: updateUserFormStore.firstName,
+            last_name: updateUserFormStore.lastName,
+            birthdate: updateUserFormStore.birthdate?.toISOString().split("T")[0],
+            phone_number: updateUserFormStore.phoneNumber,
+            representative_name: updateUserFormStore.representative,
+            representative_relationship: updateUserFormStore.relationship,
+            enrollment_id: updateUserFormStore.enrollmentId,
+            enrollment_status: updateUserFormStore.enrollmentStatus,
+            role_id: updateUserFormStore.role_id,
         }
         const idNotification = showLoadingNotification("Actualizando usuario");
         axios.put(`administration/web_update_user_enrollment/`, data).then((response) => {
@@ -211,14 +239,10 @@ function UpdateSwimmer() {
                     label="Seleccionar usuario"
                     data={updateStore.students}
                     // CORREGIR LOS DATOS QUE DEVUELVE EN LA TABLA DE USUARIOS REGISTRADOS
-                    value={swimmerFormStore.id}
-                    onChange={(value) => {
-                        homeStore.setSelectedItem(
-                            updateStore.students.find(
-                                (student) => student.value === value
-                            )?.user
-                        );
-                    }}
+                    value={updateUserFormStore.userId}
+                    onChange={updateUserFormStore.setUserId}
+                    allowDeselect={false}
+
                 />
             }
         >
@@ -232,9 +256,9 @@ function UpdateSwimmer() {
                         withAsterisk
                         placeholder="Ingrese sus nombres"
                         className="sm:col-span-2"
-                        value={swimmerFormStore.firstName}
+                        value={updateUserFormStore.firstName}
                         onChange={(e) =>
-                            swimmerFormStore.setFirstName(e.currentTarget.value)
+                            updateUserFormStore.setFirstName(e.currentTarget.value)
                         }
                     />
                     <CustomTextInput
@@ -242,9 +266,9 @@ function UpdateSwimmer() {
                         withAsterisk
                         placeholder="Ingrese sus apellidos"
                         className="sm:col-span-2"
-                        value={swimmerFormStore.lastName}
+                        value={updateUserFormStore.lastName}
                         onChange={(e) =>
-                            swimmerFormStore.setLastName(e.currentTarget.value)
+                            updateUserFormStore.setLastName(e.currentTarget.value)
                         }
                     />
 
@@ -255,14 +279,10 @@ function UpdateSwimmer() {
                             placeholder="día mes año"
                             valueFormat="DD MMMM YYYY"
                             className="sm:col-span-3"
-                            value={
-                                typeof swimmerFormStore.birthdate != "string"
-                                    ? swimmerFormStore.birthdate
-                                    : null
-                            }
+                            value={updateUserFormStore.birthdate}
                             onChange={(birthdate) => {
-                                swimmerFormStore.setBirthdate(birthdate);
-                                swimmerFormStore.setAge(
+                                updateUserFormStore.setBirthdate(birthdate);
+                                updateUserFormStore.setAge(
                                     calculateAge(birthdate)
                                 );
                             }}
@@ -274,40 +294,26 @@ function UpdateSwimmer() {
                             onChange={(e) => null}
                             variant="filled"
                         /> */}
-                        <ReadOnly label="Edad" text={swimmerFormStore.age} />
+                        <ReadOnly label="Edad" text={updateUserFormStore.age} />
                     </div>
 
                     <CustomRadioGroup
                         label="Rol"
                         className="sm:col-span-4 pointer-events-none"
                         data={registerStore.roles}
-                        value={swimmerFormStore.role}
-                        onChange={(value) => {
-                            let role =
-                                registerStore.roles?.find(
-                                    (role) => role.value === value
-                                ).label === "INSTRUCTOR"
-                                    ? swimmerFormStore.setIsInstructor(true)
-                                    : swimmerFormStore.setIsInstructor(false);
-                            swimmerFormStore.setRole(value);
-                        }}
+                        value={updateUserFormStore.role_id}
+                        onChange={v => { console.log() }}
                     />
 
                     <ReadOnly
                         label="Usuario"
-                        text={swimmerFormStore.username}
+                        text={updateUserFormStore.username}
                         className="sm:col-span-2"
                     />
-                    <CustomTextInput
-                        leftSectionPointerEvents="none"
+                    <ReadOnly
+                        label="Correo electrónico"
                         className="sm:col-span-2"
-                        withAsterisk
-                        label="Correo Electrónico: "
-                        placeholder="nombre@dominio.com"
-                        value={swimmerFormStore.email}
-                        onChange={(e) =>
-                            swimmerFormStore.setEmail(e.currentTarget?.value)
-                        }
+                        text={updateUserFormStore.email}
                     />
                     <CustomTextInput
                         leftSectionPointerEvents="none"
@@ -315,24 +321,24 @@ function UpdateSwimmer() {
                         label="Teléfono: "
                         placeholder="Ingrese telefono"
                         className="sm:col-span-2"
-                        value={swimmerFormStore.phoneNumber}
+                        value={updateUserFormStore.phoneNumber}
                         onChange={(e) =>
                             swimmerFormStore.setPhoneNumber(
                                 e.currentTarget?.value
                             )
                         }
                     />
-                    {!swimmerFormStore.isInstructor && (
+                    {!updateUserFormStore.isInstructor && (
                         <div className="sm:col-span-4 grid sm:grid-cols-4 gap-x-3">
                             <CustomTextInput
                                 leftSectionPointerEvents="none"
-                                withAsterisk={swimmerFormStore.age < 18}
+                                withAsterisk={updateUserFormStore.age < 18}
                                 label="Representante: "
                                 placeholder="Ingrese el nombre"
                                 className="sm:col-span-2"
-                                value={swimmerFormStore.representative}
+                                value={updateUserFormStore.representative}
                                 onChange={(e) =>
-                                    swimmerFormStore.setRepresentative(
+                                    updateUserFormStore.setRepresentative(
                                         e.currentTarget?.value
                                     )
                                 }
@@ -342,7 +348,7 @@ function UpdateSwimmer() {
                                 placeholder="Vínculo"
                                 withAsterisk={swimmerFormStore.age < 18}
                                 className="sm:col-span-1"
-                                value={swimmerFormStore.relationship}
+                                value={updateUserFormStore.relationship}
                                 onChange={(e) =>
                                     swimmerFormStore.setRelationship(
                                         e.currentTarget?.value
@@ -352,20 +358,22 @@ function UpdateSwimmer() {
                         </div>
                     )}
                 </div>
-                {!swimmerFormStore.isInstructor && (
+                {!updateUserFormStore.isInstructor && (
                     <div className=" grid grid-cols-12 bg-[#F1F3F5] p-6 rounded-md gap-x-3 gap-y-4">
                         <h2 className="col-span-12 font-semibold text-lg">
                             Datos de inscripción
                         </h2>
 
-                        <ReadOnly
+                        <CustomSelect
                             label={"# Ingreso"}
-                            text={swimmerFormStore.receiptNumber}
+                            data={updateStore.enrollments}
                             className="sm:col-span-1"
+                            value={updateUserFormStore.enrollmentId}
+                            onChange={updateUserFormStore.setEnrollmentId}
                         />
                         <ReadOnly
                             label={"Instructor"}
-                            text={"Joseph Carabajo"}
+                            text={updateStore.selectedEnrollment?.enrollment?.instructor}
                             className="sm:col-span-2"
                             required
                         />
@@ -386,7 +394,7 @@ function UpdateSwimmer() {
 
                         <ReadOnly
                             label={"Curso"}
-                            text={swimmerFormStore?.course}
+                            text={updateStore.selectedEnrollment?.enrollment?.course?.name}
                             required
                             className={"col-span-2"}
                         />
@@ -404,16 +412,18 @@ function UpdateSwimmer() {
                             valueFormat="DD MMMM YYYY"
                             locale="es"
                             variant={"filled"}
-                            value={swimmerFormStore.enrollmentDuration}
+                            value={
+                                updateStore.selectedEnrollment ? [new Date(updateStore.selectedEnrollment?.enrollment?.start_date), new Date(updateStore.selectedEnrollment?.enrollment?.due_date)] : []}
                             onChange={(e) => null}
                         />
                         <CustomRadioGroup
                             label="Estado de inscripción"
                             className="sm:col-span-4"
                             data={registerStore.enrollmentStatuses}
-                            value={swimmerFormStore.enrollmentStatus}
-                            onChange={swimmerFormStore.setEnrollmentStatus}
+                            value={updateUserFormStore.enrollmentStatus}
+                            onChange={updateUserFormStore.setEnrollmentStatus}
                         />
+
                         <CustomTextInput
                             label="Pendiente"
                             className="sm:col-span-1"
@@ -421,14 +431,15 @@ function UpdateSwimmer() {
                             variant="filled"
                             readOnly
                         />
+
                         <div className="col-span-3 grid grid-cols-10 gap-x-3">
                             <CustomNumberInput
                                 label="Valor a pagar"
                                 max={pendingValue}
                                 className="col-span-4"
-                                value={swimmerFormStore.credit}
+                                value={updateUserFormStore.paymentValue}
                                 onChange={(value) => {
-                                    swimmerFormStore.setCredit(value);
+                                    updateUserFormStore.setPaymentValue(value);
                                     let paymentStatus = "3";
                                     if (value === parseFloat(pendingValue)) {
                                         paymentStatus = "1";
@@ -440,7 +451,7 @@ function UpdateSwimmer() {
                                     } else {
                                         paymentStatus = "3";
                                     }
-                                    swimmerFormStore.setPaymentStatus(
+                                    updateUserFormStore.setPaymentStatus(
                                         paymentStatus
                                     );
                                 }}
@@ -455,8 +466,8 @@ function UpdateSwimmer() {
                             label="Estado de pago"
                             className="sm:col-span-4 pointer-events-none"
                             data={registerStore.paymentStatuses}
-                            value={swimmerFormStore.paymentStatus}
-                            onChange={swimmerFormStore.setPaymentStatus}
+                            value={updateUserFormStore.paymentStatus}
+                            onChange={updateUserFormStore.setPaymentStatus}
                         />
                     </div>
                 )}
