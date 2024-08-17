@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { calculateAge } from "../util/Hooks";
 import storage from "../firebase/firebaseConfig";
 import { Carousel } from "@mantine/carousel";
+import axios from "axios";
 function CustomTable(props) {
     const [opened, { toggle }] = useDisclosure(false);
     let location = useLocation();
@@ -26,6 +27,22 @@ function CustomTable(props) {
         // Join the words back with spaces
         return words.join(" ");
     }
+
+    const sendNotification = async (element, title, body) => {
+        console.log(element);
+        let data = {
+
+            title: title,
+            body: body,
+            users: [element?.applicant?.id]
+        }
+        console.log(data)
+        axios.post("administration/web_send_notification/", data).then((response) => {
+            console.log(response);
+        }).catch((error) => {
+            console.log(error);
+        });
+    };
 
     const cellColor = (cell) => {
         if (cell === "en curso" || cell === "APROBADA")
@@ -147,10 +164,14 @@ function CustomTable(props) {
                                         <Table.Td>
                                             <ActionIcon
                                                 bg={"transparent"}
-                                                onClick={(e) => {
-
-                                                    console.log("notificar");
+                                                onClick={async (e) => {
                                                     e.stopPropagation();
+                                                    await sendNotification(
+                                                        element,
+                                                        "Su inscripción está por terminar",
+                                                        "Su inscripción expira en 3 días, recuerde que puede inscribirse en otro curso si lo desea",
+                                                    );
+                                                    console.log("notificar");
                                                 }}
                                             >
                                                 <IconBellRinging

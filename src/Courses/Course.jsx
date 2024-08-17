@@ -48,7 +48,6 @@ function Curso() {
             })
             .then(function (response) {
                 console.log(localStorage.getItem("token"));
-                console.log(response.data);
                 courseStore.setCourses(response.data.data);
                 courseStore.setTotalPages(response.data?.pagesTotales);
             })
