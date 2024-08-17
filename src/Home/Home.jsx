@@ -82,6 +82,8 @@ function Home() {
                 },
             })
             .then(function (response) {
+                console.log(response.data);
+                console.log("sasa");
                 homeStore.setStudents(response.data?.data);
                 homeStore.setTotalPages(response.data?.pagesTotales);
             })

@@ -1,14 +1,17 @@
 import { ActionIcon, Group, Modal, Pagination, Table } from "@mantine/core";
 import { randomId, useDisclosure } from "@mantine/hooks";
 import { IconBellRinging, IconPhone, IconPhoto } from "@tabler/icons-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import snachesOrcasLogo from "../assets/snachesOrcasLogo.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import { calculateAge } from "../util/Hooks";
+import storage from "../firebase/firebaseConfig";
+import { Carousel } from "@mantine/carousel";
 function CustomTable(props) {
     const [opened, { toggle }] = useDisclosure(false);
     let location = useLocation();
     const navigate = useNavigate();
+    const [images, setImages] = useState([]);
     function camelToSentence(text) {
         // Split the camel case string into words
         const words = text.split(/([A-Z][a-z]+)/);
@@ -41,6 +44,7 @@ function CustomTable(props) {
                 onClose={toggle}
                 size={"40rem"}
                 className="flex justify-center items-center"
+                title="Comprobantes de pago"
                 styles={{
                     body: {
                         padding: 0,
@@ -49,15 +53,38 @@ function CustomTable(props) {
                         alignItems: "center",
                         height: "60vh",
                     },
+                    title: {
+                        padding: "1rem",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                        color: "black",
+                    },
                 }}
             >
-                <img
-                    src={snachesOrcasLogo}
-                    alt="a"
-                    loading="lazy"
-                    height={300}
-                    width={300}
-                />
+                {images.length > 0 ? (
+
+                    <Carousel
+                        height={400}
+                        className="w-full"
+                        withControls
+                        withIndicators
+                    >
+                        {images.map((image) => (
+                            <Carousel.Slide key={image} >
+                                <img
+                                    className="object-contain w-full h-full"
+                                    src={image}
+                                    loading="lazy"
+                                />
+                            </Carousel.Slide>
+                        ))}
+                    </Carousel>
+                ) : (
+                    <h2>
+                        No hay comprobantes de pago disponibles
+                    </h2>
+
+                )}
             </Modal>
             <Table.ScrollContainer className="absolute mt-5">
                 <Table
@@ -121,6 +148,8 @@ function CustomTable(props) {
                                             <ActionIcon
                                                 bg={"transparent"}
                                                 onClick={(e) => {
+
+                                                    console.log("notificar");
                                                     e.stopPropagation();
                                                 }}
                                             >
@@ -137,6 +166,8 @@ function CustomTable(props) {
                                                 bg={"transparent"}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
+
+                                                    setImages(element.voucher);
                                                     toggle();
                                                 }}
                                             >

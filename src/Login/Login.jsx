@@ -43,7 +43,7 @@ function Login() {
         <main className='h-screen grid bg-system-section-white sm:grid-cols-6'>
             <section className="sm:col-span-3 flex flex-col items-center gap-y-6 justify-center ">
                 <img alt="snaches-orcas" src={snachesOrcasLogo} className='h-48 w-48 object-contain' />
-                <h1 className='text-button-color font-semibold text-6xl mb-8'>SWIMMAST</h1>
+                {/* <h1 className='text-button-color font-semibold text-6xl mb-8'>SWIMMAST</h1> */}
                 <div className='w-full flex flex-col items-center gap-6'>
                     <TextInput
                         label='Usuario'
@@ -70,7 +70,7 @@ function Login() {
                         ])}
                     />
 
-                    <CustomButton text='INGRESAR' onClick={login} />
+                    <CustomButton text='INGRESAR' onClick={login} bgColor={"#15192F"} />
                 </div>
             </section>
             <section className='h-32 hidden sm:col-span-3 sm:flex h-screen sm:flex-col justify-end items-end'>
