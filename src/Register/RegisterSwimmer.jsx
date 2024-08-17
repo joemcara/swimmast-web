@@ -31,14 +31,55 @@ import {
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { calculateAge } from "../util/Hooks";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import storage from "../firebase/firebaseConfig";
+
 function RegisterSwimmer() {
     const registerStore = useRegisterStore();
     const swimmerFormStore = useSwimmerFormStore();
     const [queryUsernames, setQueryUsernames] = useState(false);
     const navigate = useNavigate();
+
+
+
+    const uploadImage = async () => {
+        let url = "";
+        try {
+            console.log(registerStore.courses);
+            let imageName = "";
+
+            // Busca el nombre del curso
+            registerStore.courses?.find(({ group, items }) => {
+                items.find(item => {
+                    if (item.value === swimmerFormStore.course) {
+                        imageName = item?.course?.name?.trim().replace(/\s/g, '')?.toLowerCase();
+                    }
+                });
+            });
+
+            if (imageName) {
+                const storageRef = ref(storage, `${swimmerFormStore.username?.toLowerCase()}/comprobantes/${imageName}-1`);
+
+                // Sube la imagen
+                const data = await uploadBytes(storageRef, swimmerFormStore.voucherImage);
+
+                // Obtén el URL de descarga
+                url = await getDownloadURL(data.ref);
+                console.log("URL de la imagen:", url);
+            } else {
+                console.log("No se encontró el curso correspondiente.");
+            }
+        } catch (e) {
+            console.log(e);
+        }
+
+        return url;
+    }
+
+
     //FILL SELECTS WITH DATA
     useEffect(() => {
-        swimmerFormStore.reset();
+        // swimmerFormStore.reset();
         getInstructors();
         axios.get("enrollment_status/").then(function (response) {
             const enrollmentStatuses = response.data?.map(
@@ -229,14 +270,26 @@ function RegisterSwimmer() {
             payment_status: swimmerFormStore.paymentStatus,
         };
     };
-    const saveUser = () => {
+    const saveUser = async () => {
         let data = getSwimmerData();
         if (!data) return;
-        data["username"] = swimmerFormStore.username;
+        data["username"] = swimmerFormStore.username?.toLowerCase();
         data = { ...data, ...getEnrollmentData() };
         let notificationId = showLoadingNotification({
             message: "Registrando nadador...",
         });
+        let imageUrl = "";
+        if (swimmerFormStore.voucherImage && swimmerFormStore.username) {
+            imageUrl = await uploadImage();
+            console.log("image", imageUrl)
+            if (!imageUrl) {
+                updateErrorLoadingNotification(notificationId, "Error al subir la imagen");
+                return;
+            }
+        }
+
+        data["image_url"] = imageUrl;
+
         axios
             .post(`administration/web_register_user_enrollment/`, data)
             .then(function (response) {

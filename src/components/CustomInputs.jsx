@@ -243,8 +243,10 @@ export function SelectPaymentMethod(props) {
                 {
                     <FileInput
                         size="xs"
-                        multiple
-                        onChange={(e) => console.log(e)}
+                        accept="image/png,image/jpeg,image/jpg"
+                        onChange={(value) => {
+                            props.store?.setVoucherImage(value);
+                        }}
                         ref={fileInputRef}
                         className="hidden"
                     />

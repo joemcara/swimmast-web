@@ -9,6 +9,16 @@ const createIdSlice = (set) => ({
         })),
 });
 
+
+const createVoucherImageSlice = (set) => ({
+    voucherImage: null,
+    setVoucherImage: (value) =>
+        set(() => ({
+            voucherImage: value,
+        })),
+});
+
+
 const createFirstNameSlice = (set) => ({
     firstName: "",
     setFirstName: (value) =>
@@ -242,6 +252,7 @@ const createResetSlice = (set) => ({
             courseDays: [],
             course: null,
             isInstructor: false,
+            voucherImage: null,
         })),
 });
 
@@ -310,6 +321,7 @@ const useSwimmerFormStore = create((...a) => ({
     ...createResetSlice(...a),
     ...createEditSlice(...a),
     ...createEnrollmentIdSlice(...a),
+    ...createVoucherImageSlice(...a),
 }));
 
 export default useSwimmerFormStore;
