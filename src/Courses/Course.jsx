@@ -55,13 +55,18 @@ function Curso() {
             });
     };
 
-    useEffect(() => {
-        getCourses();
-    }, []);
 
     useEffect(() => {
         if (!courseFilterStore.search) getCourses();
     }, [courseFilterStore.search]);
+
+    useEffect(() => {
+        if (courseFilterStore.courseType.length === 0) getCourses();
+    }, [courseFilterStore.courseType]);
+
+    useEffect(() => {
+        getCourses();
+    }, [courseFilterStore.currentPage]);
 
     return (
         <div>

@@ -62,6 +62,10 @@ function Home() {
         if (!homeFilterStore.search) getSwimmers();
     }, [homeFilterStore.search]);
 
+    useEffect(() => {
+        if (homeFilterStore.enrollmentStatus.length === 0 && homeFilterStore.paymentStatus.length === 0) getSwimmers();
+    }, [homeFilterStore.enrollmentStatus, homeFilterStore.paymentStatus]);
+
     const getSwimmers = () => {
         let url = `administration/registered_students/page/${homeFilterStore.currentPage}/`;
         let params = new URLSearchParams();
