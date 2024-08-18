@@ -47,7 +47,6 @@ function Curso() {
                 },
             })
             .then(function (response) {
-                console.log(localStorage.getItem("token"));
                 courseStore.setCourses(response.data.data);
                 courseStore.setTotalPages(response.data?.pagesTotales);
             })

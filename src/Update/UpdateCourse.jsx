@@ -82,7 +82,6 @@ function UpdateCourse() {
                 'Authorization': `Token ${localStorage.getItem('token')}`
             }
         }).then(function (response) {
-            console.log(response.data.data.length)
             courseStore.setCourses(response.data.data)
             courseStore.setTotalPages(response.data?.pagesTotales)
 
@@ -119,7 +118,6 @@ function UpdateCourse() {
 
     const updateCourse = () => {
         let notificationId = showLoadingNotification("Actualizando curso")
-        console.log(courseFormStore.courseStatus)
         axios.put(`administration/web_update_course/`, {
             course_id: courseFormStore.id,
             name: courseFormStore.courseName,
@@ -162,8 +160,13 @@ function UpdateCourse() {
                     data={registerStore.courses}
                     value={courseStore.selectedItem?.id?.toString()}
                     onChange={(value) => {
-                        let course = courseStore.courses?.find(course => course.id?.toString() === value)
-                        courseStore.setSelectedItem(course)
+                        registerStore?.courses?.map((courseGroup) => {
+                            courseGroup.items.map((course) => {
+                                if (course.value === value) {
+                                    courseStore.setSelectedItem(course.course)
+                                }
+                            })
+                        })
                     }}
                 />
             }

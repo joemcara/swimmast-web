@@ -8,6 +8,7 @@ import useCourseFormStore from './CourseFormStore';
 import axios from 'axios';
 import useRegisterStore from './RegisterStore';
 import { useNavigate } from 'react-router-dom';
+import { showLoadingNotification } from '../util/CustomNotifications';
 
 function RegisterCourse() {
     const courseFormStore = useCourseFormStore();
@@ -77,6 +78,7 @@ function RegisterCourse() {
 
 
     const createCourse = () => {
+        const idNotification = showLoadingNotification("Creando curso");
         axios.post("course/create_course/", {
             start_date: courseFormStore.enrollmentDuration[0]?.toISOString().split('T')[0],
             due_date: courseFormStore.enrollmentDuration[1]?.toISOString().split('T')[0],
@@ -90,9 +92,12 @@ function RegisterCourse() {
             course_type: courseFormStore.courseType,
             weekdays: courseFormStore.weekdays
         }).then(function (response) {
-            console.log(response.data)
+            updateSuccessLoadingNotification(idNotification)
             courseFormStore.reset()
             navigate("/cursos")
+        }).catch(function (error) {
+            updateErrorLoadingNotification(idNotification)
+            console.log(error)
         })
     }
 

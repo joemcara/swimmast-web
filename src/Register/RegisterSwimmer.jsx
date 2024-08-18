@@ -448,7 +448,7 @@ function RegisterSwimmer() {
                     }
                 />
 
-                {!swimmerFormStore.isInstructor && (
+                {!(swimmerFormStore.isInstructor || (!swimmerFormStore.isInstructor && swimmerFormStore.age > 18)) && (
                     <div className="sm:col-span-4 grid sm:grid-cols-4 gap-x-3">
                         <CustomTextInput
                             required={swimmerFormStore.age < 18}
